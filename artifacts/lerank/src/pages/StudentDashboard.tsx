@@ -35,34 +35,34 @@ export default function StudentDashboard() {
   return (
     <div className="min-h-screen bg-[#FAF6F1] flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-[#1A0F0A] text-[#F5EDE4] flex flex-col fixed inset-y-0 z-10">
-        <div className="h-20 flex items-center px-6 border-b border-white/10">
-          <span className="text-2xl font-display font-bold text-white">Lerank</span>
+      <aside className="w-64 bg-white border-r border-[#E8DDD3] flex flex-col fixed inset-y-0 z-10">
+        <div className="h-20 flex items-center px-6 border-b border-[#E8DDD3]">
+          <span className="text-2xl font-display font-bold text-[#2C1810]">Lerank</span>
         </div>
         <div className="p-4 flex-1">
           <nav className="space-y-2">
-            <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#C4956A]/20 text-[#C4956A] font-medium">
+            <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#C4956A]/10 text-[#C4956A] font-medium">
               <LayoutDashboard className="w-5 h-5" /> Dashboard
             </Link>
-            <Link href="/compare" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
+            <Link href="/compare" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FAF6F1] text-[#8B7355] hover:text-[#2C1810] transition-colors">
               <FileText className="w-5 h-5" /> Find Consultants
             </Link>
-            <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
+            <Link href="/dashboard" className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FAF6F1] text-[#8B7355] hover:text-[#2C1810] transition-colors">
               <CreditCard className="w-5 h-5" /> Escrow Payments
             </Link>
           </nav>
         </div>
-        <div className="p-4 border-t border-white/10">
+        <div className="p-4 border-t border-[#E8DDD3]">
           <div className="flex items-center gap-3 mb-4 px-2">
-            <div className="w-10 h-10 rounded-full bg-[#8B7355] flex items-center justify-center text-white font-bold">
+            <div className="w-10 h-10 rounded-full bg-[#C4956A]/20 flex items-center justify-center text-[#C4956A] font-bold">
               {user.fullName.charAt(0)}
             </div>
             <div>
-              <div className="text-sm font-bold text-white">{user.fullName}</div>
-              <div className="text-xs text-gray-400">Student</div>
+              <div className="text-sm font-bold text-[#2C1810]">{user.fullName}</div>
+              <div className="text-xs text-[#8B7355]">Student</div>
             </div>
           </div>
-          <button onClick={logout} className="flex items-center gap-3 px-4 py-2 w-full rounded-lg hover:bg-red-500/10 text-gray-400 hover:text-red-400 transition-colors text-sm">
+          <button onClick={logout} className="flex items-center gap-3 px-4 py-2 w-full rounded-lg hover:bg-red-50 text-[#8B7355] hover:text-red-500 transition-colors text-sm">
             <LogOut className="w-4 h-4" /> Sign Out
           </button>
         </div>
@@ -94,10 +94,10 @@ export default function StudentDashboard() {
                 <div className="text-3xl font-bold text-[#C4956A]">{stats?.milestonesCompletedThisWeek || 0}</div>
               </CardContent>
             </Card>
-            <Card className="border-none shadow-md bg-[#1A0F0A] text-white">
+            <Card className="border-none shadow-md bg-[#C4956A]/10 border border-[#C4956A]/20">
               <CardContent className="p-6">
-                <div className="text-sm text-gray-400 font-medium mb-2 flex items-center gap-2"><ShieldCheck className="w-4 h-4"/> Funds in Escrow</div>
-                <div className="text-3xl font-bold">{formatCurrency(stats?.moneyInEscrow || 0)}</div>
+                <div className="text-sm text-[#C4956A] font-medium mb-2 flex items-center gap-2"><ShieldCheck className="w-4 h-4"/> Funds in Escrow</div>
+                <div className="text-3xl font-bold text-[#2C1810]">{formatCurrency(stats?.moneyInEscrow || 0)}</div>
               </CardContent>
             </Card>
             <Card className="border-none shadow-md">

@@ -70,57 +70,57 @@ export default function Compare() {
   };
 
   if (isAuthLoading) {
-    return <div className="min-h-screen bg-[#1A0F0A] flex items-center justify-center"><Loader2 className="w-10 h-10 text-[#C4956A] animate-spin" /></div>;
+    return <div className="min-h-screen bg-[#FAF6F1] flex items-center justify-center"><Loader2 className="w-10 h-10 text-[#C4956A] animate-spin" /></div>;
   }
 
   // --- VIEW 1: AUTH ---
   if (!user) {
     return (
-      <div className="min-h-screen bg-[#1A0F0A] flex flex-col items-center justify-center p-6 dark">
+      <div className="min-h-screen bg-gradient-to-br from-white via-[#FAF6F1] to-[#F5EDE4] flex flex-col items-center justify-center p-6">
         <div className="w-full max-w-md">
           <div className="text-center mb-10">
-            <h1 className="text-4xl font-display font-bold text-white mb-2">Lerank</h1>
-            <p className="text-[#E8DDD3]">Your journey to top universities starts here.</p>
+            <h1 className="text-4xl font-display font-bold text-[#2C1810] mb-2">Lerank</h1>
+            <p className="text-[#8B7355]">Your journey to top universities starts here.</p>
           </div>
-          
-          <Card className="bg-[#2C1810] border-[#8B7355]/30">
+
+          <Card className="bg-white border border-[#E8DDD3] shadow-xl">
             <CardContent className="p-8">
               <form onSubmit={handleAuth} className="space-y-6">
                 {!isLoginMode && (
                   <div className="space-y-2">
-                    <Label className="text-[#E8DDD3]">Full Name</Label>
-                    <Input 
-                      required 
-                      value={fullName} 
-                      onChange={(e) => setFullName(e.target.value)} 
-                      className="bg-[#1A0F0A] border-[#8B7355]/50 text-white focus-visible:ring-[#C4956A]" 
+                    <Label className="text-[#2C1810]">Full Name</Label>
+                    <Input
+                      required
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      className="border-[#E8DDD3] focus-visible:ring-[#C4956A]"
                     />
                   </div>
                 )}
                 <div className="space-y-2">
-                  <Label className="text-[#E8DDD3]">Email Address</Label>
-                  <Input 
-                    type="email" 
-                    required 
-                    value={email} 
-                    onChange={(e) => setEmail(e.target.value)} 
-                    className="bg-[#1A0F0A] border-[#8B7355]/50 text-white focus-visible:ring-[#C4956A]" 
+                  <Label className="text-[#2C1810]">Email Address</Label>
+                  <Input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="border-[#E8DDD3] focus-visible:ring-[#C4956A]"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[#E8DDD3]">Password</Label>
-                  <Input 
-                    type="password" 
-                    required 
-                    value={password} 
-                    onChange={(e) => setPassword(e.target.value)} 
-                    className="bg-[#1A0F0A] border-[#8B7355]/50 text-white focus-visible:ring-[#C4956A]" 
+                  <Label className="text-[#2C1810]">Password</Label>
+                  <Input
+                    type="password"
+                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="border-[#E8DDD3] focus-visible:ring-[#C4956A]"
                   />
                 </div>
 
-                {authError && <p className="text-red-400 text-sm">{authError}</p>}
+                {authError && <p className="text-red-500 text-sm">{authError}</p>}
 
-                <Button type="submit" className="w-full bg-[#C4956A] hover:bg-[#D4C4B0] text-[#1A0F0A]">
+                <Button type="submit" className="w-full bg-[#C4956A] hover:bg-[#b8845e] text-white shadow-md">
                   {isLoginMode ? "Sign In" : "Create Account"}
                 </Button>
               </form>
@@ -240,10 +240,10 @@ export default function Compare() {
 
                     <div className="flex gap-4">
                       <Button variant="outline" onClick={() => setOnboardingStep(2)}>Back</Button>
-                      <Button 
-                        onClick={handleOnboardingSubmit} 
+                      <Button
+                        onClick={handleOnboardingSubmit}
                         isLoading={updateProfileMutation.isPending}
-                        className="flex-1 bg-[#1A0F0A] text-white hover:bg-[#2C1810]"
+                        className="flex-1 bg-[#C4956A] text-white hover:bg-[#b8845e]"
                       >
                         Complete Profile & See Matches
                       </Button>
@@ -352,7 +352,7 @@ export default function Compare() {
 
                     <div className="pt-6 border-t border-gray-100 mt-auto flex gap-3">
                       <Button variant="outline" className="flex-1">View Profile</Button>
-                      <Button className="flex-1 bg-[#1A0F0A] hover:bg-[#2C1810]">Hire & Pay into Escrow</Button>
+                      <Button className="flex-1 bg-[#C4956A] hover:bg-[#b8845e] text-white">Hire & Pay into Escrow</Button>
                     </div>
                   </CardContent>
                 </Card>

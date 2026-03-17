@@ -29,89 +29,89 @@ export default function SuperAdmin() {
   if (!user || user.role !== 'super_admin') return <div className="p-8 text-center">404 / Access Denied</div>;
 
   return (
-    <div className="min-h-screen bg-[#1A0F0A] text-[#E8DDD3] p-8 dark">
+    <div className="min-h-screen bg-[#FAF6F1] text-[#2C1810] p-8">
       <div className="max-w-7xl mx-auto space-y-8">
 
-        <header className="flex items-center justify-between border-b border-white/10 pb-6">
+        <header className="flex items-center justify-between border-b border-[#E8DDD3] pb-6">
           <div className="flex items-center gap-4">
             <ShieldCheck className="w-10 h-10 text-[#C4956A]" />
             <div>
-              <h1 className="text-3xl font-display font-bold text-white">Platform Oversight</h1>
-              <p className="text-gray-400">Super Admin Dashboard — {user.fullName}</p>
+              <h1 className="text-3xl font-display font-bold text-[#2C1810]">Platform Oversight</h1>
+              <p className="text-[#8B7355]">Super Admin Dashboard — {user.fullName}</p>
             </div>
           </div>
-          <button onClick={logout} className="flex items-center gap-2 text-sm text-gray-400 hover:text-red-400 transition-colors">
+          <button onClick={logout} className="flex items-center gap-2 text-sm text-[#8B7355] hover:text-red-500 transition-colors">
             <LogOut className="w-4 h-4" /> Sign Out
           </button>
         </header>
 
         <div className="grid grid-cols-4 gap-6">
-          <Card className="bg-[#2C1810] border-white/5">
+          <Card className="bg-white border-[#E8DDD3] shadow-sm">
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="text-sm text-gray-400 mb-1">Platform Revenue (3%)</div>
+                  <div className="text-sm text-[#8B7355] mb-1">Platform Revenue (3%)</div>
                   <div className="text-3xl font-bold text-[#C4956A]">{formatCurrency(analytics?.totalRevenue || 0)}</div>
                 </div>
-                <Activity className="w-6 h-6 text-[#C4956A]/50" />
+                <Activity className="w-6 h-6 text-[#C4956A]/40" />
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-[#2C1810] border-white/5">
+          <Card className="bg-white border-[#E8DDD3] shadow-sm">
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="text-sm text-gray-400 mb-1">Total Students</div>
-                  <div className="text-3xl font-bold text-white">{analytics?.totalStudents || 0}</div>
+                  <div className="text-sm text-[#8B7355] mb-1">Total Students</div>
+                  <div className="text-3xl font-bold text-[#2C1810]">{analytics?.totalStudents || 0}</div>
                 </div>
-                <Users className="w-6 h-6 text-gray-500" />
+                <Users className="w-6 h-6 text-[#8B7355]/40" />
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-[#2C1810] border-white/5">
+          <Card className="bg-white border-[#E8DDD3] shadow-sm">
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div>
-                  <div className="text-sm text-gray-400 mb-1">Consultant Companies</div>
-                  <div className="text-3xl font-bold text-white">{analytics?.totalCompanies || 0}</div>
+                  <div className="text-sm text-[#8B7355] mb-1">Consultant Companies</div>
+                  <div className="text-3xl font-bold text-[#2C1810]">{analytics?.totalCompanies || 0}</div>
                 </div>
-                <Building className="w-6 h-6 text-gray-500" />
+                <Building className="w-6 h-6 text-[#8B7355]/40" />
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-[#2C1810] border-red-500/20">
+          <Card className="bg-white border-red-100 shadow-sm">
             <CardContent className="p-6">
               <div className="flex justify-between items-start">
                 <div>
                   <div className="text-sm text-red-400 mb-1">Active Applications</div>
-                  <div className="text-3xl font-bold text-white">{analytics?.activeApplications || 0}</div>
+                  <div className="text-3xl font-bold text-[#2C1810]">{analytics?.activeApplications || 0}</div>
                 </div>
-                <AlertCircle className="w-6 h-6 text-red-500/50" />
+                <AlertCircle className="w-6 h-6 text-red-300" />
               </div>
             </CardContent>
           </Card>
         </div>
 
         <div className="grid grid-cols-3 gap-6">
-          <div className="bg-[#2C1810] rounded-xl p-4 border border-white/5 text-center">
-            <div className="text-2xl font-bold text-green-400">{analytics?.completedTransactions || 0}</div>
-            <div className="text-sm text-gray-400 mt-1">Released Escrows</div>
+          <div className="bg-white rounded-xl p-4 border border-[#E8DDD3] shadow-sm text-center">
+            <div className="text-2xl font-bold text-emerald-600">{analytics?.completedTransactions || 0}</div>
+            <div className="text-sm text-[#8B7355] mt-1">Released Escrows</div>
           </div>
-          <div className="bg-[#2C1810] rounded-xl p-4 border border-white/5 text-center">
-            <div className="text-2xl font-bold text-yellow-400">{analytics?.pendingTransactions || 0}</div>
-            <div className="text-sm text-gray-400 mt-1">Pending/Held</div>
+          <div className="bg-white rounded-xl p-4 border border-[#E8DDD3] shadow-sm text-center">
+            <div className="text-2xl font-bold text-amber-600">{analytics?.pendingTransactions || 0}</div>
+            <div className="text-sm text-[#8B7355] mt-1">Pending/Held</div>
           </div>
-          <div className="bg-[#2C1810] rounded-xl p-4 border border-white/5 text-center">
-            <div className="text-2xl font-bold text-red-400">{analytics?.refundedTransactions || 0}</div>
-            <div className="text-sm text-gray-400 mt-1">Refunded</div>
+          <div className="bg-white rounded-xl p-4 border border-[#E8DDD3] shadow-sm text-center">
+            <div className="text-2xl font-bold text-red-500">{analytics?.refundedTransactions || 0}</div>
+            <div className="text-sm text-[#8B7355] mt-1">Refunded</div>
           </div>
         </div>
 
         <div>
-          <h2 className="text-xl font-bold text-white mb-4">Consultant Companies</h2>
-          <Card className="bg-[#2C1810] border-white/5 overflow-hidden">
+          <h2 className="text-xl font-bold text-[#2C1810] mb-4">Consultant Companies</h2>
+          <Card className="bg-white border-[#E8DDD3] shadow-sm overflow-hidden">
             <table className="w-full text-left">
-              <thead className="border-b border-white/10 bg-black/20 text-xs uppercase text-gray-400">
+              <thead className="border-b border-[#E8DDD3] bg-[#FAF6F1] text-xs uppercase text-[#8B7355]">
                 <tr>
                   <th className="px-6 py-4">Company Name</th>
                   <th className="px-6 py-4">Countries</th>
@@ -121,15 +121,15 @@ export default function SuperAdmin() {
                   <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5">
+              <tbody className="divide-y divide-[#E8DDD3]">
                 {companies.map(c => (
-                  <tr key={c.id} className="hover:bg-white/5">
-                    <td className="px-6 py-4 font-bold text-white">{c.name}</td>
-                    <td className="px-6 py-4 text-gray-400 text-sm">{c.specializedCountries?.join(", ")}</td>
-                    <td className="px-6 py-4 text-yellow-400 font-bold">⭐ {c.rating}</td>
-                    <td className="px-6 py-4 text-gray-300">{c.studentsHelped}</td>
+                  <tr key={c.id} className="hover:bg-[#FAF6F1]">
+                    <td className="px-6 py-4 font-bold text-[#2C1810]">{c.name}</td>
+                    <td className="px-6 py-4 text-[#8B7355] text-sm">{c.specializedCountries?.join(", ")}</td>
+                    <td className="px-6 py-4 text-amber-600 font-bold">⭐ {c.rating}</td>
+                    <td className="px-6 py-4 text-[#2C1810]">{c.studentsHelped}</td>
                     <td className="px-6 py-4">
-                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${c.isActive ? 'bg-green-500/20 text-green-400' : 'bg-gray-500/20 text-gray-400'}`}>
+                      <span className={`text-xs font-bold px-2 py-1 rounded-full ${c.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
                         {c.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
@@ -137,7 +137,7 @@ export default function SuperAdmin() {
                       <Button
                         size="sm"
                         variant="outline"
-                        className={c.isActive ? "border-red-500/50 text-red-400 hover:bg-red-500/10" : "border-green-500/50 text-green-400 hover:bg-green-500/10"}
+                        className={c.isActive ? "border-red-300 text-red-500 hover:bg-red-50" : "border-green-300 text-green-600 hover:bg-green-50"}
                         onClick={() => toggleCompanyStatus(c.id, c.isActive)}
                       >
                         {c.isActive ? "Suspend" : "Activate"}
@@ -146,7 +146,7 @@ export default function SuperAdmin() {
                   </tr>
                 ))}
                 {!companies.length && (
-                  <tr><td colSpan={6} className="px-6 py-8 text-center text-gray-500">No companies found.</td></tr>
+                  <tr><td colSpan={6} className="px-6 py-8 text-center text-[#8B7355]">No companies found.</td></tr>
                 )}
               </tbody>
             </table>
