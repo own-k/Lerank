@@ -1,0 +1,15 @@
+packages:
+  "framer-motion": "For premium scroll animations and page transitions"
+  "recharts": "For dashboard analytics charts"
+  "clsx": "For utility class merging"
+  "tailwind-merge": "For utility class merging"
+  "lucide-react": "For beautiful icons"
+
+images:
+  - path: "artifacts/lerank/public/images/hero-bg.png"
+    description: "Abstract warm premium coffee espresso color background texture, subtle grain, elegant lighting, minimal, deep dark roast tones with soft caramel light leaks"
+    aspect_ratio: "16:9"
+
+notes:
+  - API uses cookie-based or bearer token auth. We will use the generated hooks.
+  - The generated API hooks are imported from @workspace/api-client-react

@@ -1,0 +1,482 @@
+# Lerank — Full-Stack Platform Build Prompt (Replit)
+
+## Project Overview
+
+**Lerank** is a trust-first marketplace that connects international students with verified education consultants. It solves one critical problem: students pay thousands of dollars to consultants who rely on verbal promises and sometimes scam them. Lerank introduces **real-time process monitoring** and **escrow-protected payments** so students can track every step of their application and get a 100% refund if the consultant doesn't deliver.
+
+**Tech Stack:** Next.js 14 (App Router), Supabase (Auth, Database, Storage, Realtime), Tailwind CSS, Framer Motion, TypeScript
+
+**Domain:** lerank.com (or lerank.io)
+
+---
+
+## Brand Identity
+
+- **Name:** Lerank
+- **Tagline:** "Your application. Tracked. Protected."
+- **Tone:** Warm, trustworthy, premium. Think Claude meets Notion — inviting and sophisticated, never cold or corporate. The entire palette should feel like a warm coffee shop where serious work gets done.
+- **Primary Color:** Rich espresso (#2C1810) with warm caramel accent (#C4956A)
+- **Secondary:** Cream (#FAF6F1), latte (#E8DDD3), warm sand (#D4C4B0), muted mocha (#8B7355)
+- **Danger/Alert:** Burnt sienna (#C0392B)
+- **Success:** Sage green (#6B8F71)
+- **Background gradient:** From deep roast (#1A0F0A) to espresso (#2C1810) — warm and rich, never cold
+- **Text:** Off-white cream (#F5EDE4) on dark backgrounds, espresso (#2C1810) on light backgrounds
+- **Typography:** Display font — "Fraunces" or "Playfair Display" (elegant, warm serifs). Body — "DM Sans" or "Plus Jakarta Sans" (clean, friendly)
+- **Logo concept:** Stylized "L" formed by an upward arrow or shield shape, symbolizing protection + progress. Caramel (#C4956A) on dark backgrounds, espresso (#2C1810) on light backgrounds.
+
+---
+
+## Page Structure & Detailed Requirements
+
+### PAGE 1: Landing Page (/)
+
+This is the most important page. It must feel like a premium product launch page with scroll-driven storytelling. Every section transitions smoothly into the next using scroll-triggered animations.
+
+#### Section 1 — Hero (Full viewport)
+- Large bold headline: **"Stop Trusting Promises. Start Tracking Progress."**
+- Subtitle: "Lerank monitors your entire university application process and protects your money with escrow-backed payments. If your consultant doesn't deliver, you get 100% back."
+- Two CTA buttons: "Find a Consultant" (primary caramel #C4956A with espresso text) and "I'm a Consultant" (outline cream)
+- **3D Globe Animation:** A slowly spinning Earth using Three.js or CSS 3D transforms. On the globe surface, show pulsing dots at locations of Ivy League and top universities (Harvard, MIT, Stanford, Oxford, Cambridge, etc.). When a dot pulses, briefly show the university name + logo floating near it. The globe should feel alive and premium.
+- Background: Deep roast-to-espresso gradient (#1A0F0A → #2C1810) with subtle warm particle effect (golden/amber particles instead of cold stars)
+- Navbar: Lerank logo (left), nav links [How it Works, Compare, Pricing] (center), Sign In / Get Started (right). Sticky on scroll with blur backdrop.
+
+#### Section 2 — "What Lerank Does" (Scroll-triggered, fade-in)
+- Section title: **"Everything You Need to Apply With Confidence"**
+- Show 3-4 feature cards in a horizontal layout that animate in on scroll:
+  1. **Real-Time Tracking** — "See exactly where your application stands. Recommendation letter? In progress. Transcript sent? Done. No more guessing." Icon: progress bar or checklist
+  2. **Verified Consultants** — "Every consultant is reviewed, rated, and held accountable by real students." Icon: verified badge
+  3. **Escrow Protection** — "Your money stays safe until the work is done. Period." Icon: shield with dollar
+  4. **Smart Matching** — "Tell us your scores, budget, and dream schools. We'll find the right consultant for you." Icon: target/match
+- Below cards: A mockup of the Lerank student dashboard showing a live application tracker (use a styled UI screenshot or build an inline interactive preview). When scrolling, this mockup should slightly tilt/parallax to feel 3D.
+
+#### Section 3 — "The Problem" (Scroll-triggered, slides in from right)
+- When user scrolls past Section 2, the content should horizontally slide/transition to the right revealing this section (like a page turning sideways).
+- Title: **"The Problem With Traditional Consulting"**
+- Body text: "Most education consultants operate on trust alone. You pay upfront, hope for the best, and have zero visibility into what's actually happening. Some deliver. Many don't. And when they don't..."
+- **Money-to-Scam Animation:** Show animated dollar bills or a money stack that morphs/dissolves into the word **"SCAM"** in bold burnt sienna (#C0392B) with a glitch/shake effect. Use Framer Motion or CSS keyframes. The animation should feel dramatic — money particles breaking apart and reforming as the word SCAM.
+- Stats below animation (use counter-up animation on scroll):
+  - "67% of students report zero progress updates from consultants"
+  - "$3,200 average lost to undelivered consulting services"
+  - "1 in 4 students say they were misled about consultant capabilities"
+  (These are illustrative — mark as "Based on student surveys" or make them clearly hypothetical for now)
+
+#### Section 4 — "How We Solve It" (Scroll down from Section 3)
+- Title: **"Lerank Changes Everything"**
+- Show a simple 3-step visual flow:
+  1. **You Choose** → Browse verified consultants, compare services and reviews
+  2. **We Hold** → Your payment goes into escrow. Consultant can see it but can't touch it.
+  3. **They Deliver** → Track every milestone. When complete, payment releases. If not, you get refunded.
+- Below: **"Most importantly: 100% refund guarantee if they don't deliver."** — This should be in a highlighted callout box with a shield icon and a subtle warm caramel glow border.
+- Subtext: "Powered by Escrow.com — the world's most trusted online escrow service."
+
+#### Section 5 — "How Payment Works" (Scroll down)
+- Title: **"Your Money, Protected Every Step"**
+- Visual diagram/flowchart showing:
+  ```
+  Student Pays → Money Held in Escrow → Consultant Works (milestones tracked) → 
+  ├─ All milestones complete → Money released to consultant
+  └─ Consultant fails to deliver → Full refund to student
+  ```
+- Show fee breakdown clearly:
+  - "Escrow.com processing: 5%"
+  - "Lerank platform fee: 3%"
+  - "Total: 8%"
+  - **Bold callout:** "This 8% is worth every cent. It's the price of guaranteed protection and full refund rights. Think of it as insurance for your future."
+- Use an animated progress bar or money flow animation to illustrate
+
+#### Section 6 — CTA "Compare Consultants" (Final scroll section)
+- Title: **"Ready to Find Your Perfect Consultant?"**
+- Subtitle: "Let's learn about you first so we can match you with the best fit."
+- Large CTA button: "Compare Consultants →" (links to /compare which triggers sign-up)
+- Background: Warm espresso gradient with subtle globe silhouette callback and golden ambient glow
+
+---
+
+### PAGE 2: Compare / Sign-Up (/compare)
+
+When user clicks "Compare" from landing page, show a sign-up/onboarding flow before showing results.
+
+#### Step 1: Account Creation
+- Clean centered form card
+- Fields: Full Name, Email, Password, Confirm Password
+- OAuth options: "Continue with Google" button
+- Use Supabase Auth for all authentication
+
+#### Step 2: "Let's Know You Better" (Multi-step form with progress bar)
+- This is the personalization onboarding. Show a progress bar at top (Step 1 of 4, etc.)
+
+**Screen 2a — Test Scores:**
+- IELTS score (dropdown: 4.0 to 9.0 in 0.5 increments, or "Not taken yet")
+- SAT score (number input: 400-1600, or "Not taken yet")
+- TOEFL score (optional, number input)
+- GPA (number input with scale selector: 4.0 or 5.0 scale)
+
+**Screen 2b — Budget:**
+- "How much can you spend on consulting services?" (slider or predefined ranges: $500-1000, $1000-2000, $2000-5000, $5000+)
+- "What's your total budget for education (tuition + living per year)?" (ranges: <$15k, $15-30k, $30-50k, $50k+)
+- Currency preference selector
+
+**Screen 2c — Preferences:**
+- Preferred countries (multi-select checkboxes: USA, UK, Canada, Australia, Germany, South Korea, Japan, Turkey, Malaysia, Other)
+- Preferred major/field (searchable dropdown or text input)
+- Degree level: Bachelor's / Master's / PhD (single select)
+
+**Screen 2d — Almost Done:**
+- "Anything else you want consultants to know?" (optional textarea)
+- Terms checkbox: "I agree to Lerank's Terms of Service and Privacy Policy"
+- Submit button: "Find My Matches →"
+
+#### After Sign-Up: Consultant Comparison Page
+- Show a filterable/sortable grid or list of consulting companies
+- Each card shows: Company name, logo, rating (stars), number of students helped, countries they specialize in, price range, success rate percentage
+- Filter sidebar: by country, price range, rating, degree level
+- Sort by: Best match (AI-recommended based on student profile), Price low-to-high, Rating, Most students helped
+- Clicking a consultant card opens their detailed profile page
+
+---
+
+### PAGE 3: Student Dashboard (/dashboard)
+
+After signing up and optionally selecting a consultant, the student sees their dashboard.
+
+#### Dashboard Layout:
+- Left sidebar: Navigation (Dashboard, My Applications, Transactions, Messages, Settings)
+- Top bar: Lerank logo, search, notifications bell, user avatar dropdown
+
+#### Main Dashboard Content:
+- **Welcome card:** "Welcome back, [Name]! Here's your application status."
+- **Application Tracker** (the core feature):
+  - Show each active consulting engagement as a card
+  - Each card shows: Consultant company name, service purchased, overall progress percentage
+  - Expand card to see milestone breakdown:
+    - Each milestone has: Name (e.g., "Recommendation Letter from Professor X"), Status (Not Started / In Progress / Under Review / Completed), Last updated timestamp
+    - Status badges: gray (not started), yellow pulse (in progress), blue (under review), green checkmark (completed)
+  - Use Supabase Realtime to update statuses live without page refresh
+
+- **Quick Stats:** Cards showing — Total applications in progress, Milestones completed this week, Money in escrow, Money released
+
+- **Recent Activity Feed:** Timeline of recent status changes ("Your recommendation letter draft was marked as 'In Progress' by ABC Consulting — 2 hours ago")
+
+---
+
+### PAGE 4: Company Admin Dashboard (/admin/company)
+
+For consulting company administrators to manage their offerings and track student applications.
+
+#### Authentication:
+- Company admins are invited by super admin
+- Role-based access via Supabase RLS (Row Level Security)
+
+#### Company Admin Features:
+
+**Company Profile Management:**
+- Edit company name, logo, description, website
+- Set service offerings with prices
+- Add team members (consultants under their company)
+
+**Country-Specific Requirements Setup:**
+- A settings page where the company admin can set **per-country requirements**
+- For each country they serve, they fill in:
+  - Minimum IELTS score accepted
+  - Minimum SAT score accepted
+  - Minimum GPA
+  - Tuition range they work with
+  - Available majors/programs
+  - Application deadline reminders
+  - Estimated success rate
+- This data is used by Lerank's matching algorithm to recommend this company to students whose profile fits
+
+**Student Management:**
+- Table view of all students who have hired them
+- For each student: Name, service purchased, payment status (escrow pending / released), overall progress
+- Click into a student to update milestone statuses (this is what triggers the real-time updates students see)
+
+**Milestone Template Builder:**
+- Create reusable milestone templates (e.g., "Standard US University Application" template with milestones: SOP Draft → SOP Review → Recommendation Letters → Application Submission → Interview Prep → Decision)
+- Assign templates to students and customize per-student if needed
+
+---
+
+### PAGE 5: Super Admin Dashboard (/admin/super)
+
+For Lerank platform administrators only.
+
+#### Super Admin Features:
+
+**Company Management:**
+- Create new consulting companies
+- Assign company admin users to companies
+- Activate/deactivate companies
+- View all companies with their stats (students served, revenue, rating)
+
+**User Management:**
+- View all users (students, company admins, consultants)
+- Role assignment
+- Account suspension/activation
+
+**Transaction Overview:**
+- View all escrow transactions across the platform
+- Filter by status: Pending, Released, Refunded, Disputed
+- Total platform revenue (3% fees collected)
+- Integration status with Escrow.com
+
+**Platform Analytics:**
+- Total students registered
+- Total consultants active
+- Total money in escrow
+- Conversion rates (visitor → signup → payment)
+- Top-performing consultants
+
+**Content Management:**
+- Edit landing page testimonials
+- Manage country/university database
+- System-wide announcements
+
+---
+
+### PAGE 6: Transactions (/transactions)
+
+Visible to both students and company admins with role-appropriate views.
+
+#### Student View:
+- List of all their transactions
+- Each shows: Consultant name, service, amount, escrow status, date
+- Status badges: "Payment Pending" (yellow), "In Escrow" (blue with lock icon), "Released" (green), "Refunded" (green with arrow), "Disputed" (red)
+- Button to raise a dispute if milestones aren't met
+
+#### Transaction Detail:
+- Full breakdown: Original amount, Escrow fee (5%), Lerank fee (3%), Net amount
+- **Prominent banner:** "This 8% fee guarantees your right to a full refund if services are not delivered. It's not just a fee — it's your protection."
+- Timeline of transaction events
+- Linked milestones and their completion status
+
+#### Escrow.com API Integration:
+- Use Escrow.com API (https://www.escrow.com/api) for:
+  - Creating escrow transactions
+  - Funding transactions
+  - Milestone management
+  - Disbursement on completion
+  - Refund on dispute resolution
+- Webhook listeners for status updates
+- Store transaction records in Supabase with Escrow.com transaction IDs
+
+---
+
+## Database Schema (Supabase/PostgreSQL)
+
+```sql
+-- Users table (extends Supabase auth.users)
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id),
+  full_name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  role TEXT NOT NULL CHECK (role IN ('student', 'company_admin', 'super_admin', 'consultant')),
+  avatar_url TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Student profiles
+CREATE TABLE student_profiles (
+  id UUID PRIMARY KEY REFERENCES profiles(id),
+  ielts_score DECIMAL(2,1),
+  sat_score INTEGER,
+  toefl_score INTEGER,
+  gpa DECIMAL(3,2),
+  gpa_scale DECIMAL(2,1) DEFAULT 4.0,
+  consulting_budget TEXT,
+  education_budget TEXT,
+  preferred_countries TEXT[],
+  preferred_major TEXT,
+  degree_level TEXT CHECK (degree_level IN ('bachelor', 'master', 'phd')),
+  additional_notes TEXT
+);
+
+-- Companies
+CREATE TABLE companies (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name TEXT NOT NULL,
+  logo_url TEXT,
+  description TEXT,
+  website TEXT,
+  is_active BOOLEAN DEFAULT true,
+  rating DECIMAL(2,1) DEFAULT 0,
+  students_helped INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Company-country requirements
+CREATE TABLE company_country_requirements (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID REFERENCES companies(id),
+  country TEXT NOT NULL,
+  min_ielts DECIMAL(2,1),
+  min_sat INTEGER,
+  min_gpa DECIMAL(3,2),
+  tuition_range TEXT,
+  available_majors TEXT[],
+  deadline_info TEXT,
+  success_rate DECIMAL(4,1),
+  UNIQUE(company_id, country)
+);
+
+-- Services offered by companies
+CREATE TABLE services (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID REFERENCES companies(id),
+  name TEXT NOT NULL,
+  description TEXT,
+  price DECIMAL(10,2) NOT NULL,
+  currency TEXT DEFAULT 'USD',
+  countries TEXT[],
+  degree_levels TEXT[]
+);
+
+-- Milestone templates
+CREATE TABLE milestone_templates (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID REFERENCES companies(id),
+  name TEXT NOT NULL,
+  milestones JSONB NOT NULL -- [{name, order, description}]
+);
+
+-- Engagements (student hiring a company)
+CREATE TABLE engagements (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  student_id UUID REFERENCES profiles(id),
+  company_id UUID REFERENCES companies(id),
+  service_id UUID REFERENCES services(id),
+  status TEXT DEFAULT 'active' CHECK (status IN ('active', 'completed', 'disputed', 'cancelled')),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Milestones (per engagement)
+CREATE TABLE milestones (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  engagement_id UUID REFERENCES engagements(id),
+  name TEXT NOT NULL,
+  description TEXT,
+  status TEXT DEFAULT 'not_started' CHECK (status IN ('not_started', 'in_progress', 'under_review', 'completed')),
+  order_index INTEGER NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  completed_at TIMESTAMPTZ
+);
+
+-- Transactions
+CREATE TABLE transactions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  engagement_id UUID REFERENCES engagements(id),
+  student_id UUID REFERENCES profiles(id),
+  company_id UUID REFERENCES companies(id),
+  amount DECIMAL(10,2) NOT NULL,
+  escrow_fee DECIMAL(10,2), -- 5%
+  platform_fee DECIMAL(10,2), -- 3%
+  net_amount DECIMAL(10,2),
+  currency TEXT DEFAULT 'USD',
+  escrow_transaction_id TEXT, -- From Escrow.com API
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'funded', 'in_escrow', 'released', 'refunded', 'disputed')),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Reviews
+CREATE TABLE reviews (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  student_id UUID REFERENCES profiles(id),
+  company_id UUID REFERENCES companies(id),
+  engagement_id UUID REFERENCES engagements(id),
+  rating INTEGER CHECK (rating BETWEEN 1 AND 5),
+  comment TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS on all tables
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE student_profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE companies ENABLE ROW LEVEL SECURITY;
+ALTER TABLE engagements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE milestones ENABLE ROW LEVEL SECURITY;
+ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
+```
+
+---
+
+## Additional Features (My Suggestions)
+
+1. **In-App Messaging:** Real-time chat between student and consultant using Supabase Realtime. Messages stored in a `messages` table linked to engagements.
+
+2. **Document Tracking:** Upload area for each milestone where consultants can attach drafts (SOP, recommendation letters, etc.) and students can review/approve. Use Supabase Storage.
+
+3. **Email Notifications:** Send emails via Resend or Supabase Edge Functions when:
+   - A milestone status changes
+   - Payment is received/released/refunded
+   - A new message arrives
+   - Application deadline is approaching
+
+4. **Review & Rating System:** After an engagement completes, prompt the student to rate (1-5 stars) and review. Display aggregate ratings on consultant cards.
+
+5. **Smart Matching Algorithm:** Based on student's IELTS, SAT, GPA, budget, country preferences, and major — score and rank consultants. Use a weighted scoring formula matching student data against company_country_requirements.
+
+6. **Dispute Resolution Flow:** If a student raises a dispute, freeze the escrow. Super admin reviews evidence from both sides and decides: release to consultant or refund to student.
+
+7. **Public Consultant Profiles:** /consultant/[slug] pages showing: company info, services, reviews, success stats, countries served. Helps with SEO.
+
+8. **Multi-Language Support:** Since users are international students, add i18n support (start with English, Uzbek, Russian, Turkish, Korean).
+
+---
+
+## Key Copy & Messaging to Use Throughout
+
+- "Track every step. Protect every dollar."
+- "Your money stays in escrow until the work is done."
+- "100% refund guarantee — no questions asked."
+- "This 8% fee is your insurance. It guarantees your right to a full refund."
+- "Stop trusting promises. Start tracking progress."
+- "Traditional consulting is broken. Lerank fixes it."
+- "See your application status in real-time. No more wondering."
+- "Verified consultants. Transparent processes. Protected payments."
+- "The 8% that saves you 100%."
+
+---
+
+## Implementation Priority
+
+**Phase 1 (MVP):**
+- Landing page with all scroll animations
+- Auth (sign up, sign in, role-based)
+- Student onboarding form
+- Consultant listing/comparison page
+- Basic student dashboard with milestone tracking
+
+**Phase 2:**
+- Company admin dashboard
+- Milestone management (create, update statuses)
+- Supabase Realtime for live updates
+- Review system
+
+**Phase 3:**
+- Super admin dashboard
+- Escrow.com API integration
+- Transaction management
+- Document uploads
+
+**Phase 4:**
+- In-app messaging
+- Email notifications
+- Smart matching algorithm
+- Multi-language support
+- Public consultant profiles + SEO
+
+---
+
+## Environment Variables Needed
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+ESCROW_API_KEY=your_escrow_api_key
+ESCROW_API_SECRET=your_escrow_api_secret
+RESEND_API_KEY=your_resend_key (for emails)
+```
+
+Build this as a production-quality application. Use Tailwind CSS for styling with the warm coffee color palette defined above (espresso, caramel, cream, latte, mocha — never use cold blues or teals). Use Framer Motion for all animations. Make it responsive (mobile-first). Follow Next.js 14 App Router conventions with server components where possible and client components only where interactivity is needed. Use TypeScript throughout. Implement proper error handling, loading states, and empty states for every page.

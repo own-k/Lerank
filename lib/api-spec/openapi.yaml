@@ -1,22 +1,35 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Lerank platform API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: users
+    description: User management
+  - name: consultants
+    description: Consultant company operations
+  - name: applications
+    description: Student application tracking
+  - name: milestones
+    description: Application milestone management
+  - name: transactions
+    description: Escrow transactions
+  - name: admin
+    description: Admin operations
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +37,443 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+
+  /auth/profile:
+    put:
+      operationId: updateProfile
+      tags: [auth]
+      summary: Update user profile (student onboarding data)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileRequest"
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /consultants:
+    get:
+      operationId: listConsultants
+      tags: [consultants]
+      summary: List consultant companies with filters
+      parameters:
+        - name: country
+          in: query
+          schema:
+            type: string
+        - name: minRating
+          in: query
+          schema:
+            type: number
+        - name: maxPrice
+          in: query
+          schema:
+            type: number
+        - name: degreeLevel
+          in: query
+          schema:
+            type: string
+            enum: [bachelor, master, phd]
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [bestMatch, priceLow, rating, mostStudents]
+      responses:
+        "200":
+          description: List of consultants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConsultantCompany"
+
+  /consultants/{id}:
+    get:
+      operationId: getConsultant
+      tags: [consultants]
+      summary: Get consultant company details
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Consultant details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsultantCompany"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /applications:
+    get:
+      operationId: listApplications
+      tags: [applications]
+      summary: List applications for current student
+      responses:
+        "200":
+          description: Student applications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Application"
+    post:
+      operationId: createApplication
+      tags: [applications]
+      summary: Create a new application (hire consultant)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateApplicationRequest"
+      responses:
+        "201":
+          description: Application created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  /applications/{id}:
+    get:
+      operationId: getApplication
+      tags: [applications]
+      summary: Get application with milestones
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Application details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationDetail"
+
+  /applications/{id}/milestones:
+    get:
+      operationId: getApplicationMilestones
+      tags: [milestones]
+      summary: Get milestones for an application
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Milestones list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Milestone"
+
+  /milestones/{id}:
+    put:
+      operationId: updateMilestone
+      tags: [milestones]
+      summary: Update milestone status (company admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMilestoneRequest"
+      responses:
+        "200":
+          description: Milestone updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Milestone"
+
+  /transactions:
+    get:
+      operationId: listTransactions
+      tags: [transactions]
+      summary: List transactions
+      responses:
+        "200":
+          description: Transactions list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transaction"
+
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [applications]
+      summary: Get student dashboard stats
+      responses:
+        "200":
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
+  /dashboard/activity:
+    get:
+      operationId: getRecentActivity
+      tags: [applications]
+      summary: Get recent activity feed
+      responses:
+        "200":
+          description: Recent activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  /admin/companies:
+    get:
+      operationId: adminListCompanies
+      tags: [admin]
+      summary: Admin - list all companies
+      responses:
+        "200":
+          description: All companies
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ConsultantCompany"
+    post:
+      operationId: adminCreateCompany
+      tags: [admin]
+      summary: Admin - create a company
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCompanyRequest"
+      responses:
+        "201":
+          description: Company created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsultantCompany"
+
+  /admin/companies/{id}:
+    put:
+      operationId: adminUpdateCompany
+      tags: [admin]
+      summary: Admin - update company status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCompanyRequest"
+      responses:
+        "200":
+          description: Company updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsultantCompany"
+
+  /admin/users:
+    get:
+      operationId: adminListUsers
+      tags: [admin]
+      summary: Admin - list all users
+      responses:
+        "200":
+          description: All users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+
+  /admin/analytics:
+    get:
+      operationId: getAdminAnalytics
+      tags: [admin]
+      summary: Admin - platform analytics
+      responses:
+        "200":
+          description: Platform analytics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAnalytics"
+
+  /company/students:
+    get:
+      operationId: getCompanyStudents
+      tags: [consultants]
+      summary: Company admin - list their students
+      responses:
+        "200":
+          description: Students list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/StudentWithApplication"
+
+  /company/milestone-templates:
+    get:
+      operationId: listMilestoneTemplates
+      tags: [milestones]
+      summary: List company milestone templates
+      responses:
+        "200":
+          description: Templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MilestoneTemplate"
+    post:
+      operationId: createMilestoneTemplate
+      tags: [milestones]
+      summary: Create a milestone template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMilestoneTemplateRequest"
+      responses:
+        "201":
+          description: Template created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MilestoneTemplate"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +481,474 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required: [error]
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+      required: [success]
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        fullName:
+          type: string
+        role:
+          type: string
+          enum: [student, company_admin, super_admin]
+        avatarUrl:
+          type: string
+          nullable: true
+        onboardingCompleted:
+          type: boolean
+        profile:
+          $ref: "#/components/schemas/StudentProfile"
+          nullable: true
+        companyId:
+          type: integer
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, email, fullName, role, onboardingCompleted, createdAt]
+
+    StudentProfile:
+      type: object
+      properties:
+        ieltsScore:
+          type: number
+          nullable: true
+        satScore:
+          type: integer
+          nullable: true
+        toeflScore:
+          type: integer
+          nullable: true
+        gpa:
+          type: number
+          nullable: true
+        gpaScale:
+          type: number
+          nullable: true
+        budgetMin:
+          type: integer
+          nullable: true
+        budgetMax:
+          type: integer
+          nullable: true
+        educationBudget:
+          type: string
+          nullable: true
+        preferredCountries:
+          type: array
+          items:
+            type: string
+        preferredMajor:
+          type: string
+          nullable: true
+        degreeLevel:
+          type: string
+          nullable: true
+        additionalNotes:
+          type: string
+          nullable: true
+
+    RegisterRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+        fullName:
+          type: string
+      required: [email, password, fullName]
+
+    LoginRequest:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required: [email, password]
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+      required: [user, token]
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        ieltsScore:
+          type: number
+          nullable: true
+        satScore:
+          type: integer
+          nullable: true
+        toeflScore:
+          type: integer
+          nullable: true
+        gpa:
+          type: number
+          nullable: true
+        gpaScale:
+          type: number
+          nullable: true
+        budgetMin:
+          type: integer
+          nullable: true
+        budgetMax:
+          type: integer
+          nullable: true
+        educationBudget:
+          type: string
+          nullable: true
+        preferredCountries:
+          type: array
+          items:
+            type: string
+        preferredMajor:
+          type: string
+          nullable: true
+        degreeLevel:
+          type: string
+          nullable: true
+        additionalNotes:
+          type: string
+          nullable: true
+        onboardingCompleted:
+          type: boolean
+
+    ConsultantCompany:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        logoUrl:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        website:
+          type: string
+          nullable: true
+        rating:
+          type: number
+        studentsHelped:
+          type: integer
+        successRate:
+          type: number
+        priceMin:
+          type: integer
+        priceMax:
+          type: integer
+        specializedCountries:
+          type: array
+          items:
+            type: string
+        degreeLevels:
+          type: array
+          items:
+            type: string
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, name, rating, studentsHelped, successRate, priceMin, priceMax, specializedCountries, degreeLevels, isActive, createdAt]
+
+    CreateCompanyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        website:
+          type: string
+          nullable: true
+        priceMin:
+          type: integer
+        priceMax:
+          type: integer
+        specializedCountries:
+          type: array
+          items:
+            type: string
+        degreeLevels:
+          type: array
+          items:
+            type: string
+      required: [name, priceMin, priceMax, specializedCountries, degreeLevels]
+
+    UpdateCompanyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        website:
+          type: string
+          nullable: true
+        isActive:
+          type: boolean
+        priceMin:
+          type: integer
+        priceMax:
+          type: integer
+
+    Application:
+      type: object
+      properties:
+        id:
+          type: integer
+        studentId:
+          type: integer
+        companyId:
+          type: integer
+        companyName:
+          type: string
+        serviceName:
+          type: string
+        status:
+          type: string
+          enum: [active, completed, refunded, disputed]
+        progressPercent:
+          type: number
+        totalAmount:
+          type: integer
+        escrowStatus:
+          type: string
+          enum: [pending, held, released, refunded]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, studentId, companyId, companyName, serviceName, status, progressPercent, totalAmount, escrowStatus, createdAt, updatedAt]
+
+    ApplicationDetail:
+      allOf:
+        - $ref: "#/components/schemas/Application"
+        - type: object
+          properties:
+            milestones:
+              type: array
+              items:
+                $ref: "#/components/schemas/Milestone"
+          required: [milestones]
+
+    CreateApplicationRequest:
+      type: object
+      properties:
+        companyId:
+          type: integer
+        serviceName:
+          type: string
+        totalAmount:
+          type: integer
+        templateId:
+          type: integer
+          nullable: true
+      required: [companyId, serviceName, totalAmount]
+
+    Milestone:
+      type: object
+      properties:
+        id:
+          type: integer
+        applicationId:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [not_started, in_progress, under_review, completed]
+        orderIndex:
+          type: integer
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, applicationId, name, status, orderIndex, updatedAt]
+
+    UpdateMilestoneRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [not_started, in_progress, under_review, completed]
+        description:
+          type: string
+          nullable: true
+      required: [status]
+
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+        applicationId:
+          type: integer
+        studentName:
+          type: string
+        companyName:
+          type: string
+        amount:
+          type: integer
+        platformFee:
+          type: integer
+        escrowFee:
+          type: integer
+        status:
+          type: string
+          enum: [pending, held, released, refunded, disputed]
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, applicationId, studentName, companyName, amount, platformFee, escrowFee, status, createdAt]
+
+    DashboardStats:
+      type: object
+      properties:
+        activeApplications:
+          type: integer
+        milestonesCompletedThisWeek:
+          type: integer
+        moneyInEscrow:
+          type: integer
+        moneyReleased:
+          type: integer
+      required: [activeApplications, milestonesCompletedThisWeek, moneyInEscrow, moneyReleased]
+
+    ActivityItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        type:
+          type: string
+          enum: [milestone_update, payment, application]
+      required: [id, message, timestamp, type]
+
+    AdminAnalytics:
+      type: object
+      properties:
+        totalStudents:
+          type: integer
+        totalCompanies:
+          type: integer
+        totalRevenue:
+          type: integer
+        activeApplications:
+          type: integer
+        pendingTransactions:
+          type: integer
+        completedTransactions:
+          type: integer
+        refundedTransactions:
+          type: integer
+      required: [totalStudents, totalCompanies, totalRevenue, activeApplications, pendingTransactions, completedTransactions, refundedTransactions]
+
+    StudentWithApplication:
+      type: object
+      properties:
+        studentId:
+          type: integer
+        studentName:
+          type: string
+        email:
+          type: string
+        applicationId:
+          type: integer
+        serviceName:
+          type: string
+        progressPercent:
+          type: number
+        escrowStatus:
+          type: string
+          enum: [pending, held, released, refunded]
+        totalAmount:
+          type: integer
+      required: [studentId, studentName, email, applicationId, serviceName, progressPercent, escrowStatus, totalAmount]
+
+    MilestoneTemplate:
+      type: object
+      properties:
+        id:
+          type: integer
+        companyId:
+          type: integer
+        name:
+          type: string
+        milestones:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              orderIndex:
+                type: integer
+            required: [name, orderIndex]
+        createdAt:
+          type: string
+          format: date-time
+      required: [id, companyId, name, milestones, createdAt]
+
+    CreateMilestoneTemplateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        milestones:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              orderIndex:
+                type: integer
+            required: [name, orderIndex]
+      required: [name, milestones]
