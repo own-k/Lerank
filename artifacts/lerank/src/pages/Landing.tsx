@@ -76,17 +76,6 @@ export default function Landing() {
                   </Button>
                 </Link>
               </div>
-
-              <div className="mt-12 flex items-center gap-6 text-sm text-[#8B7355]">
-                <div className="flex -space-x-3">
-                  {[1,2,3,4].map(i => (
-                    <div key={i} className="w-10 h-10 rounded-full border-2 border-white bg-[#E8DDD3] flex items-center justify-center overflow-hidden">
-                      <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="User" />
-                    </div>
-                  ))}
-                </div>
-                <p>Trusted by <span className="text-[#C4956A] font-bold">2,000+</span> students globally</p>
-              </div>
             </motion.div>
           </div>
 
