@@ -1,257 +1,639 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { Link } from "wouter";
 import { Button } from "@/components/ui-elements";
-import { Shield, Target, TrendingUp, CheckCircle, ArrowRight, ShieldCheck, DollarSign, Globe2 } from "lucide-react";
-import { useRef } from "react";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { ArrowRight, CheckCircle, DollarSign, Globe2, Lock, MapPin, Shield, Target, TrendingUp } from "lucide-react";
+import { useRef, useEffect, useState } from "react";
+
+const features = [
+  { icon: Shield, title: "Escrow Protection", desc: "Payment is held in escrow until each milestone is reviewed and approved by you." },
+  { icon: Target, title: "Live Progress", desc: "Every deliverable is tracked in a shared dashboard with timestamped updates." },
+  { icon: CheckCircle, title: "Verified Consultants", desc: "Every profile goes through a manual quality and consistency review before listing." },
+  { icon: TrendingUp, title: "Precision Matching", desc: "Our ranking engine weighs GPA, budget, degree level, and target countries." },
+];
+
+const flow = [
+  { step: "01", title: "Build your profile", desc: "Enter your academic background, budget, and destination countries. Takes under two minutes." },
+  { step: "02", title: "Compare consultants", desc: "Browse ranked matches tailored to your profile. Filter by country, rating, and price." },
+  { step: "03", title: "Hire with escrow", desc: "Fund milestones in escrow. Payment releases only after you approve each deliverable." },
+];
+
+const stats = [
+  { value: 67, suffix: "%", label: "of students report communication blackouts during critical application phases." },
+  { prefix: "$", value: 3, suffix: "k+", label: "paid upfront on average before any measurable output is delivered." },
+  { value: 1, suffix: " in 4", label: "students feel they were oversold on admission outcomes." },
+];
+
+const heroStats = [
+  { value: "2,400+", label: "Students matched" },
+  { value: "94%", label: "Satisfaction rate" },
+  { value: "$0", label: "Lost to disputes" },
+];
+
+function AnimatedCounter({ value, prefix = "", suffix = "", isVisible }: {
+  value: number; prefix?: string; suffix?: string; isVisible: boolean;
+}) {
+  const [display, setDisplay] = useState(0);
+  useEffect(() => {
+    if (!isVisible) return;
+    const duration = 1400;
+    const start = Date.now();
+    const tick = () => {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setDisplay(Math.round(eased * value));
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }, [isVisible, value]);
+  return <span className="text-gold">{prefix}{display}{suffix}</span>;
+}
+
+const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
+const FADE_UP = {
+  hidden: { opacity: 0, y: 16 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: EASE } },
+};
+const STAGGER = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.08 } },
+};
 
 export default function Landing() {
-  const targetRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: targetRef,
-    offset: ["start start", "end start"]
-  });
+  const heroRef = useRef<HTMLDivElement>(null);
+  const problemRef = useRef<HTMLDivElement>(null);
+  const problemInView = useInView(problemRef, { once: true, margin: "-80px" });
 
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   return (
-    <div className="min-h-screen bg-white text-[#2C1810] overflow-x-hidden">
-      {/* Sticky Nav */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-[#E8DDD3]">
-        <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between" style={{ height: "72px" }}>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#C4956A] to-[#8B7355] flex items-center justify-center">
-              <Globe2 className="w-5 h-5 text-white" />
+    <div className="min-h-screen overflow-x-hidden overflow-y-auto premium-bg text-foreground">
+      <div className="pointer-events-none fixed inset-0 premium-grid" />
+
+      {/* ── Nav ── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/90 backdrop-blur-md" style={{ willChange: "transform", transform: "translateZ(0)" }}>
+        <div className="mx-auto grid h-16 max-w-7xl grid-cols-[1fr_auto_1fr] items-center px-6">
+          {/* Left — logo */}
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+              <Globe2 className="h-4 w-4" />
             </div>
-            <span className="text-2xl font-display font-bold tracking-wider text-[#2C1810]">Lerank</span>
+            <span className="font-display text-xl font-bold">Lerank</span>
           </div>
-          <div className="hidden md:flex items-center gap-8 text-sm font-medium text-[#8B7355]">
-            <a href="#how-it-works" className="hover:text-[#C4956A] transition-colors">How it Works</a>
-            <a href="#problem" className="hover:text-[#C4956A] transition-colors">The Problem</a>
-            <a href="#guarantee" className="hover:text-[#C4956A] transition-colors">Guarantee</a>
+
+          {/* Center — links */}
+          <div className="hidden items-center gap-8 text-sm text-muted-foreground md:flex">
+            {[["how-it-works", "How It Works"], ["problem", "The Problem"], ["guarantee", "Guarantee"]].map(([id, label]) => (
+              <button
+                key={id}
+                type="button"
+                onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: "smooth" })}
+                className="transition-colors hover:text-foreground focus-visible:outline-none"
+              >
+                {label}
+              </button>
+            ))}
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/compare" className="text-sm font-semibold text-[#2C1810] hover:text-[#C4956A] transition-colors hidden sm:block">Sign In</Link>
+
+          {/* Right — actions */}
+          <div className="flex items-center justify-end gap-3">
+            <ThemeToggle className="hidden sm:inline-flex" />
+            <Link href="/compare" className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:block">
+              Sign In
+            </Link>
             <Link href="/compare">
-              <Button className="bg-[#C4956A] text-white hover:bg-[#b8845e] border-none shadow-md">
+              <Button size="sm">
                 Get Started
+                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
               </Button>
             </Link>
           </div>
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <section ref={targetRef} className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-gradient-to-br from-white via-[#FAF6F1] to-[#F5EDE4]">
-        {/* Subtle background glow */}
-        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-[#C4956A]/8 blur-[120px] rounded-full pointer-events-none"></div>
+      {/* ── Hero ── */}
+      <section ref={heroRef} className="relative flex min-h-screen items-center pt-16">
+        <div className="pointer-events-none absolute left-[6%] top-[22%] h-96 w-96 rounded-full bg-primary/10 blur-[140px] hidden md:block" />
+        <div className="pointer-events-none absolute right-[4%] bottom-[18%] h-64 w-64 rounded-full bg-primary/8 blur-[100px] hidden md:block" />
 
-        <motion.div style={{ y, opacity }} className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10 w-full">
-          <div className="max-w-2xl">
+        <motion.div
+          style={{ y: heroY, opacity: heroOpacity }}
+          className="mx-auto grid w-full max-w-7xl items-center gap-12 px-6 py-20 lg:grid-cols-[1fr_480px] lg:gap-16 lg:py-0"
+        >
+          {/* Left */}
+          <motion.div variants={STAGGER} initial="hidden" animate="show">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+              variants={FADE_UP}
+              className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/80 px-4 py-2 text-xs font-semibold text-foreground/70"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-[#C4956A]/40 bg-[#C4956A]/10 text-[#C4956A] text-sm font-semibold mb-6">
-                <Shield className="w-4 h-4" /> 100% Escrow Protected
-              </div>
-              <h1 className="text-5xl md:text-7xl font-display font-bold leading-[1.1] mb-6 text-[#2C1810]">
-                Stop Trusting Promises. <br />
-                <span className="text-[#C4956A]">Start Tracking Progress.</span>
-              </h1>
-              <p className="text-lg md:text-xl text-[#8B7355] mb-10 leading-relaxed font-light">
-                The premier marketplace for international students. We hold your payment securely until your verified consultant delivers actual results.
-              </p>
-
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link href="/compare">
-                  <Button size="lg" className="w-full sm:w-auto bg-[#C4956A] hover:bg-[#b8845e] text-white text-lg px-8 shadow-lg">
-                    Find a Consultant <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </Link>
-                <Link href="/compare">
-                  <Button size="lg" variant="outline" className="w-full sm:w-auto border-[#D4C4B0] text-[#2C1810] hover:bg-[#FAF6F1] text-lg px-8">
-                    I'm a Consultant
-                  </Button>
-                </Link>
-              </div>
+              <Lock className="h-3 w-3 text-primary" />
+              Escrow-protected consulting marketplace
             </motion.div>
-          </div>
 
-          {/* Right side animated visual */}
-          <div className="relative hidden lg:block h-[600px] w-full">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1.2, delay: 0.2 }}
-              className="absolute inset-0 flex items-center justify-center"
+            <motion.h1
+              variants={FADE_UP}
+              className="mb-6 font-display text-5xl font-bold leading-[1.06] tracking-tight sm:text-6xl lg:text-[4.25rem]"
             >
-              {/* Globe rings */}
-              <div className="w-[440px] h-[440px] rounded-full border-2 border-[#E8DDD3] relative animate-[spin_60s_linear_infinite]">
-                <div className="absolute inset-[10%] rounded-full border border-[#D4C4B0] animate-[spin_40s_linear_infinite_reverse]"></div>
-                <div className="absolute inset-[20%] rounded-full border border-[#C4956A]/30"></div>
-                {/* Pulsing dots for universities */}
-                <div className="absolute top-[20%] left-[20%] w-4 h-4 bg-[#C4956A] rounded-full shadow-[0_0_15px_rgba(196,149,106,0.5)] animate-pulse"></div>
-                <div className="absolute top-[60%] right-[15%] w-3 h-3 bg-[#8B7355] rounded-full shadow-[0_0_10px_rgba(139,115,85,0.4)] animate-pulse" style={{ animationDelay: "1s" }}></div>
-                <div className="absolute bottom-[25%] left-[40%] w-5 h-5 bg-[#C4956A] rounded-full shadow-[0_0_20px_rgba(196,149,106,0.5)] animate-pulse" style={{ animationDelay: "0.5s" }}></div>
-              </div>
+              Premium Guidance.
+              <br />
+              <span className="text-gradient">Real Accountability.</span>
+            </motion.h1>
 
-              {/* Floating UI cards */}
+            <motion.p
+              variants={FADE_UP}
+              className="mb-8 max-w-[480px] text-lg leading-relaxed text-muted-foreground"
+            >
+              The trust-first marketplace for international students. Payments held in escrow until your consultant delivers verified milestones.
+            </motion.p>
+
+            <motion.div variants={FADE_UP} className="flex flex-wrap gap-3">
+              <Link href="/compare">
+                <Button size="lg" className="shadow-lg shadow-primary/20">
+                  Find a Consultant
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="/compare">
+                <Button size="lg" variant="outline">
+                  I am a Consultant
+                </Button>
+              </Link>
+            </motion.div>
+
+            {/* Trust stats */}
+            <motion.div
+              variants={FADE_UP}
+              className="mt-10 grid grid-cols-3 divide-x divide-border/50 border-t border-border/50 pt-8"
+            >
+              {heroStats.map(({ value, label }) => (
+                <div key={label} className="flex flex-col gap-0.5 px-0 first:pr-6 [&:not(:first-child)]:px-6">
+                  <span className="font-display text-2xl font-bold text-foreground">{value}</span>
+                  <span className="text-xs text-muted-foreground">{label}</span>
+                </div>
+              ))}
+            </motion.div>
+          </motion.div>
+
+          {/* Right — product preview */}
+          <motion.div
+            initial={{ opacity: 0, x: 28 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.75, delay: 0.3, ease: EASE }}
+            whileHover={{ y: -4, transition: { duration: 0.3, ease: EASE } }}
+            className="hidden cursor-default lg:block"
+            style={{ willChange: "transform" }}
+          >
+            <div className="relative rounded-2xl border border-border/60 bg-card p-6 shadow-2xl transition-[border-color] duration-300 hover:border-primary/30">
+              <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500 hover:opacity-100 [background:radial-gradient(600px_circle_at_50%_-40px,hsl(var(--primary)/0.06),transparent_70%)]" />
+
+              {/* Card header */}
               <motion.div
-                animate={{ y: [-10, 10, -10] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-[20%] -left-10 bg-white border border-[#E8DDD3] shadow-xl p-4 rounded-xl flex items-center gap-4"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.5, ease: EASE }}
+                className="mb-5 flex items-start justify-between gap-3"
               >
-                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-emerald-500" />
-                </div>
                 <div>
-                  <p className="text-xs text-[#8B7355]">Milestone 1</p>
-                  <p className="text-sm font-bold text-[#2C1810]">SOP Completed</p>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-gold">Your Top Match</p>
+                  <h3 className="mt-1 font-display text-xl font-bold leading-tight">Dr. Sarah Okonkwo</h3>
                 </div>
+                <motion.div
+                  initial={{ scale: 0.75, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: 0.7, duration: 0.4, ease: EASE }}
+                  className="shrink-0 flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-600 dark:text-emerald-400"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  96% match
+                </motion.div>
               </motion.div>
 
+              {/* Stats */}
+              <div className="mb-5 grid grid-cols-3 gap-2.5">
+                {[
+                  { label: "Rating", value: "4.9" },
+                  { label: "Students", value: "312" },
+                  { label: "Success", value: "97%" },
+                ].map(({ label, value }, i) => (
+                  <motion.div
+                    key={label}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.55 + i * 0.08, duration: 0.4, ease: EASE }}
+                    whileHover={{ scale: 1.04, transition: { duration: 0.15 } }}
+                    style={{ willChange: "transform" }}
+                    className="rounded-xl border border-border/50 bg-muted py-3 text-center"
+                  >
+                    <p className="font-display text-lg font-bold leading-tight">{value}</p>
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">{label}</p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Countries */}
               <motion.div
-                animate={{ y: [10, -10, 10] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                className="absolute bottom-[30%] -right-10 bg-white border border-[#E8DDD3] shadow-xl p-4 rounded-xl flex items-center gap-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.75, duration: 0.4 }}
+                className="mb-5 flex items-center gap-2 text-sm text-muted-foreground"
               >
-                <div className="w-10 h-10 rounded-full bg-[#C4956A]/10 flex items-center justify-center">
-                  <ShieldCheck className="w-5 h-5 text-[#C4956A]" />
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
+                <span>USA · UK · Canada · Australia</span>
+              </motion.div>
+
+              {/* Milestones */}
+              <div className="mb-5">
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.8, duration: 0.4 }}
+                  className="mb-2.5 text-[11px] font-bold uppercase tracking-widest text-muted-foreground"
+                >
+                  Active Milestones
+                </motion.p>
+                <div className="space-y-2">
+                  {[
+                    { label: "Statement of Purpose — Draft 1", done: true },
+                    { label: "University Shortlist (8 schools)", done: true },
+                    { label: "Application Review — Round 1", done: false },
+                  ].map(({ label, done }, i) => (
+                    <motion.div
+                      key={label}
+                      initial={{ opacity: 0, x: -8 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.85 + i * 0.1, duration: 0.4, ease: EASE }}
+                      className="group/m flex items-center gap-3"
+                    >
+                      <CheckCircle className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover/m:scale-110 ${done ? "text-emerald-500" : "text-border"}`} />
+                      <span className={`text-sm transition-colors duration-200 ${done ? "line-through text-muted-foreground/70" : "text-foreground group-hover/m:text-primary"}`}>
+                        {label}
+                      </span>
+                    </motion.div>
+                  ))}
                 </div>
-                <div>
-                  <p className="text-xs text-[#8B7355]">Payment Status</p>
-                  <p className="text-sm font-bold text-[#2C1810]">Funds in Escrow</p>
+              </div>
+
+              {/* Escrow */}
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 1.1, duration: 0.45, ease: EASE }}
+                className="rounded-xl border border-primary/20 bg-primary/8 px-4 py-3.5 transition-colors duration-200 hover:border-primary/30 hover:bg-primary/12"
+              >
+                <div className="flex items-center justify-between text-sm font-medium">
+                  <div className="flex items-center gap-2">
+                    <Lock className="h-3.5 w-3.5 text-primary" />
+                    Escrow balance
+                  </div>
+                  <span className="font-display font-bold text-gold">$1,200 protected</span>
+                </div>
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-primary/15">
+                  <motion.div
+                    className="h-full rounded-full bg-primary"
+                    initial={{ width: 0 }}
+                    animate={{ width: "68%" }}
+                    transition={{ delay: 1.3, duration: 0.9, ease: EASE }}
+                  />
+                </div>
+                <div className="mt-1.5 flex justify-between text-xs text-muted-foreground">
+                  <span>2 of 3 milestones funded</span>
+                  <span>68%</span>
                 </div>
               </motion.div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </motion.div>
       </section>
 
-      {/* Features Section */}
-      <section id="how-it-works" className="py-32 bg-[#FAF6F1]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center max-w-3xl mx-auto mb-20">
-            <h2 className="text-3xl md:text-5xl font-display font-bold mb-6 text-[#2C1810]">Everything You Need to <span className="text-[#C4956A]">Apply With Confidence</span></h2>
-            <p className="text-[#8B7355] text-lg">We've rebuilt the consulting experience from the ground up to protect your investment and ensure quality.</p>
+      {/* ── How it works ── */}
+      <section id="how-it-works" className="py-28 lg:py-36">
+        <div className="mx-auto max-w-7xl px-6">
+          <motion.div
+            variants={STAGGER} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }}
+            className="mb-16"
+          >
+            <motion.p variants={FADE_UP} className="mb-2.5 text-xs font-bold uppercase tracking-widest text-gold">How It Works</motion.p>
+            <motion.h2 variants={FADE_UP} className="max-w-xl font-display text-4xl font-bold leading-tight md:text-5xl">
+              A three-step process built around your protection
+            </motion.h2>
+          </motion.div>
+
+          {/* Steps */}
+          <div className="mb-16 overflow-hidden rounded-2xl border border-border/50">
+            <div className="grid divide-y divide-border/50 md:grid-cols-3 md:divide-x md:divide-y-0">
+              {flow.map((item, i) => (
+                <motion.div
+                  key={item.step}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1, duration: 0.5, ease: EASE }}
+                  className="bg-card px-8 py-9"
+                >
+                  <p className="font-display mb-5 text-5xl font-bold text-gold">{item.step}</p>
+                  <h3 className="mb-2 font-display text-lg font-bold">{item.title}</h3>
+                  <p className="text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
+                </motion.div>
+              ))}
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              { icon: Shield, title: "Escrow Protection", desc: "Your money is held securely until agreed milestones are met." },
-              { icon: Target, title: "Real-Time Tracking", desc: "See exactly where your application stands, 24/7." },
-              { icon: CheckCircle, title: "Verified Consultants", desc: "Only top-tier, vetted professionals make it to our platform." },
-              { icon: TrendingUp, title: "Smart Matching", desc: "Find the perfect match based on your goals and budget." }
-            ].map((feature, i) => (
+          {/* Features */}
+          <motion.div
+            variants={STAGGER} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }}
+            className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4"
+          >
+            {features.map((f) => (
               <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-white border border-[#E8DDD3] p-8 rounded-2xl hover:border-[#C4956A] hover:shadow-lg transition-all group"
+                key={f.title}
+                variants={FADE_UP}
+                className="rounded-2xl border border-border/50 bg-card/70 p-6 transition-colors duration-200 hover:border-primary/30 hover:bg-card"
               >
-                <div className="w-14 h-14 rounded-xl bg-[#C4956A]/10 flex items-center justify-center mb-6 group-hover:bg-[#C4956A]/20 transition-colors">
-                  <feature.icon className="w-7 h-7 text-[#C4956A]" />
+                <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                  <f.icon className="h-5 w-5 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-[#2C1810]">{feature.title}</h3>
-                <p className="text-[#8B7355] leading-relaxed">{feature.desc}</p>
+                <h4 className="mb-1.5 font-display text-base font-bold">{f.title}</h4>
+                <p className="text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
               </motion.div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Problem ── */}
+      <section id="problem" ref={problemRef} className="border-y border-border/40 py-28 lg:py-36">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-20">
+            {/* Stats */}
+            <motion.div
+              variants={STAGGER} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }}
+            >
+              <motion.p variants={FADE_UP} className="mb-2.5 text-xs font-bold uppercase tracking-widest text-gold">The Problem</motion.p>
+              <motion.h2 variants={FADE_UP} className="mb-12 font-display text-4xl font-bold leading-tight md:text-5xl">
+                Traditional consulting runs on blind trust
+              </motion.h2>
+
+              <div className="divide-y divide-border/50">
+                {stats.map((stat, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1, duration: 0.5 }}
+                    className="flex items-start gap-8 py-6"
+                  >
+                    <span className="font-display min-w-[5rem] shrink-0 text-4xl font-bold tabular-nums leading-none">
+                      <AnimatedCounter value={stat.value} prefix={stat.prefix} suffix={stat.suffix} isVisible={problemInView} />
+                    </span>
+                    <p className="text-sm leading-relaxed text-muted-foreground pt-1">{stat.label}</p>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Problem card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, ease: EASE }}
+              className="rounded-2xl border border-border/50 bg-card/80 p-8"
+            >
+              <div className="mb-6 flex h-11 w-11 items-center justify-center rounded-xl bg-destructive/10">
+                <DollarSign className="h-5 w-5 text-destructive" />
+              </div>
+              <h3 className="mb-3 font-display text-2xl font-bold">The incentive is misaligned</h3>
+              <p className="mb-6 text-sm leading-relaxed text-muted-foreground">
+                When a consultant is paid upfront, the financial incentive to maintain quality disappears. Students have no leverage once payment is made.
+              </p>
+              <div className="mb-8 space-y-3">
+                {[
+                  "No refund if expectations aren't met",
+                  "No transparency on work in progress",
+                  "No accountability after payment clears",
+                ].map((point) => (
+                  <div key={point} className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-destructive/50" />
+                    {point}
+                  </div>
+                ))}
+              </div>
+              <div className="rounded-xl border border-primary/25 bg-primary/8 px-5 py-4">
+                <p className="text-sm font-semibold text-primary">Lerank escrow keeps the incentive aligned from start to finish.</p>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* The Problem Section */}
-      <section id="problem" className="py-32 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-4xl md:text-6xl font-display font-bold mb-8 leading-tight text-[#2C1810]">
-                The Problem With <br/> Traditional Consulting
-              </h2>
-              <div className="space-y-8">
-                <motion.div initial={{ opacity:0, x: -20 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} className="flex gap-4">
-                  <div className="text-5xl font-display text-[#C4956A] font-bold">67%</div>
-                  <p className="text-lg text-[#8B7355] pt-2">of students report periods of zero communication from their consultants.</p>
-                </motion.div>
-                <div className="w-full h-px bg-[#E8DDD3]"></div>
-                <motion.div initial={{ opacity:0, x: -20 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ delay: 0.2 }} className="flex gap-4">
-                  <div className="text-5xl font-display text-[#C4956A] font-bold">$3k</div>
-                  <p className="text-lg text-[#8B7355] pt-2">average amount lost to upfront fees with no guaranteed results.</p>
-                </motion.div>
-                <div className="w-full h-px bg-[#E8DDD3]"></div>
-                <motion.div initial={{ opacity:0, x: -20 }} whileInView={{ opacity:1, x:0 }} viewport={{ once:true }} transition={{ delay: 0.4 }} className="flex gap-4">
-                  <div className="text-5xl font-display text-[#C4956A] font-bold">1 in 4</div>
-                  <p className="text-lg text-[#8B7355] pt-2">applicants feel misled about their chances of admission.</p>
-                </motion.div>
-              </div>
-            </div>
-            <div className="relative">
-              <div className="bg-red-50 border-2 border-red-100 p-12 rounded-3xl text-center shadow-lg relative z-10">
-                <DollarSign className="w-16 h-16 text-red-400 mx-auto mb-6" />
-                <h3 className="text-3xl font-bold text-red-600 mb-4">SCAM ALERT</h3>
-                <p className="text-red-500 text-lg">
-                  Paying 100% upfront is a broken model. You lose all leverage the moment the wire transfer clears.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* ── Guarantee ── */}
+      <section id="guarantee" className="py-28 lg:py-36">
+        <div className="mx-auto max-w-7xl px-6">
+          <motion.div
+            variants={STAGGER} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }}
+            className="mb-16"
+          >
+            <motion.p variants={FADE_UP} className="mb-2.5 text-xs font-bold uppercase tracking-widest text-gold">The Guarantee</motion.p>
+            <motion.h2 variants={FADE_UP} className="max-w-xl font-display text-4xl font-bold leading-tight md:text-5xl">
+              Milestone escrow. Both sides protected.
+            </motion.h2>
+          </motion.div>
 
-      {/* Escrow Flow Section */}
-      <section id="guarantee" className="py-32 bg-[#FAF6F1]">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-4xl md:text-5xl font-display font-bold mb-6 text-[#2C1810]">Lerank Changes Everything</h2>
-          <p className="text-xl text-[#8B7355] max-w-2xl mx-auto mb-20">Our milestone-based escrow system aligns incentives. They only get paid when you see progress.</p>
+          <div className="grid gap-6 lg:grid-cols-2 lg:items-start">
+            {/* Benefit cards */}
+            <motion.div
+              variants={STAGGER} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }}
+              className="space-y-4"
+            >
+              {[
+                {
+                  title: "For students",
+                  points: [
+                    "Pay per milestone, not upfront in full",
+                    "Dispute any deliverable before releasing funds",
+                    "Full refund for incomplete milestones",
+                  ],
+                },
+                {
+                  title: "For consultants",
+                  points: [
+                    "Guaranteed payment upon approval",
+                    "Clear milestone scope prevents scope creep",
+                    "Automated release — no chasing invoices",
+                  ],
+                },
+              ].map(({ title, points }) => (
+                <motion.div key={title} variants={FADE_UP} className="rounded-2xl border border-border/50 bg-card/80 p-7">
+                  <h3 className="mb-4 font-display text-lg font-bold">{title}</h3>
+                  <div className="space-y-3">
+                    {points.map((p) => (
+                      <div key={p} className="flex items-start gap-3 text-sm text-muted-foreground">
+                        <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-500" />
+                        {p}
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
 
-          <div className="relative flex flex-col md:flex-row justify-between items-center max-w-5xl mx-auto gap-8">
-            <div className="hidden md:block absolute top-1/2 left-0 w-full h-1 bg-[#E8DDD3] -translate-y-1/2 z-0"></div>
-
-            {[
-              { step: 1, title: "You Choose", desc: "Select a vetted consultant and fund the escrow." },
-              { step: 2, title: "We Hold", desc: "Funds are secure. The consultant starts working." },
-              { step: 3, title: "They Deliver", desc: "Approve milestones to release payments." }
-            ].map((item, i) => (
-              <div key={i} className="relative z-10 bg-white p-8 rounded-2xl shadow-lg w-full md:w-1/3 border border-[#E8DDD3] hover:border-[#C4956A] transition-colors">
-                <div className="w-12 h-12 rounded-full bg-[#C4956A] text-white text-xl font-bold flex items-center justify-center mx-auto mb-6">
-                  {item.step}
+            {/* Sticky promise card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.55, delay: 0.1, ease: EASE }}
+              className="rounded-2xl border border-border/50 bg-card/80 p-8 lg:sticky lg:top-[88px]"
+            >
+              <div className="mb-6 flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                  <Shield className="h-5 w-5 text-primary" />
                 </div>
-                <h4 className="text-xl font-bold mb-3 text-[#2C1810]">{item.title}</h4>
-                <p className="text-[#8B7355]">{item.desc}</p>
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-gold">Lerank Promise</p>
+                  <p className="font-display text-base font-bold leading-snug">Escrow guarantee</p>
+                </div>
               </div>
-            ))}
-          </div>
 
-          <div className="mt-20 inline-flex items-center gap-4 bg-white border-2 border-[#C4956A]/30 text-[#2C1810] px-8 py-6 rounded-2xl shadow-xl">
-            <Shield className="w-10 h-10 text-[#C4956A]" />
-            <div className="text-left">
-              <p className="text-[#C4956A] font-bold uppercase tracking-wider text-sm">Our Promise</p>
-              <p className="text-xl font-display text-[#2C1810]">100% Refund Guarantee on uncompleted milestones.</p>
+              <p className="mb-8 text-sm leading-relaxed text-muted-foreground">
+                Every payment on Lerank is held in a regulated escrow account. Funds are released only when you explicitly approve a milestone. We do not take sides — we enforce the agreement.
+              </p>
+
+              <div className="mb-8 space-y-3 border-t border-border/50 pt-6">
+                {[
+                  "Regulated payment processing",
+                  "Dispute resolution within 48h",
+                  "Automatic refund for unstarted milestones",
+                  "Zero fees on disputed refunds",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-3 text-sm">
+                    <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+
+              <Link href="/compare">
+                <Button className="w-full">
+                  Start with Escrow Protection
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="border-t border-border/40 py-28 lg:py-36">
+        <div className="mx-auto max-w-3xl px-6 text-center">
+          <motion.div
+            variants={STAGGER} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-60px" }}
+          >
+            <motion.h2 variants={FADE_UP} className="mb-4 font-display text-5xl font-bold leading-tight md:text-6xl">
+              Apply with confidence.
+            </motion.h2>
+            <motion.p variants={FADE_UP} className="mb-10 text-lg leading-relaxed text-muted-foreground">
+              Create your free account, compare ranked consultants, and pay only for verified, delivered work.
+            </motion.p>
+            <motion.div variants={FADE_UP} className="flex flex-col items-center justify-center gap-3 sm:flex-row">
+              <Link href="/compare">
+                <Button size="lg" className="shadow-xl shadow-primary/20">
+                  Create Free Account
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="/compare">
+                <Button size="lg" variant="outline">Sign In</Button>
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Contact / Footer ── */}
+      <section className="border-t border-border/40 py-16">
+        <div className="mx-auto max-w-7xl px-6">
+          <motion.div
+            variants={STAGGER} initial="hidden" whileInView="show" viewport={{ once: true, margin: "-40px" }}
+            className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4"
+          >
+            {/* Brand */}
+            <motion.div variants={FADE_UP} className="sm:col-span-2 lg:col-span-2">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                  <Globe2 className="h-3.5 w-3.5" />
+                </div>
+                <span className="font-display text-lg font-bold">Lerank</span>
+              </div>
+              <p className="max-w-[280px] text-sm leading-relaxed text-muted-foreground">
+                Trust-first admissions consulting marketplace. We protect students and consultants through milestone-based escrow payments.
+              </p>
+            </motion.div>
+
+            {/* Contact */}
+            <motion.div variants={FADE_UP}>
+              <p className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Contact</p>
+              <div className="space-y-2">
+                {[
+                  { href: "mailto:hello@lerank.com", label: "hello@lerank.com" },
+                  { href: "tel:+15551234567", label: "+1 (555) 123-4567" },
+                ].map(({ href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    className="group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-muted-foreground outline-none transition-colors hover:bg-muted/60 hover:text-foreground"
+                  >
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border/50 bg-muted/50 transition-colors group-hover:border-border group-hover:bg-muted">
+                      <div className="h-1.5 w-1.5 rounded-full bg-primary/60 group-hover:bg-primary transition-colors" />
+                    </div>
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Social */}
+            <motion.div variants={FADE_UP}>
+              <p className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Follow Us</p>
+              <div className="space-y-2">
+                {[
+                  { href: "https://t.me/lerank", label: "Telegram" },
+                  { href: "https://instagram.com/lerank", label: "Instagram" },
+                ].map(({ href, label }) => (
+                  <a
+                    key={label}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-muted-foreground outline-none transition-colors hover:bg-muted/60 hover:text-foreground"
+                  >
+                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-border/50 bg-muted/50 transition-colors group-hover:border-border group-hover:bg-muted">
+                      <div className="h-1.5 w-1.5 rounded-full bg-primary/60 group-hover:bg-primary transition-colors" />
+                    </div>
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
+
+      <footer className="border-t border-border/40 py-6">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-6 text-sm text-muted-foreground sm:flex-row">
+          <div className="flex items-center gap-2">
+            <div className="flex h-5 w-5 items-center justify-center rounded bg-primary text-primary-foreground">
+              <Globe2 className="h-3 w-3" />
             </div>
+            <span className="font-semibold text-foreground">Lerank</span>
           </div>
+          <p>© 2026 Lerank. Trust-first admissions marketplace.</p>
         </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-32 bg-white">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-5xl md:text-7xl font-display font-bold mb-8 text-[#2C1810]">Ready to Find Your <br/><span className="text-[#C4956A] italic">Perfect Match?</span></h2>
-          <p className="text-xl text-[#8B7355] mb-12">Join thousands of students who applied to their dream universities with confidence and zero financial risk.</p>
-          <Link href="/compare">
-            <Button size="lg" className="h-16 px-10 text-xl bg-[#C4956A] text-white hover:bg-[#b8845e] shadow-lg">
-              Create Free Account
-            </Button>
-          </Link>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-[#E8DDD3] py-12 text-center text-[#8B7355] bg-[#FAF6F1]">
-        <p>© 2025 Lerank. All rights reserved. Trust-first education marketplace.</p>
       </footer>
     </div>
   );

@@ -10,10 +10,15 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const STORAGE_KEY = "lerank_theme";
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
-    return (localStorage.getItem("lerank_theme") as Theme) || "system";
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved === "light" || saved === "dark" || saved === "system") {
+      return saved;
+    }
+    return "system";
   });
 
   const [systemDark, setSystemDark] = useState(() =>
@@ -25,18 +30,29 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-color-scheme: dark)");
-    const handler = (e: MediaQueryListEvent) => setSystemDark(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    const updateSystemTheme = (matches: boolean) => setSystemDark(matches);
+
+    updateSystemTheme(mq.matches);
+
+    if (typeof mq.addEventListener === "function") {
+      const listener = (e: MediaQueryListEvent) => updateSystemTheme(e.matches);
+      mq.addEventListener("change", listener);
+      return () => mq.removeEventListener("change", listener);
+    }
+
+    const legacyListener = (e: MediaQueryListEvent) => updateSystemTheme(e.matches);
+    mq.addListener(legacyListener);
+    return () => mq.removeListener(legacyListener);
   }, []);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", resolvedTheme === "dark");
+    document.documentElement.dataset.theme = resolvedTheme;
   }, [resolvedTheme]);
 
-  const setTheme = (newTheme: Theme) => {
-    localStorage.setItem("lerank_theme", newTheme);
-    setThemeState(newTheme);
+  const setTheme = (nextTheme: Theme) => {
+    localStorage.setItem(STORAGE_KEY, nextTheme);
+    setThemeState(nextTheme);
   };
 
   const toggleTheme = () => {

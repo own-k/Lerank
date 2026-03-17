@@ -110,6 +110,14 @@ async function seed() {
     onboardingCompleted: true,
   }).returning();
 
+  await db.insert(usersTable).values({
+    email: "lerankadmin@lerank.com",
+    passwordHash: hashPassword("lerankingadmin1"),
+    fullName: "Lerank Admin",
+    role: "super_admin",
+    onboardingCompleted: true,
+  });
+
   const companyAdminUser = await db.insert(usersTable).values({
     email: "company@edupathglobal.com",
     passwordHash: hashPassword("company123"),
@@ -186,6 +194,7 @@ async function seed() {
   console.log("Seed complete!");
   console.log("Demo accounts:");
   console.log("  Super Admin: admin@lerank.com / admin123");
+  console.log("  Super Admin: lerankadmin@lerank.com / lerankingadmin1");
   console.log("  Company Admin: company@edupathglobal.com / company123");
   console.log("  Student: student@example.com / student123");
 

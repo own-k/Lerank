@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r '\"\"framer-motion\"\"' package.json)",
+      "Bash(npx tsc:*)",
+      "Bash(while read:*)",
+      "Bash(do echo:*)"
+    ]
+  }
+}

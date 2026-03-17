@@ -23,8 +23,18 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
 const TOKEN_KEY = "lerank_token";
+
+async function extractErrorMessage(res: Response, fallback: string): Promise<string> {
+  try {
+    const payload = await res.json();
+    if (payload && typeof payload.message === "string") return payload.message;
+    if (payload && typeof payload.error === "string") return payload.error;
+    return fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -33,18 +43,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!token) {
+    if (token === null) {
       setIsLoading(false);
       return;
     }
+
     fetch("/api/auth/me", {
-      headers: { Authorization: `Bearer ${token}` },
+      headers: { Authorization: "Bearer " + token },
     })
-      .then(r => {
-        if (!r.ok) throw new Error("Unauthorized");
-        return r.json();
+      .then(async (res) => {
+        if (res.ok === false) {
+          throw new Error(await extractErrorMessage(res, "Unauthorized"));
+        }
+        return res.json();
       })
-      .then(data => {
+      .then((data) => {
         setUser(data);
       })
       .catch(() => {
@@ -61,10 +74,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || "Login failed");
+
+    if (res.ok === false) {
+      const message = await extractErrorMessage(res, "Login failed");
+      throw new Error(message);
     }
+
     const data = await res.json();
     localStorage.setItem(TOKEN_KEY, data.token);
     setToken(data.token);
@@ -78,10 +93,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ fullName, email, password }),
     });
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || "Registration failed");
+
+    if (res.ok === false) {
+      const message = await extractErrorMessage(res, "Registration failed");
+      throw new Error(message);
     }
+
     const data = await res.json();
     localStorage.setItem(TOKEN_KEY, data.token);
     setToken(data.token);
@@ -96,11 +113,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryClient.clear();
   };
 
-  return (
-    <AuthContext.Provider value={{ user, isLoading, token, login, register, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, isLoading, token, login, register, logout }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

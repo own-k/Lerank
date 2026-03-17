@@ -3,27 +3,41 @@ import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 
 // --- BUTTON ---
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "default" | "outline" | "ghost" | "secondary" | "danger" | "link";
   size?: "sm" | "default" | "lg" | "icon";
   isLoading?: boolean;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant = "default", size = "default", isLoading, children, disabled, ...props }, ref) => {
+  (
+    {
+      className,
+      variant = "default",
+      size = "default",
+      isLoading,
+      children,
+      disabled,
+      ...props
+    },
+    ref,
+  ) => {
     const variants = {
-      default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20",
+      default:
+        "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20",
       outline: "border-2 border-primary/50 text-primary hover:bg-primary/10",
       ghost: "hover:bg-accent hover:text-accent-foreground",
       secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-      danger: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20",
+      danger:
+        "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20",
       link: "text-primary underline-offset-4 hover:underline",
     };
     const sizes = {
       sm: "h-9 px-4 text-xs rounded-lg",
-      default: "h-11 px-6 py-2 rounded-xl",
-      lg: "h-14 px-8 text-lg rounded-2xl",
-      icon: "h-11 w-11 rounded-xl flex items-center justify-center",
+      default: "h-11 px-6 rounded-xl",
+      lg: "h-13 px-8 text-base rounded-2xl",
+      icon: "h-11 w-11 rounded-xl",
     };
 
     return (
@@ -31,11 +45,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={cn(
-          "inline-flex items-center justify-center font-semibold transition-all duration-300 ease-out active:scale-[0.98]",
+          "inline-flex items-center justify-center font-semibold transition-[background-color,border-color,color,opacity,transform] duration-200 ease-out active:scale-[0.98]",
           "disabled:pointer-events-none disabled:opacity-50",
           variants[variant],
           sizes[size],
-          className
+          className,
         )}
         {...props}
       >
@@ -43,12 +57,13 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {children}
       </button>
     );
-  }
+  },
 );
 Button.displayName = "Button";
 
 // --- INPUT ---
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
@@ -56,41 +71,75 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "flex h-12 w-full rounded-xl border border-border bg-background px-4 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-all",
-          className
+          "flex h-12 w-full rounded-xl border border-border bg-card px-4 py-3 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:border-primary disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200",
+          className,
         )}
         ref={ref}
         {...props}
       />
     );
-  }
+  },
 );
 Input.displayName = "Input";
 
 // --- CARD ---
-export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function Card({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("rounded-2xl border border-border bg-card text-card-foreground shadow-xl shadow-black/5 overflow-hidden", className)}
+      className={cn(
+        "rounded-2xl border border-border bg-card text-card-foreground shadow-sm overflow-hidden",
+        className,
+      )}
       {...props}
     />
   );
 }
 
-export function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={cn("flex flex-col space-y-1.5 p-6", className)} {...props} />;
+export function CardHeader({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn("flex flex-col space-y-1.5 p-6", className)}
+      {...props}
+    />
+  );
 }
 
-export function CardTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
-  return <h3 className={cn("text-2xl font-semibold leading-none tracking-tight font-display", className)} {...props} />;
+export function CardTitle({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLHeadingElement>) {
+  return (
+    <h3
+      className={cn(
+        "text-2xl font-semibold leading-none tracking-tight font-display",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
-export function CardContent({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function CardContent({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return <div className={cn("p-6 pt-0", className)} {...props} />;
 }
 
 // --- BADGE ---
-export function Badge({ className, variant = "default", ...props }: React.HTMLAttributes<HTMLDivElement> & { variant?: "default" | "secondary" | "outline" | "success" | "warning" }) {
+export function Badge({
+  className,
+  variant = "default",
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & {
+  variant?: "default" | "secondary" | "outline" | "success" | "warning";
+}) {
   const variants = {
     default: "bg-primary/10 text-primary border border-primary/20",
     secondary: "bg-secondary text-secondary-foreground",
@@ -99,14 +148,29 @@ export function Badge({ className, variant = "default", ...props }: React.HTMLAt
     warning: "bg-amber-500/10 text-amber-600 border border-amber-500/20",
   };
   return (
-    <div className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors", variants[variant], className)} {...props} />
+    <div
+      className={cn(
+        "inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold transition-colors",
+        variants[variant],
+        className,
+      )}
+      {...props}
+    />
   );
 }
 
 // --- LABEL ---
-export const Label = React.forwardRef<HTMLLabelElement, React.LabelHTMLAttributes<HTMLLabelElement>>(
-  ({ className, ...props }, ref) => (
-    <label ref={ref} className={cn("text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70", className)} {...props} />
-  )
-);
+export const Label = React.forwardRef<
+  HTMLLabelElement,
+  React.LabelHTMLAttributes<HTMLLabelElement>
+>(({ className, ...props }, ref) => (
+  <label
+    ref={ref}
+    className={cn(
+      "text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
+      className,
+    )}
+    {...props}
+  />
+));
 Label.displayName = "Label";
