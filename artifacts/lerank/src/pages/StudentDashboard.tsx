@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/use-auth";
+import { useLanguage } from "@/hooks/use-language";
 import { useEffect, useState } from "react";
 import { Card, CardContent, Badge, Button, Input, Label } from "@/components/ui-elements";
 import { Link } from "wouter";
@@ -39,6 +40,8 @@ const MAJOR_OPTIONS = [
 type ActiveView = "dashboard" | "profile";
 
 function ProfileEditor({ user, token, onClose }: { user: any; token: string | null; onClose: () => void }) {
+  const { t } = useLanguage();
+  const tp = t.dashboard.profile;
   const profile = user.profile || {};
   const [form, setForm] = useState({
     gpa: profile.gpa ?? 3.5,
@@ -112,8 +115,8 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
     >
       <header className="flex justify-between items-start gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#1A0F0A]">Edit Profile</h1>
-          <p className="text-gray-500 mt-1 text-sm">Update your academic profile for better consultant matches.</p>
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#1A0F0A]">{tp.title}</h1>
+          <p className="text-gray-500 mt-1 text-sm">{tp.subtitle}</p>
         </div>
         <Button variant="ghost" size="icon" onClick={onClose} className="text-gray-400 hover:text-gray-600 shrink-0">
           <X className="w-5 h-5" />
@@ -123,7 +126,7 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
       {/* Academic Scores */}
       <Card className="border-[#E8DDD3] shadow-sm">
         <CardContent className="p-5 sm:p-6 space-y-5">
-          <h2 className="font-bold text-[#1A0F0A] text-base">Academic Scores</h2>
+          <h2 className="font-bold text-[#1A0F0A] text-base">{tp.academicScores}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>GPA</Label>
@@ -138,7 +141,7 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
               />
             </div>
             <div className="space-y-2">
-              <Label>GPA Scale</Label>
+              <Label>{tp.gpaScale}</Label>
               <select
                 value={form.gpaScale}
                 onChange={e => set("gpaScale")(parseFloat(e.target.value))}
@@ -151,7 +154,7 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
               </select>
             </div>
             <div className="space-y-2">
-              <Label>IELTS Score <span className="text-gray-400 font-normal text-xs">(optional, max 9.0)</span></Label>
+              <Label>{tp.ieltsOptional}</Label>
               <Input
                 type="number" step="0.5" min="0" max="9"
                 placeholder="e.g. 7.5"
@@ -165,7 +168,7 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
               />
             </div>
             <div className="space-y-2">
-              <Label>SAT Score <span className="text-gray-400 font-normal text-xs">(optional, max 1600)</span></Label>
+              <Label>{tp.satOptional}</Label>
               <Input
                 type="number" step="10" min="400" max="1600"
                 placeholder="e.g. 1450"
@@ -185,9 +188,9 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
       {/* Degree & Major */}
       <Card className="border-[#E8DDD3] shadow-sm">
         <CardContent className="p-5 sm:p-6 space-y-5">
-          <h2 className="font-bold text-[#1A0F0A] text-base">Degree & Major</h2>
+          <h2 className="font-bold text-[#1A0F0A] text-base">{tp.degreeMajor}</h2>
           <div className="space-y-2">
-            <Label>Degree Level</Label>
+            <Label>{tp.degreeLevel}</Label>
             <div className="grid grid-cols-3 gap-2 sm:gap-3">
               {(["bachelor", "master", "phd"] as DegreeLevel[]).map(level => (
                 <button
@@ -205,13 +208,13 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
             </div>
           </div>
           <div className="space-y-2">
-            <Label>Major</Label>
+            <Label>{tp.major}</Label>
             <select
               value={form.major}
               onChange={e => set("major")(e.target.value)}
               className="flex h-11 w-full rounded-xl border border-[#E8DDD3] bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#C4956A] focus:border-[#C4956A] transition-all"
             >
-              <option value="">Select major…</option>
+              <option value="">{tp.selectMajor}</option>
               {MAJOR_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
             </select>
           </div>
@@ -221,10 +224,10 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
       {/* Budget */}
       <Card className="border-[#E8DDD3] shadow-sm">
         <CardContent className="p-5 sm:p-6 space-y-5">
-          <h2 className="font-bold text-[#1A0F0A] text-base">Budget</h2>
+          <h2 className="font-bold text-[#1A0F0A] text-base">{tp.budget}</h2>
           <div className="space-y-3">
             <div className="flex justify-between">
-              <Label>Consulting Budget</Label>
+              <Label>{tp.consultingBudget}</Label>
               <span className="text-sm font-bold text-[#C4956A]">{formatCurrency(form.consultingBudget)}</span>
             </div>
             <input
@@ -239,7 +242,7 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
           </div>
           <div className="space-y-3">
             <div className="flex justify-between">
-              <Label>Education Budget / yr</Label>
+              <Label>{tp.educationBudget}</Label>
               <span className="text-sm font-bold text-[#C4956A]">{formatCurrency(form.educationBudget)}</span>
             </div>
             <input
@@ -258,7 +261,7 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
       {/* Preferred Countries */}
       <Card className="border-[#E8DDD3] shadow-sm">
         <CardContent className="p-5 sm:p-6 space-y-4">
-          <h2 className="font-bold text-[#1A0F0A] text-base">Preferred Countries</h2>
+          <h2 className="font-bold text-[#1A0F0A] text-base">{tp.preferredCountries}</h2>
           <div className="flex flex-wrap gap-2">
             {COUNTRY_OPTIONS.map(c => (
               <button
@@ -280,14 +283,14 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
       {/* Save */}
       <div className="flex flex-wrap items-center gap-3 pb-8">
         <Button onClick={handleSave} isLoading={isSaving} className="bg-[#C4956A] hover:bg-[#b8845e] text-white">
-          <Save className="w-4 h-4 mr-2" /> Save Changes
+          <Save className="w-4 h-4 mr-2" /> {tp.saveChanges}
         </Button>
-        <Button variant="ghost" onClick={onClose} className="text-gray-500">Cancel</Button>
+        <Button variant="ghost" onClick={onClose} className="text-gray-500">{tp.cancel}</Button>
         <AnimatePresence>
           {saveStatus === "success" && (
             <motion.span initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
               className="text-sm font-medium text-emerald-600 flex items-center gap-1">
-              <CheckCircle className="w-4 h-4" /> Saved!
+              <CheckCircle className="w-4 h-4" /> {tp.saved}
             </motion.span>
           )}
           {saveStatus === "error" && (
@@ -304,6 +307,8 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
 
 export default function StudentDashboard() {
   const { user, logout, token } = useAuth();
+  const { t } = useLanguage();
+  const td = t.dashboard;
   const { data: stats } = useFetchWithAuth("/api/dashboard/stats", token);
   const { data: applications } = useFetchWithAuth("/api/applications", token);
   const { data: activities } = useFetchWithAuth("/api/dashboard/activity", token);
@@ -317,7 +322,7 @@ export default function StudentDashboard() {
   const SidebarContent = () => (
     <>
       <div className="h-16 sm:h-20 flex items-center px-6 border-b border-[#E8DDD3]">
-        <span className="text-2xl font-display font-bold text-[#2C1810]">Lerank</span>
+        <span className="text-2xl font-display font-bold text-[#2C1810]">{td.nav.title}</span>
         <button onClick={closeSidebar} className="ml-auto md:hidden text-gray-400 hover:text-gray-600">
           <X className="w-5 h-5" />
         </button>
@@ -328,21 +333,21 @@ export default function StudentDashboard() {
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors text-left ${
               activeView === "dashboard" ? "bg-[#C4956A]/10 text-[#C4956A]" : "text-[#8B7355] hover:bg-[#FAF6F1] hover:text-[#2C1810]"
             }`}>
-            <LayoutDashboard className="w-5 h-5 shrink-0" /> Dashboard
+            <LayoutDashboard className="w-5 h-5 shrink-0" /> {td.nav.dashboard}
           </button>
           <Link href="/compare" onClick={closeSidebar}
             className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FAF6F1] text-[#8B7355] hover:text-[#2C1810] transition-colors">
-            <FileText className="w-5 h-5 shrink-0" /> Find Consultants
+            <FileText className="w-5 h-5 shrink-0" /> {td.nav.findConsultants}
           </Link>
           <button onClick={() => { setActiveView("dashboard"); closeSidebar(); }}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FAF6F1] text-[#8B7355] hover:text-[#2C1810] transition-colors text-left">
-            <CreditCard className="w-5 h-5 shrink-0" /> Escrow Payments
+            <CreditCard className="w-5 h-5 shrink-0" /> {td.nav.escrowPayments}
           </button>
           <button onClick={() => { setActiveView("profile"); closeSidebar(); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors text-left ${
               activeView === "profile" ? "bg-[#C4956A]/10 text-[#C4956A]" : "text-[#8B7355] hover:bg-[#FAF6F1] hover:text-[#2C1810]"
             }`}>
-            <UserCog className="w-5 h-5 shrink-0" /> Edit Profile
+            <UserCog className="w-5 h-5 shrink-0" /> {td.nav.editProfile}
           </button>
         </nav>
       </div>
@@ -353,12 +358,12 @@ export default function StudentDashboard() {
           </div>
           <div className="min-w-0">
             <div className="text-sm font-bold text-[#2C1810] truncate">{user.fullName}</div>
-            <div className="text-xs text-[#8B7355]">Student</div>
+            <div className="text-xs text-[#8B7355]">{td.nav.student}</div>
           </div>
         </div>
         <button onClick={logout}
           className="flex items-center gap-3 px-4 py-2 w-full rounded-lg hover:bg-red-50 text-[#8B7355] hover:text-red-500 transition-colors text-sm">
-          <LogOut className="w-4 h-4" /> Sign Out
+          <LogOut className="w-4 h-4" /> {td.nav.signOut}
         </button>
       </div>
     </>
@@ -398,7 +403,7 @@ export default function StudentDashboard() {
           <button onClick={() => setSidebarOpen(true)} className="text-[#8B7355]">
             <Menu className="w-6 h-6" />
           </button>
-          <span className="font-display font-bold text-[#2C1810]">Lerank</span>
+          <span className="font-display font-bold text-[#2C1810]">{td.nav.title}</span>
         </div>
 
         <div className="p-4 sm:p-6 lg:p-8">
@@ -417,15 +422,15 @@ export default function StudentDashboard() {
                 <header className="flex flex-wrap gap-3 justify-between items-start">
                   <div>
                     <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#1A0F0A]">
-                      Welcome back, {user.fullName.split(' ')[0]}!
+                      {td.header.welcomeBack}{user.fullName.split(' ')[0]}!
                     </h1>
-                    <p className="text-gray-500 mt-1 text-sm">Here is the latest on your university applications.</p>
+                    <p className="text-gray-500 mt-1 text-sm">{td.header.subtitle}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm" onClick={() => setActiveView("profile")}
                       className="border-[#E8DDD3] text-[#8B7355] hover:text-[#2C1810]">
                       <UserCog className="w-4 h-4 sm:mr-2" />
-                      <span className="hidden sm:inline">Edit Profile</span>
+                      <span className="hidden sm:inline">{td.header.editProfile}</span>
                     </Button>
                     <Button variant="outline" size="sm" className="bg-white border-[#E8DDD3]">
                       <Bell className="w-4 h-4" />
@@ -437,27 +442,27 @@ export default function StudentDashboard() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                   <Card className="border-none shadow-md">
                     <CardContent className="p-4 sm:p-6">
-                      <div className="text-xs sm:text-sm text-gray-500 font-medium mb-1 sm:mb-2">Active Apps</div>
+                      <div className="text-xs sm:text-sm text-gray-500 font-medium mb-1 sm:mb-2">{td.stats.activeApps}</div>
                       <div className="text-2xl sm:text-3xl font-bold text-[#1A0F0A]">{stats?.activeApplications || 0}</div>
                     </CardContent>
                   </Card>
                   <Card className="border-none shadow-md">
                     <CardContent className="p-4 sm:p-6">
-                      <div className="text-xs sm:text-sm text-gray-500 font-medium mb-1 sm:mb-2">Milestones (wk)</div>
+                      <div className="text-xs sm:text-sm text-gray-500 font-medium mb-1 sm:mb-2">{td.stats.milestonesWk}</div>
                       <div className="text-2xl sm:text-3xl font-bold text-[#C4956A]">{stats?.milestonesCompletedThisWeek || 0}</div>
                     </CardContent>
                   </Card>
                   <Card className="border-none shadow-md bg-[#C4956A]/10 border border-[#C4956A]/20">
                     <CardContent className="p-4 sm:p-6">
                       <div className="text-xs sm:text-sm text-[#C4956A] font-medium mb-1 sm:mb-2 flex items-center gap-1.5">
-                        <ShieldCheck className="w-4 h-4 shrink-0" /> Escrow
+                        <ShieldCheck className="w-4 h-4 shrink-0" /> {td.stats.escrow}
                       </div>
                       <div className="text-xl sm:text-3xl font-bold text-[#2C1810]">{formatCurrency(stats?.moneyInEscrow || 0)}</div>
                     </CardContent>
                   </Card>
                   <Card className="border-none shadow-md">
                     <CardContent className="p-4 sm:p-6">
-                      <div className="text-xs sm:text-sm text-gray-500 font-medium mb-1 sm:mb-2">Released</div>
+                      <div className="text-xs sm:text-sm text-gray-500 font-medium mb-1 sm:mb-2">{td.stats.released}</div>
                       <div className="text-xl sm:text-3xl font-bold text-emerald-600">{formatCurrency(stats?.moneyReleased || 0)}</div>
                     </CardContent>
                   </Card>
@@ -467,9 +472,9 @@ export default function StudentDashboard() {
                   {/* Active Applications */}
                   <div className="lg:col-span-2 space-y-4">
                     <div className="flex justify-between items-center">
-                      <h2 className="text-lg sm:text-xl font-bold text-[#1A0F0A]">Active Applications</h2>
+                      <h2 className="text-lg sm:text-xl font-bold text-[#1A0F0A]">{td.applications.title}</h2>
                       <Link href="/compare" className="text-sm font-semibold text-[#C4956A] hover:underline">
-                        Find consultant
+                        {td.applications.findConsultant}
                       </Link>
                     </div>
 
@@ -491,7 +496,7 @@ export default function StudentDashboard() {
                           </div>
                           <div className="space-y-2">
                             <div className="flex justify-between text-sm">
-                              <span className="font-medium text-gray-700">Progress</span>
+                              <span className="font-medium text-gray-700">{td.applications.progress}</span>
                               <span className="font-bold">{Math.round(app.progressPercent || 0)}%</span>
                             </div>
                             <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
@@ -499,9 +504,9 @@ export default function StudentDashboard() {
                             </div>
                           </div>
                           <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
-                            <span className="text-sm text-gray-500">Total: {formatCurrency(app.totalAmount)}</span>
+                            <span className="text-sm text-gray-500">{td.applications.total} {formatCurrency(app.totalAmount)}</span>
                             <Button variant="ghost" size="sm" className="text-[#C4956A]">
-                              Details <ChevronRight className="w-4 h-4 ml-1" />
+                              {td.applications.details} <ChevronRight className="w-4 h-4 ml-1" />
                             </Button>
                           </div>
                         </CardContent>
@@ -510,9 +515,9 @@ export default function StudentDashboard() {
 
                     {(!applications || applications.length === 0) && (
                       <div className="text-center py-10 bg-white rounded-2xl border border-dashed border-gray-300">
-                        <p className="text-gray-500 mb-4 text-sm">No active applications yet.</p>
+                        <p className="text-gray-500 mb-4 text-sm">{td.applications.emptyState}</p>
                         <Link href="/compare">
-                          <Button className="bg-[#C4956A] hover:bg-[#b8845e] text-white">Browse Consultants</Button>
+                          <Button className="bg-[#C4956A] hover:bg-[#b8845e] text-white">{td.applications.browseConsultants}</Button>
                         </Link>
                       </div>
                     )}
@@ -520,7 +525,7 @@ export default function StudentDashboard() {
 
                   {/* Activity Feed */}
                   <div className="space-y-4">
-                    <h2 className="text-lg sm:text-xl font-bold text-[#1A0F0A]">Recent Activity</h2>
+                    <h2 className="text-lg sm:text-xl font-bold text-[#1A0F0A]">{td.activity.title}</h2>
                     <Card className="border-[#E8DDD3] shadow-sm">
                       <CardContent className="p-0">
                         <div className="divide-y divide-gray-100">
@@ -542,7 +547,7 @@ export default function StudentDashboard() {
                             </div>
                           ))}
                           {(!activities || !activities.length) && (
-                            <div className="p-6 text-center text-sm text-gray-500">No recent activity</div>
+                            <div className="p-6 text-center text-sm text-gray-500">{td.activity.empty}</div>
                           )}
                         </div>
                       </CardContent>

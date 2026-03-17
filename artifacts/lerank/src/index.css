@@ -1,9 +1,18 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Monsieur La Doulaise';
+  src: url('/MonsieurLaDoulaise-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme inline {
   --font-sans: 'Plus Jakarta Sans', sans-serif;
   --font-display: 'Playfair Display', serif;
+  --font-brand: 'Monsieur La Doulaise', cursive;
 
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
@@ -38,7 +47,7 @@
   --secondary: 33 24% 44%;
   --secondary-foreground: 32 38% 93%;
   --muted: 29 28% 87%;
-  --muted-foreground: 33 24% 44%;
+  --muted-foreground: 33 20% 30%;
   --accent: 29 28% 87%;
   --accent-foreground: 21 44% 8%;
   --destructive: 6 63% 46%;
@@ -63,7 +72,7 @@
   --secondary: 33 24% 20%;
   --secondary-foreground: 32 38% 93%;
   --muted: 21 30% 16%;
-  --muted-foreground: 33 20% 70%;
+  --muted-foreground: 33 22% 78%;
   --accent: 21 30% 16%;
   --accent-foreground: 32 38% 93%;
   --destructive: 6 63% 46%;
@@ -226,4 +235,9 @@ select:focus {
   outline: 2px solid hsl(var(--primary));
   outline-offset: 0;
   border-color: hsl(var(--primary));
+}
+
+/* Brand font utility */
+.font-brand {
+  font-family: 'Monsieur La Doulaise', cursive;
 }

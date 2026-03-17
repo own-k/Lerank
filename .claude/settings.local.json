@@ -4,7 +4,14 @@
       "Bash(grep -r '\"\"framer-motion\"\"' package.json)",
       "Bash(npx tsc:*)",
       "Bash(while read:*)",
-      "Bash(do echo:*)"
+      "Bash(do echo:*)",
+      "Bash(grep -r \"i18n\\\\|i18next\\\\|intl\\\\|translation\" /home/runner/workspace/artifacts/mockup-sandbox/src --include=*.ts --include=*.tsx)",
+      "Bash(find /home/runner/workspace -path */mockups/*.tsx -o -path */mockups/*.ts)",
+      "Bash(grep -r \"lang\\\\|i18n\\\\|locale\\\\|translation\\\\|t\\(\" /home/runner/workspace --include=*.tsx --include=*.ts --include=*.json)",
+      "Bash(grep -r \"en\\\\|fr\\\\|es\\\\|de\" /home/runner/workspace/artifacts/lerank --include=*.tsx --include=*.ts)",
+      "Bash(head -20 grep -n \"Lerank\\\\|lerank\\\\|logo\\\\|brand\" /home/runner/workspace/artifacts/lerank/src/pages/Compare.tsx)",
+      "Bash(head -20 grep -n \"Sarah\\\\|Okonkwo\\\\|Dr\\\\.\" /home/runner/workspace/artifacts/lerank/src/pages/Landing.tsx)",
+      "Bash(head -10 grep -n \"Sarah\\\\|Okonkwo\\\\|Dr\\\\.\" /home/runner/workspace/artifacts/lerank/src/pages/Compare.tsx)"
     ]
   }
 }

@@ -4,6 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/use-auth";
 import { ThemeProvider } from "@/hooks/use-theme";
+import { LanguageProvider } from "@/hooks/use-language";
 import { useEffect } from "react";
 
 import Landing from "@/pages/Landing";
@@ -68,6 +69,7 @@ function normalizedBasePath(path: string) {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <LanguageProvider>
       <ThemeProvider>
         <AuthProvider>
           <TooltipProvider>
@@ -78,6 +80,7 @@ function App() {
           </TooltipProvider>
         </AuthProvider>
       </ThemeProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

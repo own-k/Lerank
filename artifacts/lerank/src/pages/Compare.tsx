@@ -2,6 +2,8 @@ import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Badge, Button, Card, CardContent, Input, Label } from "@/components/ui-elements";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageToggle } from "@/components/language-toggle";
+import { useLanguage } from "@/hooks/use-language";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, DollarSign, Eye, EyeOff, Filter, Loader2, LogOut, MapPin, Star, X, GitCompare, CheckSquare, Square, ChevronDown } from "lucide-react";
 import { Link, useLocation } from "wouter";
@@ -34,6 +36,8 @@ const TOTAL_STEPS = 4;
 
 export default function Compare() {
   const { user, login, register, logout, isLoading: isAuthLoading, token } = useAuth();
+  const { t } = useLanguage();
+  const tc = t.compare;
   const [, setLocation] = useLocation();
 
   const [isLoginMode, setIsLoginMode] = useState(true);
@@ -178,21 +182,27 @@ export default function Compare() {
 
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: "easeOut" }} className="w-full max-w-md">
           <div className="mb-8">
-            <Link href="/">
-              <button type="button" className="mb-5 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
-                <ArrowLeft className="h-4 w-4" /> Back to home
-              </button>
-            </Link>
+            <div className="mb-5 flex items-center justify-between">
+              <Link href="/">
+                <button type="button" className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                  <ArrowLeft className="h-4 w-4" /> {tc.backToHome}
+                </button>
+              </Link>
+              <div className="flex items-center gap-2">
+                <LanguageToggle />
+                <ThemeToggle />
+              </div>
+            </div>
             <h1 className="font-display text-4xl font-bold">Lerank</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Premium admissions consulting marketplace</p>
+            <p className="mt-1 text-sm text-muted-foreground">{tc.appSubtitle}</p>
           </div>
 
           <Card className="border-border/70 bg-card shadow-xl overflow-hidden">
             <div className="h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
             <CardContent className="p-8">
               <div className="mb-6 flex gap-1 rounded-xl bg-muted/50 p-1">
-                {["Sign In", "Register"].map((label, i) => (
-                  <button key={label} type="button"
+                {[tc.tabs.signIn, tc.tabs.register].map((label, i) => (
+                  <button key={i} type="button"
                     onClick={() => { setIsLoginMode(i === 0); setAuthError(""); setShowPassword(false); }}
                     className={((i === 0) === isLoginMode ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground") + " flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all duration-200"}
                   >{label}</button>
@@ -211,27 +221,27 @@ export default function Compare() {
                       className="overflow-hidden bg-transparent"
                     >
                       <div className="flex flex-col gap-1.5 pb-1">
-                        <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Full Name</Label>
-                        <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your full name" />
+                        <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tc.form.fullName}</Label>
+                        <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder={tc.form.fullNamePlaceholder} />
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
 
                 <div className="flex flex-col gap-1.5">
-                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Email Address</Label>
-                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@email.com" />
+                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tc.form.email}</Label>
+                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={tc.form.emailPlaceholder} />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Password</Label>
+                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tc.form.password}</Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
                       required
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder="••••••••"
+                      placeholder={tc.form.passwordPlaceholder}
                       className="pr-12"
                     />
                     <button
@@ -252,7 +262,7 @@ export default function Compare() {
                 </AnimatePresence>
 
                 <Button type="submit" isLoading={isSubmittingAuth} className="mt-1 w-full h-12 text-base">
-                  {isLoginMode ? "Sign In" : "Create Account"}
+                  {isLoginMode ? tc.submitSignIn : tc.submitCreateAccount}
                   {!isSubmittingAuth && <ArrowRight className="ml-2 h-4 w-4" />}
                 </Button>
               </form>
@@ -265,16 +275,20 @@ export default function Compare() {
 
   // ── Onboarding ────────────────────────────────────────────────────────────
   if (user.onboardingCompleted !== true) {
+    const ob = tc.onboarding;
     return (
       <div className="min-h-screen premium-bg">
         <div className="pointer-events-none absolute inset-0 premium-grid" />
         <div className="mx-auto max-w-2xl px-6 py-16">
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mb-10 flex items-start justify-between gap-4">
             <div>
-              <h1 className="font-display text-4xl font-bold">Build Your Profile</h1>
-              <p className="mt-2 text-sm text-muted-foreground">We use this to rank consultants perfectly for you.</p>
+              <h1 className="font-display text-3xl font-bold">{ob.title}</h1>
+              <p className="mt-2 text-sm text-muted-foreground">{ob.subtitle}</p>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-2 shrink-0">
+              <LanguageToggle />
+              <ThemeToggle />
+            </div>
           </motion.div>
 
           {/* Progress bar */}
@@ -293,15 +307,15 @@ export default function Compare() {
                 {onboardingStep === 1 && (
                   <motion.div key="step-1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.28 }} className="space-y-6">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-gold mb-1">Step 1 of {TOTAL_STEPS}</p>
-                      <h2 className="font-display text-2xl font-bold">Academic Background</h2>
-                      <p className="mt-1 text-sm text-muted-foreground">Your scores help us match the right consultant tier.</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-gold mb-1">{ob.stepLabel} 1 {ob.stepOf} {TOTAL_STEPS}</p>
+                      <h2 className="font-display text-2xl font-bold">{ob.step1Title}</h2>
+                      <p className="mt-1 text-sm text-muted-foreground">{ob.step1Sub}</p>
                     </div>
 
                     <div className="grid gap-4 sm:grid-cols-2">
                       <div className="space-y-3 sm:col-span-2">
                         <div className="flex items-center justify-between">
-                          <Label>GPA</Label>
+                          <Label>{ob.gpa}</Label>
                           <div className="flex items-center gap-2">
                             <select className="h-7 rounded-lg border border-border bg-background px-2 text-xs" value={profileData.gpaScale} onChange={(e) => { const s = parseFloat(e.target.value) || 4; set("gpaScale")(s); set("gpa")(Math.min(Number(profileData.gpa), s)); }}>
                               <option value="4.0">/ 4.0</option>
@@ -315,16 +329,10 @@ export default function Compare() {
                         </div>
                         <div className="relative pt-1 pb-2">
                           <input
-                            type="range"
-                            min="0"
-                            max={profileData.gpaScale}
-                            step={profileData.gpaScale === 100 ? 1 : 0.01}
+                            type="range" min="0" max={profileData.gpaScale} step={profileData.gpaScale === 100 ? 1 : 0.01}
                             value={Number(profileData.gpa)}
                             onChange={(e) => set("gpa")(parseFloat(e.target.value))}
-                            className="w-full h-2 rounded-full appearance-none cursor-pointer
-                              bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400
-                              [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-gold [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer
-                              [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-gold [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
+                            className="w-full h-2 rounded-full appearance-none cursor-pointer bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-gold [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-gold [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
                           />
                           <div className="flex justify-between mt-1.5">
                             <span className="text-[10px] text-muted-foreground/60">0</span>
@@ -335,7 +343,7 @@ export default function Compare() {
                       </div>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <Label>IELTS Score <span className="text-xs text-muted-foreground">(optional)</span></Label>
+                          <Label>{ob.ielts} <span className="text-xs text-muted-foreground">({ob.optional})</span></Label>
                           {profileData.ieltsScore !== "" ? (
                             <div className="flex items-center gap-1.5">
                               <span className="text-xl font-bold text-gold">{Number(profileData.ieltsScore).toFixed(1)}</span>
@@ -346,71 +354,38 @@ export default function Compare() {
                                 Number(profileData.ieltsScore) >= 6 ? "bg-amber-500/15 text-amber-600" :
                                 "bg-rose-500/15 text-rose-600"
                               }`}>
-                                {Number(profileData.ieltsScore) >= 8 ? "Expert" :
-                                 Number(profileData.ieltsScore) >= 7 ? "Good" :
-                                 Number(profileData.ieltsScore) >= 6 ? "Competent" : "Modest"}
+                                {Number(profileData.ieltsScore) >= 8 ? ob.ieltsExpert :
+                                 Number(profileData.ieltsScore) >= 7 ? ob.ieltsGood :
+                                 Number(profileData.ieltsScore) >= 6 ? ob.ieltsCompetent : ob.ieltsModest}
                               </span>
                             </div>
                           ) : (
-                            <span className="text-xs text-muted-foreground italic">not set</span>
+                            <span className="text-xs text-muted-foreground italic">{ob.notSet}</span>
                           )}
                         </div>
                         <div className="relative pt-1 pb-2">
                           <input
-                            type="range"
-                            min="0"
-                            max="9"
-                            step="0.5"
+                            type="range" min="0" max="9" step="0.5"
                             value={profileData.ieltsScore === "" ? 0 : Number(profileData.ieltsScore)}
                             onChange={(e) => set("ieltsScore")(parseFloat(e.target.value))}
-                            className="w-full h-2 rounded-full appearance-none cursor-pointer
-                              bg-gradient-to-r from-rose-400 via-amber-400 via-blue-400 to-emerald-400
-                              [&::-webkit-slider-thumb]:appearance-none
-                              [&::-webkit-slider-thumb]:w-5
-                              [&::-webkit-slider-thumb]:h-5
-                              [&::-webkit-slider-thumb]:rounded-full
-                              [&::-webkit-slider-thumb]:bg-white
-                              [&::-webkit-slider-thumb]:border-2
-                              [&::-webkit-slider-thumb]:border-gold
-                              [&::-webkit-slider-thumb]:shadow-md
-                              [&::-webkit-slider-thumb]:cursor-pointer
-                              [&::-moz-range-thumb]:w-5
-                              [&::-moz-range-thumb]:h-5
-                              [&::-moz-range-thumb]:rounded-full
-                              [&::-moz-range-thumb]:bg-white
-                              [&::-moz-range-thumb]:border-2
-                              [&::-moz-range-thumb]:border-gold
-                              [&::-moz-range-thumb]:shadow-md
-                              [&::-moz-range-thumb]:cursor-pointer"
+                            className="w-full h-2 rounded-full appearance-none cursor-pointer bg-gradient-to-r from-rose-400 via-amber-400 via-blue-400 to-emerald-400 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-gold [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-gold [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
                           />
                           <div className="flex justify-between mt-1.5">
-                            {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((v) => (
+                            {[0,1,2,3,4,5,6,7,8,9].map((v) => (
                               <span key={v} className="text-[10px] text-muted-foreground/60 w-4 text-center">{v}</span>
                             ))}
                           </div>
                         </div>
                         {profileData.ieltsScore === "" && (
-                          <button
-                            type="button"
-                            onClick={() => set("ieltsScore")(6.5)}
-                            className="text-xs text-gold underline underline-offset-2 hover:text-gold/80"
-                          >
-                            Add score
-                          </button>
+                          <button type="button" onClick={() => set("ieltsScore")(6.5)} className="text-xs text-gold underline underline-offset-2 hover:text-gold/80">{ob.addScore}</button>
                         )}
                         {profileData.ieltsScore !== "" && (
-                          <button
-                            type="button"
-                            onClick={() => set("ieltsScore")("")}
-                            className="text-xs text-muted-foreground/60 underline underline-offset-2 hover:text-muted-foreground"
-                          >
-                            Clear
-                          </button>
+                          <button type="button" onClick={() => set("ieltsScore")("")} className="text-xs text-muted-foreground/60 underline underline-offset-2 hover:text-muted-foreground">{ob.clear}</button>
                         )}
                       </div>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <Label>SAT Score <span className="text-xs text-muted-foreground">(optional)</span></Label>
+                          <Label>{ob.sat} <span className="text-xs text-muted-foreground">({ob.optional})</span></Label>
                           {profileData.satScore !== "" ? (
                             <div className="flex items-center gap-1.5">
                               <span className="text-xl font-bold text-gold">{profileData.satScore}</span>
@@ -421,27 +396,21 @@ export default function Compare() {
                                 Number(profileData.satScore) >= 1000 ? "bg-amber-500/15 text-amber-600" :
                                 "bg-rose-500/15 text-rose-600"
                               }`}>
-                                {Number(profileData.satScore) >= 1400 ? "Excellent" :
-                                 Number(profileData.satScore) >= 1200 ? "Good" :
-                                 Number(profileData.satScore) >= 1000 ? "Average" : "Below Avg"}
+                                {Number(profileData.satScore) >= 1400 ? ob.satExcellent :
+                                 Number(profileData.satScore) >= 1200 ? ob.satGood :
+                                 Number(profileData.satScore) >= 1000 ? ob.satAverage : ob.satBelowAvg}
                               </span>
                             </div>
                           ) : (
-                            <span className="text-xs text-muted-foreground italic">not set</span>
+                            <span className="text-xs text-muted-foreground italic">{ob.notSet}</span>
                           )}
                         </div>
                         <div className="relative pt-1 pb-2">
                           <input
-                            type="range"
-                            min="400"
-                            max="1600"
-                            step="10"
+                            type="range" min="400" max="1600" step="10"
                             value={profileData.satScore === "" ? 400 : Number(profileData.satScore)}
                             onChange={(e) => set("satScore")(parseInt(e.target.value))}
-                            className="w-full h-2 rounded-full appearance-none cursor-pointer
-                              bg-gradient-to-r from-rose-400 via-amber-400 via-blue-400 to-emerald-400
-                              [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-gold [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer
-                              [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-gold [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
+                            className="w-full h-2 rounded-full appearance-none cursor-pointer bg-gradient-to-r from-rose-400 via-amber-400 via-blue-400 to-emerald-400 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-gold [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-gold [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
                           />
                           <div className="flex justify-between mt-1.5">
                             <span className="text-[10px] text-muted-foreground/60">400</span>
@@ -450,17 +419,17 @@ export default function Compare() {
                           </div>
                         </div>
                         {profileData.satScore === "" && (
-                          <button type="button" onClick={() => set("satScore")(1200)} className="text-xs text-gold underline underline-offset-2 hover:text-gold/80">Add score</button>
+                          <button type="button" onClick={() => set("satScore")(1200)} className="text-xs text-gold underline underline-offset-2 hover:text-gold/80">{ob.addScore}</button>
                         )}
                         {profileData.satScore !== "" && (
-                          <button type="button" onClick={() => set("satScore")("")} className="text-xs text-muted-foreground/60 underline underline-offset-2 hover:text-muted-foreground">Clear</button>
+                          <button type="button" onClick={() => set("satScore")("")} className="text-xs text-muted-foreground/60 underline underline-offset-2 hover:text-muted-foreground">{ob.clear}</button>
                         )}
                       </div>
                     </div>
 
                     <div className="flex gap-3">
-                      <Button variant="outline" onClick={logout} className="flex items-center gap-1.5"><ArrowLeft className="h-4 w-4" /> Back</Button>
-                      <Button onClick={() => setOnboardingStep(2)} className="flex-1">Continue <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                      <Button variant="outline" onClick={logout} className="flex items-center gap-1.5"><ArrowLeft className="h-4 w-4" /> {ob.back}</Button>
+                      <Button onClick={() => setOnboardingStep(2)} className="flex-1">{ob.continue} <ArrowRight className="ml-2 h-4 w-4" /></Button>
                     </div>
                   </motion.div>
                 )}
@@ -469,13 +438,13 @@ export default function Compare() {
                 {onboardingStep === 2 && (
                   <motion.div key="step-2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.28 }} className="space-y-6">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-gold mb-1">Step 2 of {TOTAL_STEPS}</p>
-                      <h2 className="font-display text-2xl font-bold">Academic Goals</h2>
-                      <p className="mt-1 text-sm text-muted-foreground">Tell us what you're aiming for.</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-gold mb-1">{ob.stepLabel} 2 {ob.stepOf} {TOTAL_STEPS}</p>
+                      <h2 className="font-display text-2xl font-bold">{ob.step2Title}</h2>
+                      <p className="mt-1 text-sm text-muted-foreground">{ob.step2Sub}</p>
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Target Degree Level</Label>
+                      <Label>{ob.degreeLevel}</Label>
                       <div className="grid grid-cols-3 gap-3">
                         {(["bachelor", "master", "phd"] as DegreeLevel[]).map((level) => (
                           <button key={level} type="button" onClick={() => set("degreeLevel")(level)}
@@ -486,23 +455,23 @@ export default function Compare() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Field of Study / Major</Label>
+                      <Label>{ob.fieldOfStudy}</Label>
                       <select className="h-11 w-full rounded-xl border border-border bg-background px-4 text-sm" value={profileData.major} onChange={(e) => set("major")(e.target.value)}>
-                        <option value="">Select your major…</option>
+                        <option value="">{ob.selectMajor}</option>
                         {MAJOR_OPTIONS.map((m) => <option key={m} value={m}>{m}</option>)}
                       </select>
                     </div>
 
                     {profileData.major === "Other" && (
                       <div className="space-y-2">
-                        <Label>Specify Major</Label>
-                        <Input placeholder="e.g. Environmental Science" onChange={(e) => set("major")(e.target.value)} />
+                        <Label>{ob.specifyMajor}</Label>
+                        <Input placeholder={ob.specifyPlaceholder} onChange={(e) => set("major")(e.target.value)} />
                       </div>
                     )}
 
                     <div className="flex gap-3">
-                      <Button variant="outline" onClick={() => setOnboardingStep(1)}>Back</Button>
-                      <Button onClick={() => setOnboardingStep(3)} className="flex-1">Continue <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                      <Button variant="outline" onClick={() => setOnboardingStep(1)}>{ob.back}</Button>
+                      <Button onClick={() => setOnboardingStep(3)} className="flex-1">{ob.continue} <ArrowRight className="ml-2 h-4 w-4" /></Button>
                     </div>
                   </motion.div>
                 )}
@@ -511,15 +480,15 @@ export default function Compare() {
                 {onboardingStep === 3 && (
                   <motion.div key="step-3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.28 }} className="space-y-6">
                     <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-gold mb-1">Step 3 of {TOTAL_STEPS}</p>
-                      <h2 className="font-display text-2xl font-bold">Budget & Destinations</h2>
-                      <p className="mt-1 text-sm text-muted-foreground">Helps us filter consultants you can actually afford.</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-gold mb-1">{ob.stepLabel} 3 {ob.stepOf} {TOTAL_STEPS}</p>
+                      <h2 className="font-display text-2xl font-bold">{ob.step3Title}</h2>
+                      <p className="mt-1 text-sm text-muted-foreground">{ob.step3Sub}</p>
                     </div>
 
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label>Consulting Budget</Label>
-                        <p className="text-xs text-muted-foreground">Max you'll spend on a consulting service.</p>
+                        <Label>{ob.consultingBudget}</Label>
+                        <p className="text-xs text-muted-foreground">{ob.consultingBudgetHint}</p>
                         <input type="range" min="500" max="6000" step="50" value={profileData.consultingBudget} onChange={(e) => set("consultingBudget")(parseInt(e.target.value))} className="w-full accent-primary" />
                         <div className="flex justify-between text-xs text-muted-foreground">
                           <span>$500</span>
@@ -529,8 +498,8 @@ export default function Compare() {
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Annual Education Budget</Label>
-                        <p className="text-xs text-muted-foreground">Tuition + living costs per year.</p>
+                        <Label>{ob.educationBudget}</Label>
+                        <p className="text-xs text-muted-foreground">{ob.educationBudgetHint}</p>
                         <input type="range" min="5000" max="100000" step="1000" value={profileData.educationBudget} onChange={(e) => set("educationBudget")(parseInt(e.target.value))} className="w-full accent-primary" />
                         <div className="flex justify-between text-xs text-muted-foreground">
                           <span>$5k</span>
@@ -541,8 +510,8 @@ export default function Compare() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>Preferred Countries</Label>
-                      <p className="text-xs text-muted-foreground">Select all that interest you.</p>
+                      <Label>{ob.preferredCountries}</Label>
+                      <p className="text-xs text-muted-foreground">{ob.preferredCountriesHint}</p>
                       <div className="flex flex-wrap gap-2">
                         {COUNTRY_OPTIONS.map((country) => {
                           const selected = profileData.preferredCountries.includes(country);
@@ -558,8 +527,8 @@ export default function Compare() {
                     </div>
 
                     <div className="flex gap-3">
-                      <Button variant="outline" onClick={() => setOnboardingStep(2)}>Back</Button>
-                      <Button onClick={() => setOnboardingStep(4)} className="flex-1">Continue <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                      <Button variant="outline" onClick={() => setOnboardingStep(2)}>{ob.back}</Button>
+                      <Button onClick={() => setOnboardingStep(4)} className="flex-1">{ob.continue} <ArrowRight className="ml-2 h-4 w-4" /></Button>
                     </div>
                   </motion.div>
                 )}
@@ -568,23 +537,23 @@ export default function Compare() {
                 {onboardingStep === 4 && (
                   <motion.div key="step-4" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.28 }} className="space-y-6">
                     <div className="text-center">
-                      <p className="text-xs font-bold uppercase tracking-widest text-gold mb-1">Step 4 of {TOTAL_STEPS}</p>
-                      <h2 className="font-display text-2xl font-bold">Review & Confirm</h2>
-                      <p className="mt-1 text-sm text-muted-foreground">Everything looks correct? We'll start matching you.</p>
+                      <p className="text-xs font-bold uppercase tracking-widest text-gold mb-1">{ob.stepLabel} 4 {ob.stepOf} {TOTAL_STEPS}</p>
+                      <h2 className="font-display text-2xl font-bold">{ob.step4Title}</h2>
+                      <p className="mt-1 text-sm text-muted-foreground">{ob.step4Sub}</p>
                     </div>
 
                     <div className="rounded-2xl border border-border/60 bg-muted/30 overflow-hidden">
                       {[
-                        { label: "Degree", value: profileData.degreeLevel === "phd" ? "PhD" : profileData.degreeLevel.charAt(0).toUpperCase() + profileData.degreeLevel.slice(1) },
-                        { label: "Major", value: profileData.major || "Not specified" },
-                        { label: "GPA", value: `${profileData.gpa} / ${profileData.gpaScale}` },
-                        { label: "IELTS", value: profileData.ieltsScore ? String(profileData.ieltsScore) : "Not specified" },
-                        { label: "SAT", value: profileData.satScore ? String(profileData.satScore) : "Not specified" },
-                        { label: "Consulting Budget", value: `$${profileData.consultingBudget.toLocaleString()}` },
-                        { label: "Education Budget / yr", value: `$${profileData.educationBudget.toLocaleString()}` },
-                        { label: "Countries", value: profileData.preferredCountries.length > 0 ? profileData.preferredCountries.join(", ") : "Any" },
+                        { label: ob.reviewDegree, value: profileData.degreeLevel === "phd" ? "PhD" : profileData.degreeLevel.charAt(0).toUpperCase() + profileData.degreeLevel.slice(1) },
+                        { label: ob.reviewMajor, value: profileData.major || ob.notSpecified },
+                        { label: ob.reviewGpa, value: `${profileData.gpa} / ${profileData.gpaScale}` },
+                        { label: ob.reviewIelts, value: profileData.ieltsScore ? String(profileData.ieltsScore) : ob.notSpecified },
+                        { label: ob.reviewSat, value: profileData.satScore ? String(profileData.satScore) : ob.notSpecified },
+                        { label: ob.reviewConsultingBudget, value: `$${profileData.consultingBudget.toLocaleString()}` },
+                        { label: ob.reviewEducationBudget, value: `$${profileData.educationBudget.toLocaleString()}` },
+                        { label: ob.reviewCountries, value: profileData.preferredCountries.length > 0 ? profileData.preferredCountries.join(", ") : ob.any },
                       ].map((row, i, arr) => (
-                        <div key={row.label} className={"flex items-center justify-between px-5 py-3.5" + (i < arr.length - 1 ? " border-b border-border/50" : "")}>
+                        <div key={i} className={"flex items-center justify-between px-5 py-3.5" + (i < arr.length - 1 ? " border-b border-border/50" : "")}>
                           <span className="text-sm text-muted-foreground">{row.label}</span>
                           <span className="text-sm font-semibold">{row.value}</span>
                         </div>
@@ -598,8 +567,8 @@ export default function Compare() {
                     </AnimatePresence>
 
                     <div className="flex gap-3">
-                      <Button variant="outline" onClick={() => setOnboardingStep(3)}>Back</Button>
-                      <Button onClick={handleOnboardingSubmit} isLoading={isSubmittingProfile} className="flex-1">Complete Profile</Button>
+                      <Button variant="outline" onClick={() => setOnboardingStep(3)}>{ob.back}</Button>
+                      <Button onClick={handleOnboardingSubmit} isLoading={isSubmittingProfile} className="flex-1">{ob.completeProfile}</Button>
                     </div>
                   </motion.div>
                 )}
@@ -612,20 +581,22 @@ export default function Compare() {
   }
 
   // ── Main compare view ─────────────────────────────────────────────────────
+  const tm = tc.main;
   return (
     <div className="min-h-screen premium-bg pb-16">
       <div className="sticky top-0 z-40 border-b border-border/70 bg-background/95 backdrop-blur-sm" style={{ willChange: "transform", transform: "translateZ(0)" }}>
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           <Link href="/">
-            <span className="font-display text-xl font-bold cursor-pointer hover:text-primary transition-colors">Lerank</span>
+            <span className="font-brand text-3xl cursor-pointer hover:text-primary transition-colors">Lerank</span>
           </Link>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <span className="hidden text-sm text-muted-foreground sm:block">
-              Welcome, <span className="font-semibold text-foreground">{user.fullName}</span>
+              {tm.welcome}<span className="font-semibold text-foreground">{user.fullName}</span>
             </span>
+            <LanguageToggle />
             <ThemeToggle />
             <Link href="/dashboard">
-              <Button variant="outline" size="sm">Dashboard</Button>
+              <Button variant="outline" size="sm">{tm.dashboard}</Button>
             </Link>
             <Button variant="outline" size="sm" onClick={logout} className="text-muted-foreground hover:text-destructive hover:border-destructive/50">
               <LogOut className="h-4 w-4" />
@@ -635,27 +606,27 @@ export default function Compare() {
       </div>
 
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 pt-10 md:flex-row">
-        <aside className="w-full shrink-0 space-y-4 md:w-72">
+        <aside className="w-full shrink-0 space-y-4 md:w-64">
           <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} className="reveal-card rounded-2xl border border-border/70 bg-card/90 p-5">
             <h3 className="mb-4 flex items-center gap-2 text-base font-bold">
               <Filter className="h-4 w-4 text-primary" />
-              Filters
+              {tm.filterTitle}
               {(filterCountry !== "All" || filterRating !== "Any") && (
-                <button type="button" onClick={() => { setFilterCountry("All"); setFilterRating("Any"); }} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors">Clear</button>
+                <button type="button" onClick={() => { setFilterCountry("All"); setFilterRating("Any"); }} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors">{tm.clear}</button>
               )}
             </h3>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Country</Label>
+                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tm.filterCountry}</Label>
                 <select className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm" value={filterCountry} onChange={(e) => setFilterCountry(e.target.value)}>
-                  <option value="All">All Countries</option>
+                  <option value="All">{tm.allCountries}</option>
                   {COUNTRY_OPTIONS.map((c) => <option key={c}>{c}</option>)}
                 </select>
               </div>
               <div className="space-y-2">
-                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Min Rating</Label>
+                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tm.filterRating}</Label>
                 <select className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm" value={filterRating} onChange={(e) => setFilterRating(e.target.value)}>
-                  <option value="Any">Any Rating</option>
+                  <option value="Any">{tm.anyRating}</option>
                   <option value="4.5+">4.5+</option>
                   <option value="4.8+">4.8+</option>
                 </select>
@@ -663,24 +634,24 @@ export default function Compare() {
             </div>
             {(filterCountry !== "All" || filterRating !== "Any") && (
               <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="mt-4 rounded-lg bg-primary/10 px-3 py-2 text-xs text-gold font-medium">
-                Showing {filteredConsultants.length} of {consultants.length}
+                {tm.showing} {filteredConsultants.length} {tm.showingOf} {consultants.length}
               </motion.div>
             )}
           </motion.div>
 
           <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="reveal-card rounded-2xl border border-border/70 bg-card/90 p-5">
             <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-base font-bold">Your Profile</h3>
+              <h3 className="text-base font-bold">{tm.yourProfile}</h3>
               <Link href="/dashboard">
-                <button type="button" className="text-xs text-primary hover:underline">Edit</button>
+                <button type="button" className="text-xs text-primary hover:underline">{tm.edit}</button>
               </Link>
             </div>
             <div className="space-y-2 text-sm">
               {[
-                { label: "Degree", value: (user.profile?.degreeLevel ?? "—") },
-                { label: "Major", value: user.profile?.major ?? "—" },
-                { label: "Budget", value: user.profile?.consultingBudget ? `$${user.profile.consultingBudget.toLocaleString()}` : (user.profile?.budgetMax ? `$${user.profile.budgetMax.toLocaleString()}` : "—") },
-                { label: "GPA", value: user.profile?.gpa ? `${user.profile.gpa} / ${user.profile.gpaScale}` : "—" },
+                { label: tm.degree, value: (user.profile?.degreeLevel ?? "—") },
+                { label: tm.major, value: user.profile?.major ?? "—" },
+                { label: tm.budget, value: user.profile?.consultingBudget ? `$${user.profile.consultingBudget.toLocaleString()}` : (user.profile?.budgetMax ? `$${user.profile.budgetMax.toLocaleString()}` : "—") },
+                { label: tm.gpa, value: user.profile?.gpa ? `${user.profile.gpa} / ${user.profile.gpaScale}` : "—" },
               ].map(({ label, value }) => (
                 <div key={label} className="flex justify-between">
                   <span className="text-muted-foreground">{label}</span>
@@ -693,8 +664,8 @@ export default function Compare() {
 
         <main className="flex-1 min-w-0">
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
-            <h1 className="font-display text-3xl font-bold">Your Top Matches</h1>
-            <p className="mt-1 text-muted-foreground">Ranked by compatibility with your profile and budget.</p>
+            <h1 className="font-display text-3xl font-bold">{tm.topMatches}</h1>
+            <p className="mt-1 text-muted-foreground">{tm.topMatchesSubtitle}</p>
           </motion.div>
 
           {isLoadingConsultants ? (
@@ -739,16 +710,16 @@ export default function Compare() {
                               </div>
                             </div>
                           </div>
-                          <Badge variant="success" className="shrink-0">{consultant.successRate}% Success</Badge>
+                          <Badge variant="success" className="shrink-0">{consultant.successRate}% {tm.tableSuccessRate}</Badge>
                         </div>
 
                         <p className="mb-4 text-sm leading-relaxed text-muted-foreground line-clamp-2">
-                          {consultant.description || "Premium education consulting with personalized guidance for international applicants."}
+                          {consultant.description || tm.defaultDesc}
                         </p>
 
                         <div className="mb-2 mt-auto">
                           <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                            <span>Match score</span>
+                            <span>{tm.matchScore}</span>
                             <span className="font-bold text-gold">{consultant.matchScore ?? Math.round(85 + Math.random() * 14)}%</span>
                           </div>
                           <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
@@ -771,7 +742,7 @@ export default function Compare() {
                           <button
                             type="button"
                             onClick={() => toggleCompare(consultant.id)}
-                            title={compareIds.includes(consultant.id) ? "Remove from compare" : compareIds.length >= 3 ? "Max 3 consultants" : "Add to compare"}
+                            title={compareIds.includes(consultant.id) ? tm.compare : compareIds.length >= 3 ? "Max 3" : tm.compare}
                             className={`flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-all duration-200 ${
                               compareIds.includes(consultant.id)
                                 ? "border-primary bg-primary/10 text-primary"
@@ -781,10 +752,10 @@ export default function Compare() {
                             }`}
                           >
                             {compareIds.includes(consultant.id) ? <CheckSquare className="h-3.5 w-3.5" /> : <Square className="h-3.5 w-3.5" />}
-                            Compare
+                            {tm.compare}
                           </button>
-                          <Button variant="outline" className="flex-1 text-sm">View Profile</Button>
-                          <Button className="flex-1 text-sm">Hire</Button>
+                          <Button variant="outline" className="flex-1 text-sm">{tm.viewProfile}</Button>
+                          <Button className="flex-1 text-sm">{tm.hire}</Button>
                         </div>
                       </CardContent>
                     </Card>
@@ -794,9 +765,9 @@ export default function Compare() {
                 {filteredConsultants.length === 0 && (
                   <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-full rounded-2xl border border-border/70 bg-card/70 p-12 text-center">
                     <Filter className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
-                    <p className="font-semibold">No consultants match your filters</p>
-                    <p className="mt-1 text-sm text-muted-foreground">Try adjusting the country or rating filters.</p>
-                    <Button variant="outline" size="sm" className="mt-4" onClick={() => { setFilterCountry("All"); setFilterRating("Any"); }}>Clear filters</Button>
+                    <p className="font-semibold">{tm.noResults}</p>
+                    <p className="mt-1 text-sm text-muted-foreground">{tm.noResultsHint}</p>
+                    <Button variant="outline" size="sm" className="mt-4" onClick={() => { setFilterCountry("All"); setFilterRating("Any"); }}>{tm.clearFilters}</Button>
                   </motion.div>
                 )}
               </div>
@@ -815,16 +786,12 @@ export default function Compare() {
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className="fixed bottom-0 left-0 right-0 z-50"
           >
-            {/* Collapse toggle */}
-            <div
-              className="mx-auto w-full max-w-7xl px-6"
-              onClick={() => setShowComparePanel(p => !p)}
-            >
+            <div className="mx-auto w-full max-w-7xl px-6" onClick={() => setShowComparePanel(p => !p)}>
               <div className="flex cursor-pointer items-center justify-between rounded-t-2xl border border-b-0 border-border/80 bg-card px-5 py-3 shadow-lg">
                 <div className="flex items-center gap-3">
                   <GitCompare className="h-4 w-4 text-primary" />
                   <span className="text-sm font-bold">
-                    Comparing {compareIds.length} consultant{compareIds.length > 1 ? "s" : ""}
+                    {tm.comparing} {compareIds.length} {compareIds.length > 1 ? tm.consultantPlural : tm.consultantSingle}
                   </span>
                   <div className="flex gap-2">
                     {compareIds.map(id => {
@@ -844,7 +811,7 @@ export default function Compare() {
                 <div className="flex items-center gap-2">
                   {compareIds.length >= 2 && (
                     <span className="text-xs text-muted-foreground">
-                      {showComparePanel ? "Hide" : "Show"} comparison
+                      {showComparePanel ? tm.hideComparison : tm.showComparison} {tm.comparison}
                     </span>
                   )}
                   <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-300 ${showComparePanel ? "rotate-0" : "rotate-180"}`} />
@@ -852,7 +819,6 @@ export default function Compare() {
               </div>
             </div>
 
-            {/* Comparison table */}
             <AnimatePresence>
               {showComparePanel && compareIds.length >= 2 && (
                 <motion.div
@@ -866,12 +832,12 @@ export default function Compare() {
                     {(() => {
                       const compared = compareIds.map(id => consultants.find(x => x.id === id)).filter(Boolean);
                       const rows: { label: string; key: (c: any) => string | number }[] = [
-                        { label: "Rating", key: c => c.rating },
-                        { label: "Success Rate", key: c => `${c.successRate}%` },
-                        { label: "Students Helped", key: c => c.studentsHelped ?? "—" },
-                        { label: "Price Range", key: c => `$${c.priceMin}–$${c.priceMax}` },
-                        { label: "Match Score", key: c => `${c.matchScore ?? "—"}%` },
-                        { label: "Countries", key: c => Array.isArray(c.specializedCountries) ? c.specializedCountries.join(", ") : "Various" },
+                        { label: tm.tableRating, key: c => c.rating },
+                        { label: tm.tableSuccessRate, key: c => `${c.successRate}%` },
+                        { label: tm.tableStudentsHelped, key: c => c.studentsHelped ?? "—" },
+                        { label: tm.tablePriceRange, key: c => `$${c.priceMin}–$${c.priceMax}` },
+                        { label: tm.tableMatchScore, key: c => `${c.matchScore ?? "—"}%` },
+                        { label: tm.tableCountries, key: c => Array.isArray(c.specializedCountries) ? c.specializedCountries.join(", ") : "Various" },
                       ];
                       return (
                         <table className="w-full min-w-[480px] text-sm">
@@ -892,7 +858,7 @@ export default function Compare() {
                           </thead>
                           <tbody>
                             {rows.map((row, ri) => (
-                              <tr key={row.label} className={ri % 2 === 0 ? "bg-muted/30" : ""}>
+                              <tr key={ri} className={ri % 2 === 0 ? "bg-muted/30" : ""}>
                                 <td className="py-2.5 pr-4 text-xs font-semibold text-muted-foreground">{row.label}</td>
                                 {compared.map((c: any) => (
                                   <td key={c.id} className="py-2.5 text-center font-semibold">{row.key(c)}</td>
