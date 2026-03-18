@@ -41,25 +41,25 @@ export default function CompanyAdmin() {
   if (!user || user.role !== 'company_admin') return <div className="p-8 text-center text-red-500">Access Denied</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col fixed inset-y-0 z-10">
-        <div className="h-20 flex items-center px-6 border-b border-gray-100">
-          <span className="text-xl font-bold text-[#1A0F0A]">Consultant Portal</span>
+    <div className="min-h-screen bg-background flex">
+      <aside className="w-64 bg-card border-r border-border flex flex-col fixed inset-y-0 z-10">
+        <div className="h-20 flex items-center px-6 border-b border-border">
+          <span className="text-xl font-bold text-foreground">Consultant Portal</span>
         </div>
         <div className="p-4 flex-1 space-y-1">
-          <div className="px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">Management</div>
-          <a className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-[#C4956A]/10 text-[#C4956A] font-semibold cursor-pointer">
+          <div className="px-4 py-2 text-xs font-bold text-muted-foreground uppercase tracking-wider">Management</div>
+          <a className="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-gold/10 text-gold font-semibold cursor-pointer">
             <Users className="w-5 h-5" /> Students
           </a>
-          <a className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 font-medium cursor-pointer">
+          <a className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-muted-foreground hover:bg-muted font-medium cursor-pointer">
             <Target className="w-5 h-5" /> Templates
           </a>
-          <a className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-gray-600 hover:bg-gray-50 font-medium cursor-pointer">
+          <a className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-muted-foreground hover:bg-muted font-medium cursor-pointer">
             <Settings className="w-5 h-5" /> Settings
           </a>
         </div>
-        <div className="p-4 border-t border-gray-100">
-          <div className="text-sm font-medium text-gray-700 mb-1">{user.fullName}</div>
+        <div className="p-4 border-t border-border">
+          <div className="text-sm font-medium text-foreground mb-1">{user.fullName}</div>
           <button onClick={logout} className="text-xs text-red-500 hover:text-red-700 flex items-center gap-1">
             <LogOut className="w-3 h-3" /> Sign Out
           </button>
@@ -69,21 +69,21 @@ export default function CompanyAdmin() {
       <main className="flex-1 ml-64 p-8">
         <div className="max-w-6xl mx-auto space-y-8">
           <header>
-            <h1 className="text-3xl font-bold text-[#1A0F0A]">Student Management</h1>
-            <p className="text-gray-500">Manage active applications and update milestones.</p>
+            <h1 className="text-3xl font-bold text-foreground">Student Management</h1>
+            <p className="text-muted-foreground">Manage active applications and update milestones.</p>
           </header>
 
           <Card className="shadow-sm">
-            <div className="p-4 border-b flex justify-between items-center bg-gray-50/50">
+            <div className="p-4 border-b flex justify-between items-center bg-muted/30">
               <div className="relative w-72">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input placeholder="Search students..." className="w-full pl-9 pr-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-[#C4956A]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                <input placeholder="Search students..." className="w-full pl-9 pr-4 py-2 rounded-lg border border-border bg-card text-sm focus:outline-none focus:border-primary text-foreground placeholder:text-muted-foreground" />
               </div>
             </div>
 
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="bg-gray-50 text-gray-500 uppercase font-semibold">
+                <thead className="bg-muted/50 text-muted-foreground uppercase font-semibold">
                   <tr>
                     <th className="px-6 py-4">Student</th>
                     <th className="px-6 py-4">Service</th>
@@ -92,15 +92,15 @@ export default function CompanyAdmin() {
                     <th className="px-6 py-4 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-border">
                   {students.map(student => (
-                    <tr key={student.applicationId} className="hover:bg-gray-50/50">
-                      <td className="px-6 py-4 font-medium text-gray-900">{student.studentName}</td>
-                      <td className="px-6 py-4 text-gray-600">{student.serviceName}</td>
+                    <tr key={student.applicationId} className="hover:bg-muted/30">
+                      <td className="px-6 py-4 font-medium text-foreground">{student.studentName}</td>
+                      <td className="px-6 py-4 text-muted-foreground">{student.serviceName}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
-                          <div className="w-full bg-gray-200 rounded-full h-2 max-w-[100px]">
-                            <div className="bg-[#C4956A] h-2 rounded-full" style={{ width: `${student.progressPercent}%` }}></div>
+                          <div className="w-full bg-muted rounded-full h-2 max-w-[100px]">
+                            <div className="bg-primary h-2 rounded-full" style={{ width: `${student.progressPercent}%` }}></div>
                           </div>
                           <span className="text-xs font-bold">{Math.round(student.progressPercent)}%</span>
                         </div>
@@ -117,14 +117,14 @@ export default function CompanyAdmin() {
                       </td>
                     </tr>
                   ))}
-                  {!students.length && <tr><td colSpan={5} className="px-6 py-8 text-center text-gray-500">No active students yet.</td></tr>}
+                  {!students.length && <tr><td colSpan={5} className="px-6 py-8 text-center text-muted-foreground">No active students yet.</td></tr>}
                 </tbody>
               </table>
             </div>
           </Card>
 
           {selectedApp && (
-            <Card className="border-[#C4956A] shadow-lg">
+            <Card className="border-primary shadow-lg">
               <CardContent className="p-6">
                 <div className="flex justify-between items-center mb-6">
                   <h2 className="text-xl font-bold">Update Milestones for Application #{selectedApp.id}</h2>
@@ -133,10 +133,10 @@ export default function CompanyAdmin() {
 
                 <div className="space-y-4">
                   {selectedApp.milestones?.map((milestone: any) => (
-                    <div key={milestone.id} className="flex items-center justify-between p-4 border border-gray-100 rounded-xl bg-gray-50">
+                    <div key={milestone.id} className="flex items-center justify-between p-4 border border-border rounded-xl bg-muted/50">
                       <div>
-                        <div className="font-bold text-gray-900">{milestone.name}</div>
-                        <div className="text-sm text-gray-500">Current: <span className="font-semibold capitalize">{milestone.status.replace(/_/g, ' ')}</span></div>
+                        <div className="font-bold text-foreground">{milestone.name}</div>
+                        <div className="text-sm text-muted-foreground">Current: <span className="font-semibold capitalize">{milestone.status.replace(/_/g, ' ')}</span></div>
                       </div>
                       <div className="flex gap-2">
                         {milestone.status === 'completed' ? (

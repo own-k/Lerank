@@ -522,10 +522,10 @@ const ru: Translations = {
     getStarted: "Начать",
   },
   hero: {
-    badge: "Площадка с защитой эскроу",
+    badge: "Площадка с защитой Escrow",
     heading1: "Премиальное руководство.",
     heading2: "Реальная ответственность.",
-    body: "Площадка для сравнения и найма лучших консультантов. Платежи в эскроу до тех пор, пока ваш консультант не выполнит проверенные этапы.",
+    body: "Площадка для сравнения и найма лучших консультантов. Платежи в Escrow до тех пор, пока ваш консультант не выполнит проверенные этапы.",
     findConsultant: "Найти консультанта",
     iAmConsultant: "Сравнить консультантов",
   },
@@ -541,7 +541,7 @@ const ru: Translations = {
     students: "Студенты",
     success: "Успех",
     activeMilestones: "Активные этапы",
-    escrowBalance: "Баланс эскроу",
+    escrowBalance: "Баланс Escrow",
     escrowAmount: "$1 200 под защитой",
     milestonesProgress: "2 из 3 этапов",
     milestoneItems: [
@@ -556,10 +556,10 @@ const ru: Translations = {
     flow: [
       { step: "01", title: "Создайте профиль", desc: "Укажите академические данные, бюджет и страны. Занимает менее двух минут." },
       { step: "02", title: "Сравните консультантов", desc: "Просматривайте ранжированные совпадения. Фильтруйте по стране, рейтингу и цене." },
-      { step: "03", title: "Нанять через эскроу", desc: "Пополняйте этапы в эскроу. Платёж выпускается только после вашего одобрения." },
+      { step: "03", title: "Нанять через Escrow", desc: "Пополняйте этапы в Escrow. Платёж выпускается только после вашего одобрения." },
     ],
     features: [
-      { title: "Защита эскроу", desc: "Платёж удерживается в эскроу до тех пор, пока каждый этап не одобрен вами." },
+      { title: "Защита Escrow", desc: "Платёж удерживается в Escrow до тех пор, пока каждый этап не одобрен вами." },
       { title: "Живой прогресс", desc: "Каждый результат отслеживается на общей панели с метками времени." },
       { title: "Проверенные консультанты", desc: "Каждый профиль проходит проверку качества перед публикацией." },
       { title: "Точное сопоставление", desc: "Наш движок учитывает GPA, бюджет, уровень образования и страны." },
@@ -580,11 +580,11 @@ const ru: Translations = {
       "Нет прозрачности в ходе работы",
       "Нет ответственности после оплаты",
     ],
-    cardFooter: "Эскроу Lerank поддерживает согласованность стимулов от начала до конца.",
+    cardFooter: "Escrow Lerank поддерживает согласованность стимулов от начала до конца.",
   },
   guarantee: {
     sectionLabel: "Гарантия",
-    heading: "Поэтапное эскроу. Обе стороны защищены.",
+    heading: "Поэтапное Escrow. Обе стороны защищены.",
     benefits: [
       {
         title: "Для студентов",
@@ -605,15 +605,15 @@ const ru: Translations = {
     ],
     promise: {
       badge: "Обещание Lerank",
-      title: "Гарантия эскроу",
-      body: "Каждый платёж на Lerank удерживается на регулируемом эскроу-счёте. Средства выпускаются только когда вы явно одобряете этап. Мы не принимаем ничьей стороны.",
+      title: "Гарантия Escrow",
+      body: "Каждый платёж на Lerank удерживается на регулируемом Escrow-счёте. Средства выпускаются только когда вы явно одобряете этап. Мы не принимаем ничьей стороны.",
       points: [
         "Регулируемая обработка платежей",
         "Разрешение споров в течение 48 часов",
         "Автоматический возврат за незапущенные этапы",
         "Нулевая комиссия на спорные возвраты",
       ],
-      cta: "Начать с защитой эскроу",
+      cta: "Начать с защитой Escrow",
     },
   },
   cta: {
@@ -623,7 +623,7 @@ const ru: Translations = {
     signIn: "Войти",
   },
   footer: {
-    brandDesc: "Площадка для сравнения и найма лучших консультантов. Защита клиентов через поэтапные эскроу-платежи.",
+    brandDesc: "Площадка для сравнения и найма лучших консультантов. Защита клиентов через поэтапные Escrow-платежи.",
     contact: "Контакты",
     followUs: "Подписаться",
     copyright: "© 2026 Lerank. Консалтинговая площадка, ориентированная на доверие.",
@@ -741,7 +741,7 @@ const ru: Translations = {
       title: "Lerank",
       dashboard: "Панель",
       findConsultants: "Найти консультантов",
-      escrowPayments: "Платежи эскроу",
+      escrowPayments: "Платежи Escrow",
       editProfile: "Редактировать",
       student: "Студент",
       signOut: "Выйти",
@@ -754,7 +754,7 @@ const ru: Translations = {
     stats: {
       activeApps: "Активные заявки",
       milestonesWk: "Этапы (нед.)",
-      escrow: "Эскроу",
+      escrow: "Escrow",
       released: "Выпущено",
     },
     applications: {
@@ -802,10 +802,10 @@ const uz: Translations = {
     getStarted: "Boshlash",
   },
   hero: {
-    badge: "Eskrou himoyali konsulting bozori",
+    badge: "Escrow himoyali konsulting bozori",
     heading1: "Premium yo'nalish.",
     heading2: "Haqiqiy mas'uliyat.",
-    body: "Eng yaxshi konsultantlarni solishtirish va yollash uchun ishonchga asoslangan bozor. To'lovlar bosqichlar bajarilmaguncha eskroud turiladi.",
+    body: "Eng yaxshi konsultantlarni solishtirish va yollash uchun ishonchga asoslangan bozor. To'lovlar bosqichlar bajarilmaguncha Escrow-da turiladi.",
     findConsultant: "Konsultant topish",
     iAmConsultant: "Konsultantlarni solishtirish",
   },
@@ -821,7 +821,7 @@ const uz: Translations = {
     students: "Talabalar",
     success: "Muvaffaqiyat",
     activeMilestones: "Faol bosqichlar",
-    escrowBalance: "Eskrou balansi",
+    escrowBalance: "Escrow balansi",
     escrowAmount: "$1,200 himoyada",
     milestonesProgress: "3 dan 2 bosqich",
     milestoneItems: [
@@ -836,10 +836,10 @@ const uz: Translations = {
     flow: [
       { step: "01", title: "Profil yarating", desc: "Akademik ma'lumot, byudjet va mamlakatlarni kiriting. Ikki daqiqadan kam." },
       { step: "02", title: "Solishtiring", desc: "Reytingli mos kelishlarni ko'ring. Mamlakat, reyting va narx bo'yicha filtrlang." },
-      { step: "03", title: "Eskrou orqali yollash", desc: "Bosqichlarni eskroud to'ldiring. To'lov faqat tasdiqlashingizdan keyin chiqariladi." },
+      { step: "03", title: "Escrow orqali yollash", desc: "Bosqichlarni Escrow-da to'ldiring. To'lov faqat tasdiqlashingizdan keyin chiqariladi." },
     ],
     features: [
-      { title: "Eskrou himoyasi", desc: "To'lov har bir bosqich siz tomonidan tasdiqlangunicha eskroud turiladi." },
+      { title: "Escrow himoyasi", desc: "To'lov har bir bosqich siz tomonidan tasdiqlangunicha Escrow-da turiladi." },
       { title: "Jonli jarayon", desc: "Har bir natija vaqt belgisi bilan umumiy panelda kuzatiladi." },
       { title: "Tasdiqlangan konsultantlar", desc: "Har bir profil ro'yxatga kiritilishdan oldin sifat tekshiruvidan o'tadi." },
       { title: "Aniq moslash", desc: "Tizimimiz GPA, byudjet, ta'lim darajasi va mamlakatlarni hisobga oladi." },
@@ -860,11 +860,11 @@ const uz: Translations = {
       "Davom etayotgan ish bo'yicha shaffoflik yo'q",
       "To'lovdan keyin javobgarlik yo'q",
     ],
-    cardFooter: "Lerank eskroui boshlanishidan oxirigacha rag'batni muvofiqlashtiradi.",
+    cardFooter: "Lerank Escrowi boshlanishidan oxirigacha rag'batni muvofiqlashtiradi.",
   },
   guarantee: {
     sectionLabel: "Kafolat",
-    heading: "Bosqichli eskrou. Ikkala tomon himoyalangan.",
+    heading: "Bosqichli Escrow. Ikkala tomon himoyalangan.",
     benefits: [
       {
         title: "Talabalar uchun",
@@ -885,15 +885,15 @@ const uz: Translations = {
     ],
     promise: {
       badge: "Lerank va'dasi",
-      title: "Eskrou kafolati",
-      body: "Leranktagi har bir to'lov tartibga solingan eskrou hisobida turiladi. Mablag' faqat siz bosqichni tasdiqlaganingizda chiqariladi. Biz kelishuvni bajaramiz.",
+      title: "Escrow kafolati",
+      body: "Leranktagi har bir to'lov tartibga solingan Escrow hisobida turiladi. Mablag' faqat siz bosqichni tasdiqlaganingizda chiqariladi. Biz kelishuvni bajaramiz.",
       points: [
         "Tartibga solingan to'lov qayta ishlash",
         "48 soat ichida nizo yechimi",
         "Boshlanmagan bosqichlar uchun avtomatik qaytarish",
         "Bahslashilgan qaytarishlarda nol komissiya",
       ],
-      cta: "Eskrou himoyasi bilan boshlash",
+      cta: "Escrow himoyasi bilan boshlash",
     },
   },
   cta: {
@@ -903,7 +903,7 @@ const uz: Translations = {
     signIn: "Kirish",
   },
   footer: {
-    brandDesc: "Konsultantlarni solishtirish va yollash uchun ishonchga asoslangan bozor. Mijozlarni bosqichli eskrou to'lovlari orqali himoya.",
+    brandDesc: "Konsultantlarni solishtirish va yollash uchun ishonchga asoslangan bozor. Mijozlarni bosqichli Escrow to'lovlari orqali himoya.",
     contact: "Aloqa",
     followUs: "Kuzatib boring",
     copyright: "© 2026 Lerank. Ishonchga asoslangan konsalting bozori.",
@@ -1021,7 +1021,7 @@ const uz: Translations = {
       title: "Lerank",
       dashboard: "Panel",
       findConsultants: "Konsultant topish",
-      escrowPayments: "Eskrou to'lovlari",
+      escrowPayments: "Escrow to'lovlari",
       editProfile: "Tahrirlash",
       student: "Talaba",
       signOut: "Chiqish",
@@ -1034,7 +1034,7 @@ const uz: Translations = {
     stats: {
       activeApps: "Faol arizalar",
       milestonesWk: "Bosqichlar (hft.)",
-      escrow: "Eskrou",
+      escrow: "Escrow",
       released: "Chiqarilgan",
     },
     applications: {

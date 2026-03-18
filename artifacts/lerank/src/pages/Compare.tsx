@@ -43,10 +43,12 @@ export default function Compare() {
   const [isLoginMode, setIsLoginMode] = useState(true);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [fullName, setFullName] = useState("");
   const [authError, setAuthError] = useState("");
   const [isSubmittingAuth, setIsSubmittingAuth] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [consultants, setConsultants] = useState<any[]>([]);
   const [isLoadingConsultants, setIsLoadingConsultants] = useState(false);
@@ -110,6 +112,21 @@ export default function Compare() {
     if (!email.includes("@") || !email.includes(".")) {
       setAuthError("Please enter a valid email address.");
       return;
+    }
+    if (!isLoginMode) {
+      const words = fullName.trim().split(/\s+/).filter(Boolean);
+      if (words.length < 1 || words.some(w => w.replace(/[^a-zA-Z]/g, "").length < 3)) {
+        setAuthError("Name must be at least 3 letters.");
+        return;
+      }
+      if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
+        setAuthError("Password must contain both letters and numbers.");
+        return;
+      }
+      if (password !== confirmPassword) {
+        setAuthError("Passwords do not match. Please try again.");
+        return;
+      }
     }
     setIsSubmittingAuth(true);
     try {
@@ -184,7 +201,7 @@ export default function Compare() {
           <div className="mb-8">
             <div className="mb-5 flex items-center justify-between">
               <Link href="/">
-                <button type="button" className="inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground">
+                <button type="button" className="inline-flex items-center gap-2 text-sm text-[#4A5248] dark:text-[#7A8E78] transition-colors hover:text-[#1E3D28] dark:hover:text-[#D4B96A]">
                   <ArrowLeft className="h-4 w-4" /> {tc.backToHome}
                 </button>
               </Link>
@@ -197,14 +214,15 @@ export default function Compare() {
             <p className="mt-1 text-sm text-muted-foreground">{tc.appSubtitle}</p>
           </div>
 
-          <Card className="border-border/70 bg-card shadow-xl overflow-hidden">
-            <div className="h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
-            <CardContent className="p-8">
-              <div className="mb-6 flex gap-1 rounded-xl bg-muted/50 p-1">
+          <Card className="overflow-hidden rounded-2xl border border-black/[0.08] dark:border-white/[0.07] dark:bg-[#1A2218]" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+            <CardContent className="p-8" style={{ paddingTop: '2rem' }}>
+              <div className="mb-6 flex gap-1 rounded-xl bg-[#F0EDE4] dark:bg-[#141C12] p-1">
                 {[tc.tabs.signIn, tc.tabs.register].map((label, i) => (
                   <button key={i} type="button"
-                    onClick={() => { setIsLoginMode(i === 0); setAuthError(""); setShowPassword(false); }}
-                    className={((i === 0) === isLoginMode ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground") + " flex-1 rounded-lg py-2.5 text-sm font-semibold transition-all duration-200"}
+                    onClick={() => { setIsLoginMode(i === 0); setAuthError(""); setShowPassword(false); setConfirmPassword(""); setShowConfirmPassword(false); }}
+                    className={((i === 0) === isLoginMode
+                      ? "bg-[#FAFAF8] dark:bg-[#0F1410] text-[#111811] dark:text-[#F0ECE2] shadow-sm rounded-[10px]"
+                      : "text-[#4A5248] dark:text-[#7A8E78]") + " flex-1 py-2.5 text-sm font-semibold transition-all duration-200"}
                   >{label}</button>
                 ))}
               </div>
@@ -221,20 +239,25 @@ export default function Compare() {
                       className="overflow-hidden bg-transparent"
                     >
                       <div className="flex flex-col gap-1.5 pb-1">
-                        <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tc.form.fullName}</Label>
+                        <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">{tc.form.fullName}</Label>
                         <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder={tc.form.fullNamePlaceholder} />
+                        {fullName.trim().length > 0 && (() => {
+                          const words = fullName.trim().split(/\s+/).filter(Boolean);
+                          if (words.some(w => w.replace(/[^a-zA-Z]/g, "").length < 3)) return <p className="text-xs text-destructive mt-0.5">Each name must have at least 3 letters</p>;
+                          return <p className="text-xs text-emerald-600 mt-0.5">✓ {words.join(" ")}</p>;
+                        })()}
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
 
                 <div className="flex flex-col gap-1.5">
-                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tc.form.email}</Label>
+                  <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">{tc.form.email}</Label>
                   <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={tc.form.emailPlaceholder} />
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tc.form.password}</Label>
+                  <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">{tc.form.password}</Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
@@ -255,13 +278,53 @@ export default function Compare() {
                   </div>
                 </div>
 
+                <AnimatePresence initial={false}>
+                  {!isLoginMode && (
+                    <motion.div
+                      key="confirm-password-field"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                      className="overflow-hidden bg-transparent"
+                    >
+                      <div className="flex flex-col gap-1.5 pb-1">
+                        <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">Confirm Password</Label>
+                        <div className="relative">
+                          <Input
+                            type={showConfirmPassword ? "text" : "password"}
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            placeholder="Re-enter your password"
+                            className={`pr-12 ${!isLoginMode && confirmPassword && password ? (confirmPassword === password ? "border-emerald-400 focus:ring-emerald-400" : "border-destructive focus:ring-destructive") : ""}`}
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword((v) => !v)}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                            tabIndex={-1}
+                          >
+                            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
+                        {!isLoginMode && confirmPassword && password && confirmPassword !== password && (
+                          <p className="text-xs text-destructive mt-0.5">Passwords do not match</p>
+                        )}
+                        {!isLoginMode && confirmPassword && password && confirmPassword === password && (
+                          <p className="text-xs text-emerald-600 mt-0.5 flex items-center gap-1">✓ Passwords match</p>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 <AnimatePresence>
                   {authError && (
                     <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">{authError}</motion.p>
                   )}
                 </AnimatePresence>
 
-                <Button type="submit" isLoading={isSubmittingAuth} className="mt-1 w-full h-12 text-base">
+                <Button type="submit" isLoading={isSubmittingAuth} className="mt-1 w-full h-12 text-base font-semibold dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
                   {isLoginMode ? tc.submitSignIn : tc.submitCreateAccount}
                   {!isSubmittingAuth && <ArrowRight className="ml-2 h-4 w-4" />}
                 </Button>
@@ -298,8 +361,7 @@ export default function Compare() {
             ))}
           </div>
 
-          <Card className="border-border/70 bg-card shadow-xl overflow-hidden">
-            <div className="h-1 bg-gradient-to-r from-primary/60 via-primary to-primary/60" />
+          <Card className="bg-card overflow-hidden border-0" style={{ boxShadow: '0 2px 16px rgba(0,0,0,0.07)' }}>
             <CardContent className="p-8">
               <AnimatePresence mode="wait">
 
@@ -332,7 +394,8 @@ export default function Compare() {
                             type="range" min="0" max={profileData.gpaScale} step={profileData.gpaScale === 100 ? 1 : 0.01}
                             value={Number(profileData.gpa)}
                             onChange={(e) => set("gpa")(parseFloat(e.target.value))}
-                            className="w-full h-2 rounded-full appearance-none cursor-pointer bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-400 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-gold [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-gold [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
+                            className="slider-academic"
+                            style={{ '--pct': `${(Number(profileData.gpa) / Number(profileData.gpaScale)) * 100}%` } as React.CSSProperties}
                           />
                           <div className="flex justify-between mt-1.5">
                             <span className="text-[10px] text-muted-foreground/60">0</span>
@@ -368,7 +431,8 @@ export default function Compare() {
                             type="range" min="0" max="9" step="0.5"
                             value={profileData.ieltsScore === "" ? 0 : Number(profileData.ieltsScore)}
                             onChange={(e) => set("ieltsScore")(parseFloat(e.target.value))}
-                            className="w-full h-2 rounded-full appearance-none cursor-pointer bg-gradient-to-r from-rose-400 via-amber-400 via-blue-400 to-emerald-400 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-gold [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-gold [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
+                            className="slider-academic"
+                            style={{ '--pct': `${(profileData.ieltsScore === "" ? 0 : Number(profileData.ieltsScore)) / 9 * 100}%` } as React.CSSProperties}
                           />
                           <div className="flex justify-between mt-1.5">
                             {[0,1,2,3,4,5,6,7,8,9].map((v) => (
@@ -377,7 +441,7 @@ export default function Compare() {
                           </div>
                         </div>
                         {profileData.ieltsScore === "" && (
-                          <button type="button" onClick={() => set("ieltsScore")(6.5)} className="text-xs text-gold underline underline-offset-2 hover:text-gold/80">{ob.addScore}</button>
+                          <button type="button" onClick={() => set("ieltsScore")(6.5)} className="text-xs text-[#1E3D28] dark:text-[#D4B96A] hover:underline underline-offset-2">+ {ob.addScore}</button>
                         )}
                         {profileData.ieltsScore !== "" && (
                           <button type="button" onClick={() => set("ieltsScore")("")} className="text-xs text-muted-foreground/60 underline underline-offset-2 hover:text-muted-foreground">{ob.clear}</button>
@@ -410,7 +474,8 @@ export default function Compare() {
                             type="range" min="400" max="1600" step="10"
                             value={profileData.satScore === "" ? 400 : Number(profileData.satScore)}
                             onChange={(e) => set("satScore")(parseInt(e.target.value))}
-                            className="w-full h-2 rounded-full appearance-none cursor-pointer bg-gradient-to-r from-rose-400 via-amber-400 via-blue-400 to-emerald-400 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-gold [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-5 [&::-moz-range-thumb]:h-5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-white [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-gold [&::-moz-range-thumb]:shadow-md [&::-moz-range-thumb]:cursor-pointer"
+                            className="slider-academic"
+                            style={{ '--pct': `${(profileData.satScore === "" ? 0 : (Number(profileData.satScore) - 400) / 1200) * 100}%` } as React.CSSProperties}
                           />
                           <div className="flex justify-between mt-1.5">
                             <span className="text-[10px] text-muted-foreground/60">400</span>
@@ -419,7 +484,7 @@ export default function Compare() {
                           </div>
                         </div>
                         {profileData.satScore === "" && (
-                          <button type="button" onClick={() => set("satScore")(1200)} className="text-xs text-gold underline underline-offset-2 hover:text-gold/80">{ob.addScore}</button>
+                          <button type="button" onClick={() => set("satScore")(1200)} className="text-xs text-[#1E3D28] dark:text-[#D4B96A] hover:underline underline-offset-2">+ {ob.addScore}</button>
                         )}
                         {profileData.satScore !== "" && (
                           <button type="button" onClick={() => set("satScore")("")} className="text-xs text-muted-foreground/60 underline underline-offset-2 hover:text-muted-foreground">{ob.clear}</button>
@@ -428,8 +493,8 @@ export default function Compare() {
                     </div>
 
                     <div className="flex gap-3">
-                      <Button variant="outline" onClick={logout} className="flex items-center gap-1.5"><ArrowLeft className="h-4 w-4" /> {ob.back}</Button>
-                      <Button onClick={() => setOnboardingStep(2)} className="flex-1">{ob.continue} <ArrowRight className="ml-2 h-4 w-4" /></Button>
+                      <Button variant="outline" onClick={logout} className="flex items-center gap-1.5 dark:border-[#D4B96A]/60 dark:text-[#D4B96A] dark:bg-transparent dark:hover:bg-[#D4B96A]/10"><ArrowLeft className="h-4 w-4" /> {ob.back}</Button>
+                      <Button onClick={() => setOnboardingStep(2)} className="flex-1 dark:bg-[#D4B96A] dark:text-[#111811] dark:hover:bg-[#D4B96A]/90">{ob.continue} <ArrowRight className="ml-2 h-4 w-4" /></Button>
                     </div>
                   </motion.div>
                 )}
@@ -489,7 +554,7 @@ export default function Compare() {
                       <div className="space-y-2">
                         <Label>{ob.consultingBudget}</Label>
                         <p className="text-xs text-muted-foreground">{ob.consultingBudgetHint}</p>
-                        <input type="range" min="500" max="6000" step="50" value={profileData.consultingBudget} onChange={(e) => set("consultingBudget")(parseInt(e.target.value))} className="w-full accent-primary" />
+                        <input type="range" min="500" max="6000" step="50" value={profileData.consultingBudget} onChange={(e) => set("consultingBudget")(parseInt(e.target.value))} className="w-full accent-gold" />
                         <div className="flex justify-between text-xs text-muted-foreground">
                           <span>$500</span>
                           <span className="font-display text-lg font-bold text-foreground">${profileData.consultingBudget.toLocaleString()}</span>
@@ -500,7 +565,7 @@ export default function Compare() {
                       <div className="space-y-2">
                         <Label>{ob.educationBudget}</Label>
                         <p className="text-xs text-muted-foreground">{ob.educationBudgetHint}</p>
-                        <input type="range" min="5000" max="100000" step="1000" value={profileData.educationBudget} onChange={(e) => set("educationBudget")(parseInt(e.target.value))} className="w-full accent-primary" />
+                        <input type="range" min="5000" max="100000" step="1000" value={profileData.educationBudget} onChange={(e) => set("educationBudget")(parseInt(e.target.value))} className="w-full accent-gold" />
                         <div className="flex justify-between text-xs text-muted-foreground">
                           <span>$5k</span>
                           <span className="font-display text-lg font-bold text-foreground">${profileData.educationBudget.toLocaleString()}</span>

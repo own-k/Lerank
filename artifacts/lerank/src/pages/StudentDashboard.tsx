@@ -115,18 +115,18 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
     >
       <header className="flex justify-between items-start gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#1A0F0A]">{tp.title}</h1>
-          <p className="text-gray-500 mt-1 text-sm">{tp.subtitle}</p>
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">{tp.title}</h1>
+          <p className="text-muted-foreground mt-1 text-sm">{tp.subtitle}</p>
         </div>
-        <Button variant="ghost" size="icon" onClick={onClose} className="text-gray-400 hover:text-gray-600 shrink-0">
+        <Button variant="ghost" size="icon" onClick={onClose} className="text-muted-foreground hover:text-foreground shrink-0">
           <X className="w-5 h-5" />
         </Button>
       </header>
 
       {/* Academic Scores */}
-      <Card className="border-[#E8DDD3] shadow-sm">
+      <Card className="border-border shadow-sm">
         <CardContent className="p-5 sm:p-6 space-y-5">
-          <h2 className="font-bold text-[#1A0F0A] text-base">{tp.academicScores}</h2>
+          <h2 className="font-bold text-foreground text-base">{tp.academicScores}</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>GPA</Label>
@@ -145,7 +145,7 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
               <select
                 value={form.gpaScale}
                 onChange={e => set("gpaScale")(parseFloat(e.target.value))}
-                className="flex h-11 w-full rounded-xl border border-[#E8DDD3] bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#C4956A] focus:border-[#C4956A] transition-all"
+                className="flex h-11 w-full rounded-xl border border-border bg-card px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
               >
                 <option value={4.0}>4.0 Scale</option>
                 <option value={5.0}>5.0 Scale</option>
@@ -186,9 +186,9 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
       </Card>
 
       {/* Degree & Major */}
-      <Card className="border-[#E8DDD3] shadow-sm">
+      <Card className="border-border shadow-sm">
         <CardContent className="p-5 sm:p-6 space-y-5">
-          <h2 className="font-bold text-[#1A0F0A] text-base">{tp.degreeMajor}</h2>
+          <h2 className="font-bold text-foreground text-base">{tp.degreeMajor}</h2>
           <div className="space-y-2">
             <Label>{tp.degreeLevel}</Label>
             <div className="grid grid-cols-3 gap-2 sm:gap-3">
@@ -198,8 +198,8 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
                   onClick={() => set("degreeLevel")(level)}
                   className={`py-3 rounded-xl border-2 text-xs sm:text-sm font-semibold capitalize transition-all ${
                     form.degreeLevel === level
-                      ? "border-[#C4956A] bg-[#C4956A]/10 text-[#C4956A]"
-                      : "border-[#E8DDD3] text-gray-500 hover:border-[#C4956A]/50"
+                      ? "border-gold bg-gold/10 text-gold"
+                      : "border-border text-muted-foreground hover:border-gold/50"
                   }`}
                 >
                   {level === "phd" ? "PhD" : level.charAt(0).toUpperCase() + level.slice(1)}
@@ -212,7 +212,7 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
             <select
               value={form.major}
               onChange={e => set("major")(e.target.value)}
-              className="flex h-11 w-full rounded-xl border border-[#E8DDD3] bg-white px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[#C4956A] focus:border-[#C4956A] transition-all"
+              className="flex h-11 w-full rounded-xl border border-border bg-card px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
             >
               <option value="">{tp.selectMajor}</option>
               {MAJOR_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
@@ -222,36 +222,36 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
       </Card>
 
       {/* Budget */}
-      <Card className="border-[#E8DDD3] shadow-sm">
+      <Card className="border-border shadow-sm">
         <CardContent className="p-5 sm:p-6 space-y-5">
-          <h2 className="font-bold text-[#1A0F0A] text-base">{tp.budget}</h2>
+          <h2 className="font-bold text-foreground text-base">{tp.budget}</h2>
           <div className="space-y-3">
             <div className="flex justify-between">
               <Label>{tp.consultingBudget}</Label>
-              <span className="text-sm font-bold text-[#C4956A]">{formatCurrency(form.consultingBudget)}</span>
+              <span className="text-sm font-bold text-gold">{formatCurrency(form.consultingBudget)}</span>
             </div>
             <input
               type="range" min={500} max={6000} step={50}
               value={form.consultingBudget}
               onChange={e => set("consultingBudget")(parseInt(e.target.value))}
-              className="w-full accent-[#C4956A]"
+              className="w-full accent-gold"
             />
-            <div className="flex justify-between text-xs text-gray-400">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>$500</span><span>$6,000</span>
             </div>
           </div>
           <div className="space-y-3">
             <div className="flex justify-between">
               <Label>{tp.educationBudget}</Label>
-              <span className="text-sm font-bold text-[#C4956A]">{formatCurrency(form.educationBudget)}</span>
+              <span className="text-sm font-bold text-gold">{formatCurrency(form.educationBudget)}</span>
             </div>
             <input
               type="range" min={5000} max={100000} step={1000}
               value={form.educationBudget}
               onChange={e => set("educationBudget")(parseInt(e.target.value))}
-              className="w-full accent-[#C4956A]"
+              className="w-full accent-gold"
             />
-            <div className="flex justify-between text-xs text-gray-400">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>$5,000</span><span>$100,000</span>
             </div>
           </div>
@@ -259,9 +259,9 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
       </Card>
 
       {/* Preferred Countries */}
-      <Card className="border-[#E8DDD3] shadow-sm">
+      <Card className="border-border shadow-sm">
         <CardContent className="p-5 sm:p-6 space-y-4">
-          <h2 className="font-bold text-[#1A0F0A] text-base">{tp.preferredCountries}</h2>
+          <h2 className="font-bold text-foreground text-base">{tp.preferredCountries}</h2>
           <div className="flex flex-wrap gap-2">
             {COUNTRY_OPTIONS.map(c => (
               <button
@@ -269,8 +269,8 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
                 onClick={() => toggleCountry(c)}
                 className={`px-4 py-2 rounded-full text-sm font-medium border-2 transition-all ${
                   form.preferredCountries.includes(c)
-                    ? "border-[#C4956A] bg-[#C4956A]/10 text-[#C4956A]"
-                    : "border-[#E8DDD3] text-gray-500 hover:border-[#C4956A]/50"
+                    ? "border-gold bg-gold/10 text-gold"
+                    : "border-border text-muted-foreground hover:border-gold/50"
                 }`}
               >
                 {c}
@@ -282,10 +282,10 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
 
       {/* Save */}
       <div className="flex flex-wrap items-center gap-3 pb-8">
-        <Button onClick={handleSave} isLoading={isSaving} className="bg-[#C4956A] hover:bg-[#b8845e] text-white">
+        <Button onClick={handleSave} isLoading={isSaving} className="bg-primary hover:bg-primary/85 text-primary-foreground">
           <Save className="w-4 h-4 mr-2" /> {tp.saveChanges}
         </Button>
-        <Button variant="ghost" onClick={onClose} className="text-gray-500">{tp.cancel}</Button>
+        <Button variant="ghost" onClick={onClose} className="text-muted-foreground">{tp.cancel}</Button>
         <AnimatePresence>
           {saveStatus === "success" && (
             <motion.span initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
@@ -321,9 +321,9 @@ export default function StudentDashboard() {
 
   const SidebarContent = () => (
     <>
-      <div className="h-16 sm:h-20 flex items-center px-6 border-b border-[#E8DDD3]">
-        <span className="text-2xl font-display font-bold text-[#2C1810]">{td.nav.title}</span>
-        <button onClick={closeSidebar} className="ml-auto md:hidden text-gray-400 hover:text-gray-600">
+      <div className="h-16 sm:h-20 flex items-center px-6 border-b border-border">
+        <span className="text-2xl font-display font-bold text-foreground">{td.nav.title}</span>
+        <button onClick={closeSidebar} className="ml-auto md:hidden text-muted-foreground hover:text-foreground">
           <X className="w-5 h-5" />
         </button>
       </div>
@@ -331,38 +331,38 @@ export default function StudentDashboard() {
         <nav className="space-y-1">
           <button onClick={() => { setActiveView("dashboard"); closeSidebar(); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors text-left ${
-              activeView === "dashboard" ? "bg-[#C4956A]/10 text-[#C4956A]" : "text-[#8B7355] hover:bg-[#FAF6F1] hover:text-[#2C1810]"
+              activeView === "dashboard" ? "bg-gold/10 text-gold" : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}>
             <LayoutDashboard className="w-5 h-5 shrink-0" /> {td.nav.dashboard}
           </button>
           <Link href="/compare" onClick={closeSidebar}
-            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FAF6F1] text-[#8B7355] hover:text-[#2C1810] transition-colors">
+            className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
             <FileText className="w-5 h-5 shrink-0" /> {td.nav.findConsultants}
           </Link>
           <button onClick={() => { setActiveView("dashboard"); closeSidebar(); }}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#FAF6F1] text-[#8B7355] hover:text-[#2C1810] transition-colors text-left">
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-colors text-left">
             <CreditCard className="w-5 h-5 shrink-0" /> {td.nav.escrowPayments}
           </button>
           <button onClick={() => { setActiveView("profile"); closeSidebar(); }}
             className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors text-left ${
-              activeView === "profile" ? "bg-[#C4956A]/10 text-[#C4956A]" : "text-[#8B7355] hover:bg-[#FAF6F1] hover:text-[#2C1810]"
+              activeView === "profile" ? "bg-gold/10 text-gold" : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}>
             <UserCog className="w-5 h-5 shrink-0" /> {td.nav.editProfile}
           </button>
         </nav>
       </div>
-      <div className="p-4 border-t border-[#E8DDD3]">
+      <div className="p-4 border-t border-border">
         <div className="flex items-center gap-3 mb-4 px-2">
-          <div className="w-10 h-10 rounded-full bg-[#C4956A]/20 flex items-center justify-center text-[#C4956A] font-bold shrink-0">
+          <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center text-gold font-bold shrink-0">
             {user.fullName.charAt(0)}
           </div>
           <div className="min-w-0">
-            <div className="text-sm font-bold text-[#2C1810] truncate">{user.fullName}</div>
-            <div className="text-xs text-[#8B7355]">{td.nav.student}</div>
+            <div className="text-sm font-bold text-foreground truncate">{user.fullName}</div>
+            <div className="text-xs text-muted-foreground">{td.nav.student}</div>
           </div>
         </div>
         <button onClick={logout}
-          className="flex items-center gap-3 px-4 py-2 w-full rounded-lg hover:bg-red-50 text-[#8B7355] hover:text-red-500 transition-colors text-sm">
+          className="flex items-center gap-3 px-4 py-2 w-full rounded-lg hover:bg-red-50 text-muted-foreground hover:text-red-500 transition-colors text-sm">
           <LogOut className="w-4 h-4" /> {td.nav.signOut}
         </button>
       </div>
@@ -370,9 +370,9 @@ export default function StudentDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-[#FAF6F1] flex">
+    <div className="min-h-screen bg-background flex">
       {/* Sidebar — desktop fixed */}
-      <aside className="hidden md:flex w-64 bg-white border-r border-[#E8DDD3] flex-col fixed inset-y-0 z-20">
+      <aside className="hidden md:flex w-64 bg-card border-r border-border flex-col fixed inset-y-0 z-20">
         <SidebarContent />
       </aside>
 
@@ -388,7 +388,7 @@ export default function StudentDashboard() {
             <motion.aside
               initial={{ x: "-100%" }} animate={{ x: 0 }} exit={{ x: "-100%" }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-y-0 left-0 z-40 w-72 bg-white border-r border-[#E8DDD3] flex flex-col md:hidden"
+              className="fixed inset-y-0 left-0 z-40 w-72 bg-card border-r border-border flex flex-col md:hidden"
             >
               <SidebarContent />
             </motion.aside>
@@ -399,11 +399,11 @@ export default function StudentDashboard() {
       {/* Main Content */}
       <main className="flex-1 md:ml-64 min-w-0">
         {/* Mobile top bar */}
-        <div className="md:hidden flex items-center gap-3 px-4 h-14 bg-white border-b border-[#E8DDD3] sticky top-0 z-10">
-          <button onClick={() => setSidebarOpen(true)} className="text-[#8B7355]">
+        <div className="md:hidden flex items-center gap-3 px-4 h-14 bg-card border-b border-border sticky top-0 z-10">
+          <button onClick={() => setSidebarOpen(true)} className="text-muted-foreground">
             <Menu className="w-6 h-6" />
           </button>
-          <span className="font-display font-bold text-[#2C1810]">{td.nav.title}</span>
+          <span className="font-display font-bold text-foreground">{td.nav.title}</span>
         </div>
 
         <div className="p-4 sm:p-6 lg:p-8">
@@ -421,18 +421,18 @@ export default function StudentDashboard() {
               >
                 <header className="flex flex-wrap gap-3 justify-between items-start">
                   <div>
-                    <h1 className="text-2xl sm:text-3xl font-display font-bold text-[#1A0F0A]">
+                    <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">
                       {td.header.welcomeBack}{user.fullName.split(' ')[0]}!
                     </h1>
-                    <p className="text-gray-500 mt-1 text-sm">{td.header.subtitle}</p>
+                    <p className="text-muted-foreground mt-1 text-sm">{td.header.subtitle}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <Button variant="outline" size="sm" onClick={() => setActiveView("profile")}
-                      className="border-[#E8DDD3] text-[#8B7355] hover:text-[#2C1810]">
+                      className="border-border text-muted-foreground hover:text-foreground">
                       <UserCog className="w-4 h-4 sm:mr-2" />
                       <span className="hidden sm:inline">{td.header.editProfile}</span>
                     </Button>
-                    <Button variant="outline" size="sm" className="bg-white border-[#E8DDD3]">
+                    <Button variant="outline" size="sm" className="bg-card border-border">
                       <Bell className="w-4 h-4" />
                     </Button>
                   </div>
@@ -442,27 +442,27 @@ export default function StudentDashboard() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                   <Card className="border-none shadow-md">
                     <CardContent className="p-4 sm:p-6">
-                      <div className="text-xs sm:text-sm text-gray-500 font-medium mb-1 sm:mb-2">{td.stats.activeApps}</div>
-                      <div className="text-2xl sm:text-3xl font-bold text-[#1A0F0A]">{stats?.activeApplications || 0}</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground font-medium mb-1 sm:mb-2">{td.stats.activeApps}</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-foreground">{stats?.activeApplications || 0}</div>
                     </CardContent>
                   </Card>
                   <Card className="border-none shadow-md">
                     <CardContent className="p-4 sm:p-6">
-                      <div className="text-xs sm:text-sm text-gray-500 font-medium mb-1 sm:mb-2">{td.stats.milestonesWk}</div>
-                      <div className="text-2xl sm:text-3xl font-bold text-[#C4956A]">{stats?.milestonesCompletedThisWeek || 0}</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground font-medium mb-1 sm:mb-2">{td.stats.milestonesWk}</div>
+                      <div className="text-2xl sm:text-3xl font-bold text-gold">{stats?.milestonesCompletedThisWeek || 0}</div>
                     </CardContent>
                   </Card>
-                  <Card className="border-none shadow-md bg-[#C4956A]/10 border border-[#C4956A]/20">
+                  <Card className="border-none shadow-md bg-gold/10 border border-gold/20">
                     <CardContent className="p-4 sm:p-6">
-                      <div className="text-xs sm:text-sm text-[#C4956A] font-medium mb-1 sm:mb-2 flex items-center gap-1.5">
+                      <div className="text-xs sm:text-sm text-gold font-medium mb-1 sm:mb-2 flex items-center gap-1.5">
                         <ShieldCheck className="w-4 h-4 shrink-0" /> {td.stats.escrow}
                       </div>
-                      <div className="text-xl sm:text-3xl font-bold text-[#2C1810]">{formatCurrency(stats?.moneyInEscrow || 0)}</div>
+                      <div className="text-xl sm:text-3xl font-bold text-foreground">{formatCurrency(stats?.moneyInEscrow || 0)}</div>
                     </CardContent>
                   </Card>
                   <Card className="border-none shadow-md">
                     <CardContent className="p-4 sm:p-6">
-                      <div className="text-xs sm:text-sm text-gray-500 font-medium mb-1 sm:mb-2">{td.stats.released}</div>
+                      <div className="text-xs sm:text-sm text-muted-foreground font-medium mb-1 sm:mb-2">{td.stats.released}</div>
                       <div className="text-xl sm:text-3xl font-bold text-emerald-600">{formatCurrency(stats?.moneyReleased || 0)}</div>
                     </CardContent>
                   </Card>
@@ -472,19 +472,19 @@ export default function StudentDashboard() {
                   {/* Active Applications */}
                   <div className="lg:col-span-2 space-y-4">
                     <div className="flex justify-between items-center">
-                      <h2 className="text-lg sm:text-xl font-bold text-[#1A0F0A]">{td.applications.title}</h2>
-                      <Link href="/compare" className="text-sm font-semibold text-[#C4956A] hover:underline">
+                      <h2 className="text-lg sm:text-xl font-bold text-foreground">{td.applications.title}</h2>
+                      <Link href="/compare" className="text-sm font-semibold text-gold hover:underline">
                         {td.applications.findConsultant}
                       </Link>
                     </div>
 
                     {Array.isArray(applications) && applications.map((app: any) => (
-                      <Card key={app.id} className="border-[#E8DDD3] shadow-sm hover:shadow-md transition-shadow">
+                      <Card key={app.id} className="border-border shadow-sm hover:shadow-md transition-shadow">
                         <CardContent className="p-5">
                           <div className="flex justify-between items-start mb-4 gap-3">
                             <div>
                               <h3 className="font-bold">{app.companyName}</h3>
-                              <p className="text-sm text-gray-500">{app.serviceName}</p>
+                              <p className="text-sm text-muted-foreground">{app.serviceName}</p>
                             </div>
                             <span className={`text-xs font-bold px-2.5 py-1 rounded-full shrink-0 ${
                               app.escrowStatus === 'held' ? 'bg-blue-100 text-blue-700' :
@@ -496,16 +496,16 @@ export default function StudentDashboard() {
                           </div>
                           <div className="space-y-2">
                             <div className="flex justify-between text-sm">
-                              <span className="font-medium text-gray-700">{td.applications.progress}</span>
+                              <span className="font-medium text-muted-foreground">{td.applications.progress}</span>
                               <span className="font-bold">{Math.round(app.progressPercent || 0)}%</span>
                             </div>
-                            <div className="h-2.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                              <div className="h-full bg-gradient-to-r from-[#C4956A] to-[#8B7355] transition-all duration-1000" style={{ width: `${app.progressPercent || 0}%` }} />
+                            <div className="h-2.5 w-full bg-muted rounded-full overflow-hidden">
+                              <div className="h-full bg-gradient-to-r from-primary to-primary/60 transition-all duration-1000" style={{ width: `${app.progressPercent || 0}%` }} />
                             </div>
                           </div>
-                          <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center">
-                            <span className="text-sm text-gray-500">{td.applications.total} {formatCurrency(app.totalAmount)}</span>
-                            <Button variant="ghost" size="sm" className="text-[#C4956A]">
+                          <div className="mt-4 pt-4 border-t border-border/50 flex justify-between items-center">
+                            <span className="text-sm text-muted-foreground">{td.applications.total} {formatCurrency(app.totalAmount)}</span>
+                            <Button variant="ghost" size="sm" className="text-gold">
                               {td.applications.details} <ChevronRight className="w-4 h-4 ml-1" />
                             </Button>
                           </div>
@@ -514,10 +514,10 @@ export default function StudentDashboard() {
                     ))}
 
                     {(!applications || applications.length === 0) && (
-                      <div className="text-center py-10 bg-white rounded-2xl border border-dashed border-gray-300">
-                        <p className="text-gray-500 mb-4 text-sm">{td.applications.emptyState}</p>
+                      <div className="text-center py-10 bg-card rounded-2xl border border-dashed border-border">
+                        <p className="text-muted-foreground mb-4 text-sm">{td.applications.emptyState}</p>
                         <Link href="/compare">
-                          <Button className="bg-[#C4956A] hover:bg-[#b8845e] text-white">{td.applications.browseConsultants}</Button>
+                          <Button className="bg-primary hover:bg-primary/85 text-primary-foreground">{td.applications.browseConsultants}</Button>
                         </Link>
                       </div>
                     )}
@@ -525,15 +525,15 @@ export default function StudentDashboard() {
 
                   {/* Activity Feed */}
                   <div className="space-y-4">
-                    <h2 className="text-lg sm:text-xl font-bold text-[#1A0F0A]">{td.activity.title}</h2>
-                    <Card className="border-[#E8DDD3] shadow-sm">
+                    <h2 className="text-lg sm:text-xl font-bold text-foreground">{td.activity.title}</h2>
+                    <Card className="border-border shadow-sm">
                       <CardContent className="p-0">
-                        <div className="divide-y divide-gray-100">
+                        <div className="divide-y divide-border/50">
                           {Array.isArray(activities) && activities.map((activity: any) => (
                             <div key={activity.id} className="p-4 flex gap-3">
                               <div className={`mt-0.5 shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
                                 activity.type === 'payment' ? 'bg-emerald-100 text-emerald-600' :
-                                activity.type === 'milestone_update' ? 'bg-[#C4956A]/20 text-[#C4956A]' :
+                                activity.type === 'milestone_update' ? 'bg-gold/20 text-gold' :
                                 'bg-blue-100 text-blue-600'
                               }`}>
                                 {activity.type === 'payment' ? <DollarSign className="w-4 h-4" /> :
@@ -541,13 +541,13 @@ export default function StudentDashboard() {
                                  <Activity className="w-4 h-4" />}
                               </div>
                               <div>
-                                <p className="text-sm font-medium text-[#1A0F0A]">{activity.message}</p>
-                                <p className="text-xs text-gray-500 mt-0.5">{new Date(activity.timestamp).toLocaleString()}</p>
+                                <p className="text-sm font-medium text-foreground">{activity.message}</p>
+                                <p className="text-xs text-muted-foreground mt-0.5">{new Date(activity.timestamp).toLocaleString()}</p>
                               </div>
                             </div>
                           ))}
                           {(!activities || !activities.length) && (
-                            <div className="p-6 text-center text-sm text-gray-500">{td.activity.empty}</div>
+                            <div className="p-6 text-center text-sm text-muted-foreground">{td.activity.empty}</div>
                           )}
                         </div>
                       </CardContent>

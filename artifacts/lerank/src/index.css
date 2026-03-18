@@ -1,6 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+/* Tell Tailwind v4 to use .dark class instead of OS media query */
+@custom-variant dark (&:is(.dark *));
+
 @font-face {
   font-family: 'Monsieur La Doulaise';
   src: url('/MonsieurLaDoulaise-Regular.ttf') format('truetype');
@@ -33,60 +36,109 @@
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --color-gold: hsl(var(--gold));
+  --color-sage: hsl(var(--sage));
 }
 
+/* ─── LIGHT MODE ────────────────────────────────────────────────────────────── */
 :root {
-  --background: 33 43% 96%;
-  --foreground: 21 44% 8%;
-  --card: 0 0% 100%;
-  --card-foreground: 21 44% 8%;
-  --popover: 0 0% 100%;
-  --popover-foreground: 21 44% 8%;
-  --primary: 29 43% 59%;
-  --primary-foreground: 21 44% 8%;
-  --secondary: 33 24% 44%;
-  --secondary-foreground: 32 38% 93%;
-  --muted: 29 28% 87%;
-  --muted-foreground: 33 20% 30%;
-  --accent: 29 28% 87%;
-  --accent-foreground: 21 44% 8%;
+  /* Page background: #ECEAE2 warm linen */
+  --background: 49 21% 91%;
+
+  /* Primary text: #111811 near-black with green undertone */
+  --foreground: 120 17% 8%;
+
+  /* Card background: #FAFAF8 off-white, visibly lighter than page */
+  --card: 60 15% 98%;
+  --card-foreground: 120 17% 8%;
+  --popover: 60 15% 98%;
+  --popover-foreground: 120 17% 8%;
+
+  /* CTA button / logo / nav: #1E3D28 Deep Forest */
+  --primary: 139 34% 18%;
+  --primary-foreground: 49 21% 91%;
+
+  /* Stat card background: #E8E4DA slightly warmer */
+  --secondary: 43 23% 88%;
+  --secondary-foreground: 120 17% 8%;
+  --muted: 43 23% 88%;
+
+  /* Secondary text: #4A5248 */
+  --muted-foreground: 108 7% 30%;
+
+  /* Hover accent — very light sage tint */
+  --accent: 143 18% 92%;
+  --accent-foreground: 120 17% 8%;
+
   --destructive: 6 63% 46%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 33 20% 85%;
-  --input: 33 20% 85%;
-  --ring: 29 43% 59%;
+  --destructive-foreground: 0 0% 97%;
+
+  /* Border / icon / hover: #2D5A3E mid-green (used with opacity) */
+  --border: 143 33% 26%;
+  /* Input border: softer warm tone */
+  --input: 49 16% 82%;
+  --ring: 139 34% 18%;
   --radius: 0.75rem;
-  /* Gold — dark enough for light backgrounds */
-  --gold: 38 72% 34%;
+
+  /* Headline accent gold: #C9A84C */
+  --gold: 44 54% 54%;
+
+  /* Mid-green icon/badge token: #2D5A3E */
+  --sage: 143 33% 26%;
 }
 
+/* ─── DARK MODE ─────────────────────────────────────────────────────────────── */
 .dark {
-  --background: 21 44% 8%;
-  --foreground: 32 38% 93%;
-  --card: 17 47% 12%;
-  --card-foreground: 32 38% 93%;
-  --popover: 17 47% 12%;
-  --popover-foreground: 32 38% 93%;
-  --primary: 29 43% 59%;
-  --primary-foreground: 21 44% 8%;
-  --secondary: 33 24% 20%;
-  --secondary-foreground: 32 38% 93%;
-  --muted: 21 30% 16%;
-  --muted-foreground: 33 22% 78%;
-  --accent: 21 30% 16%;
-  --accent-foreground: 32 38% 93%;
+  /* Page background: #0F1410 near-black green */
+  --background: 132 14% 7%;
+
+  /* Primary text: #F0ECE2 warm white */
+  --foreground: 43 32% 91%;
+
+  /* Card background: #1A2218 — clearly lifted from page bg */
+  --card: 108 17% 11%;
+  --card-foreground: 43 32% 91%;
+  --popover: 108 17% 11%;
+  --popover-foreground: 43 32% 91%;
+
+  /* Primary action: #D4B96A gold replaces green in dark mode */
+  --primary: 45 55% 62%;
+  --primary-foreground: 132 14% 7%;
+
+  /* Stat box background: #212D1F */
+  --secondary: 112 18% 15%;
+  --secondary-foreground: 43 32% 91%;
+  --muted: 112 18% 15%;
+
+  /* Body text: #A8B09E muted warm gray */
+  --muted-foreground: 87 10% 65%;
+
+  /* Dark hover accent — dark sage */
+  --accent: 147 22% 22%;
+  --accent-foreground: 43 32% 91%;
+
   --destructive: 6 63% 46%;
-  --destructive-foreground: 0 0% 100%;
-  --border: 21 30% 20%;
-  --input: 21 30% 20%;
-  --ring: 29 43% 59%;
-  /* Gold — bright enough for dark backgrounds */
-  --gold: 43 88% 60%;
+  --destructive-foreground: 0 0% 97%;
+
+  /* Structural border: subtle white instead of green */
+  --border: 147 30% 32%;
+  --input: 108 22% 9%;
+  --ring: 45 55% 62%;
+
+  /* Headline accent gold: #D4B96A */
+  --gold: 45 55% 62%;
+
+  /* Mid-green icon token: #3A6B50 */
+  --sage: 147 30% 32%;
 }
 
+/* ─── BASE ──────────────────────────────────────────────────────────────────── */
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    /* Smooth theme color transitions on all elements */
+    transition: background-color 0.2s ease, color 0.2s ease,
+                border-color 0.2s ease, fill 0.2s ease, stroke 0.2s ease;
   }
   html {
     -webkit-overflow-scrolling: touch;
@@ -98,80 +150,84 @@
     min-height: 100%;
   }
   body {
-    @apply bg-background text-foreground font-sans antialiased selection:bg-primary/30;
-    transition: background-color 260ms ease, color 260ms ease;
+    @apply bg-background text-foreground font-sans antialiased selection:bg-primary/20;
     overflow-x: hidden;
     overscroll-behavior-y: none;
   }
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
+  h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight;
   }
 }
 
+/* ─── BACKGROUNDS ───────────────────────────────────────────────────────────── */
 .premium-bg {
   background: hsl(var(--background));
 }
 
-/* Richer gradient only on non-mobile */
 @media (min-width: 768px) {
   .premium-bg {
     background:
-      radial-gradient(900px circle at 7% 10%, hsl(var(--primary) / 0.16), transparent 50%),
-      radial-gradient(1100px circle at 88% 5%, hsl(var(--primary) / 0.08), transparent 46%),
+      radial-gradient(900px circle at 7% 10%, hsl(var(--primary) / 0.10), transparent 50%),
+      radial-gradient(1100px circle at 88% 5%, hsl(var(--gold) / 0.06), transparent 46%),
       hsl(var(--background));
     background-attachment: fixed;
   }
 
   .dark .premium-bg {
     background:
-      radial-gradient(900px circle at 7% 10%, hsl(var(--primary) / 0.18), transparent 52%),
-      radial-gradient(1100px circle at 88% 5%, hsl(var(--primary) / 0.07), transparent 48%),
-      hsl(21 35% 7%);
+      radial-gradient(900px circle at 7% 10%, hsl(var(--sage) / 0.10), transparent 52%),
+      radial-gradient(1100px circle at 88% 5%, hsl(var(--gold) / 0.06), transparent 48%),
+      hsl(132 14% 7%);
     background-attachment: fixed;
   }
 }
 
 .premium-grid {
   background-image:
-    linear-gradient(to right, hsl(var(--border) / 0.3) 1px, transparent 1px),
-    linear-gradient(to bottom, hsl(var(--border) / 0.3) 1px, transparent 1px);
+    linear-gradient(to right, hsl(var(--border) / 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, hsl(var(--border) / 0.15) 1px, transparent 1px);
   background-size: 60px 60px;
   -webkit-mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
   mask-image: linear-gradient(to bottom, black 0%, black 60%, transparent 100%);
-  opacity: 0.4;
+  opacity: 0.12;
 }
 
-/* Hide expensive decorations on mobile */
 @media (max-width: 767px) {
   .premium-grid {
     display: none;
   }
 }
 
+/* ─── CARDS & SHADOWS ───────────────────────────────────────────────────────── */
 .reveal-card {
-  box-shadow: 0 20px 45px -30px hsl(24 45% 10% / 0.35);
+  box-shadow: 0 20px 45px -30px hsl(139 34% 8% / 0.22);
 }
 
 .dark .reveal-card {
-  box-shadow: 0 20px 45px -30px hsl(30 35% 2% / 0.8);
+  box-shadow: 0 20px 45px -30px hsl(132 14% 3% / 0.80);
 }
 
+/* How-it-works cards dark shadow override */
+.dark .hiw-card-shadow {
+  box-shadow: 0 2px 20px rgba(0,0,0,0.3) !important;
+}
+
+.dark .hiw-feature-shadow {
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25) !important;
+}
+
+/* ─── TYPOGRAPHY UTILITIES ──────────────────────────────────────────────────── */
 .text-gold {
   color: hsl(var(--gold));
 }
 
+/* Italic/accent headline gradient — gold only */
 .text-gradient {
   @apply bg-clip-text text-transparent;
-  background-image: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold) / 0.75));
+  background-image: linear-gradient(135deg, hsl(var(--gold)), hsl(var(--gold) / 0.72));
 }
 
-
-/* Skeleton shimmer */
+/* ─── SKELETON ──────────────────────────────────────────────────────────────── */
 .skeleton {
   background: hsl(var(--muted));
   position: relative;
@@ -185,7 +241,7 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    hsl(var(--background) / 0.6) 50%,
+    hsl(var(--card) / 0.7) 50%,
     transparent 100%
   );
   animation: shimmer 1.6s infinite;
@@ -196,34 +252,26 @@
   100% { transform: translateX(100%); }
 }
 
-/* Smooth scrollbar */
+/* ─── SCROLLBAR ─────────────────────────────────────────────────────────────── */
 * {
   scrollbar-width: thin;
-  scrollbar-color: hsl(var(--border)) transparent;
+  scrollbar-color: hsl(var(--border) / 0.4) transparent;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--border));
+  background: hsl(var(--border) / 0.4);
   border-radius: 99px;
 }
 
-/* Focus ring polish */
+/* ─── FOCUS ─────────────────────────────────────────────────────────────────── */
 :focus-visible {
   outline: 2px solid hsl(var(--primary));
   outline-offset: 2px;
 }
 
-a:focus {
-  outline: none;
-}
+a:focus { outline: none; }
 
 a:focus-visible {
   outline: 2px solid hsl(var(--primary));
@@ -237,7 +285,95 @@ select:focus {
   border-color: hsl(var(--primary));
 }
 
-/* Brand font utility */
+/* ─── FONT UTILITIES ────────────────────────────────────────────────────────── */
 .font-brand {
   font-family: 'Monsieur La Doulaise', cursive;
+}
+
+/* ─── SLIDERS ───────────────────────────────────────────────────────────────── */
+input[type="range"].slider-gold::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: hsl(var(--card));
+  border: 2.5px solid hsl(var(--gold));
+  box-shadow: 0 2px 8px hsl(var(--gold) / 0.35);
+  cursor: pointer;
+}
+input[type="range"].slider-gold::-moz-range-thumb {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: hsl(var(--card));
+  border: 2.5px solid hsl(var(--gold));
+  box-shadow: 0 2px 8px hsl(var(--gold) / 0.35);
+  cursor: pointer;
+}
+
+/* ─── ACADEMIC BACKGROUND SLIDERS ──────────────────────────────────────────── */
+.slider-academic {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  outline: none;
+  background: linear-gradient(
+    to right,
+    #1E3D28 0%,
+    #1E3D28 var(--pct, 50%),
+    #D0CEC6 var(--pct, 50%),
+    #D0CEC6 100%
+  );
+}
+
+.dark .slider-academic {
+  background: linear-gradient(
+    to right,
+    #D4B96A 0%,
+    #D4B96A var(--pct, 50%),
+    #2D4A35 var(--pct, 50%),
+    #2D4A35 100%
+  );
+}
+
+.slider-academic::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #1E3D28;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.slider-academic::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+
+.dark .slider-academic::-webkit-slider-thumb {
+  background: #151F14;
+  border-color: #D4B96A;
+}
+
+.slider-academic::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #1E3D28;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease;
+}
+
+.slider-academic::-moz-range-thumb:hover {
+  transform: scale(1.1);
+}
+
+.dark .slider-academic::-moz-range-thumb {
+  background: #151F14;
+  border-color: #D4B96A;
 }
