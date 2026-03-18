@@ -1,8 +1,14 @@
 import { Router } from "express";
-import { db, companiesTable, usersTable, transactionsTable, applicationsTable } from "@workspace/db";
-import { eq } from "drizzle-orm";
+import { db, companiesTable, usersTable, transactionsTable, applicationsTable, studentProfilesTable } from "@workspace/db";
+import { AdminCreateUserBody, AdminUpdateUserRoleBody } from "@workspace/api-zod";
+import { eq, ilike } from "drizzle-orm";
+import { requireAuth, requireRole, hashPassword, generateUserCode, generateToken } from "../lib/auth.js";
 
 const router = Router();
+
+// All admin routes require super_admin role
+router.use(requireAuth as any);
+router.use(requireRole("super_admin") as any);
 
 router.get("/companies", async (_req, res) => {
   try {
@@ -60,11 +66,150 @@ router.get("/users", async (_req, res) => {
       avatarUrl: u.avatarUrl,
       onboardingCompleted: u.onboardingCompleted,
       companyId: u.companyId,
+      userCode: u.userCode,
+      emailVerified: u.emailVerified,
       createdAt: u.createdAt.toISOString(),
-      profile: null,
     })));
   } catch (err) {
     res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.get("/users/search", async (req: any, res) => {
+  try {
+    const code = (req.query.code as string || "").trim().toUpperCase();
+    if (!code) {
+      res.status(400).json({ error: "BadRequest", message: "Code is required" });
+      return;
+    }
+    const user = await db.query.usersTable.findFirst({
+      where: eq(usersTable.userCode, code),
+    });
+    if (!user) {
+      res.status(404).json({ error: "NotFound", message: "No user found with this code" });
+      return;
+    }
+    res.json({
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      avatarUrl: user.avatarUrl,
+      onboardingCompleted: user.onboardingCompleted,
+      companyId: user.companyId,
+      userCode: user.userCode,
+      emailVerified: user.emailVerified,
+      createdAt: user.createdAt.toISOString(),
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
+router.post("/users", async (req: any, res) => {
+  try {
+    const body = AdminCreateUserBody.parse(req.body);
+    const existing = await db.query.usersTable.findFirst({
+      where: eq(usersTable.email, body.email),
+    });
+    if (existing) {
+      res.status(400).json({ error: "BadRequest", message: "Email already in use" });
+      return;
+    }
+
+    let userCode: string;
+    do {
+      userCode = generateUserCode();
+      const dup = await db.query.usersTable.findFirst({ where: eq(usersTable.userCode, userCode) });
+      if (!dup) break;
+    } while (true);
+
+    const [user] = await db.insert(usersTable).values({
+      email: body.email,
+      passwordHash: hashPassword(body.password),
+      fullName: body.fullName,
+      role: body.role,
+      companyId: body.companyId ?? null,
+      emailVerified: true,
+      userCode,
+    }).returning();
+
+    res.status(201).json({
+      id: user.id,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      avatarUrl: user.avatarUrl,
+      onboardingCompleted: user.onboardingCompleted,
+      companyId: user.companyId,
+      userCode: user.userCode,
+      emailVerified: user.emailVerified,
+      createdAt: user.createdAt.toISOString(),
+    });
+  } catch (err: any) {
+    if (err?.name === "ZodError") {
+      res.status(400).json({ error: "ValidationError", message: err.message });
+    } else {
+      res.status(500).json({ error: "Server error", message: err?.message });
+    }
+  }
+});
+
+router.delete("/users/:id", async (req: any, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (id === req.userId) {
+      res.status(400).json({ error: "BadRequest", message: "Cannot delete yourself" });
+      return;
+    }
+    const user = await db.query.usersTable.findFirst({ where: eq(usersTable.id, id) });
+    if (!user) {
+      res.status(404).json({ error: "NotFound" });
+      return;
+    }
+    // Delete related data
+    await db.delete(studentProfilesTable).where(eq(studentProfilesTable.userId, id));
+    await db.delete(usersTable).where(eq(usersTable.id, id));
+    res.json({ success: true, message: "User deleted" });
+  } catch (err: any) {
+    res.status(500).json({ error: "Server error", message: err?.message });
+  }
+});
+
+router.put("/users/:id/role", async (req: any, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    const body = AdminUpdateUserRoleBody.parse(req.body);
+    const user = await db.query.usersTable.findFirst({ where: eq(usersTable.id, id) });
+    if (!user) {
+      res.status(404).json({ error: "NotFound" });
+      return;
+    }
+
+    const updates: any = { role: body.role };
+    if (body.companyId !== undefined) {
+      updates.companyId = body.companyId;
+    }
+
+    const [updated] = await db.update(usersTable)
+      .set(updates)
+      .where(eq(usersTable.id, id))
+      .returning();
+
+    res.json({
+      id: updated.id,
+      email: updated.email,
+      fullName: updated.fullName,
+      role: updated.role,
+      avatarUrl: updated.avatarUrl,
+      onboardingCompleted: updated.onboardingCompleted,
+      companyId: updated.companyId,
+      userCode: updated.userCode,
+      emailVerified: updated.emailVerified,
+      createdAt: updated.createdAt.toISOString(),
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: "Server error", message: err?.message });
   }
 });
 

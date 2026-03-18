@@ -35,7 +35,7 @@ function getColorClass(name: string) {
 const TOTAL_STEPS = 4;
 
 export default function Compare() {
-  const { user, login, register, logout, isLoading: isAuthLoading, token } = useAuth();
+  const { user, login, register, verifyEmail, resendCode, forgotPassword, resetPassword, logout, isLoading: isAuthLoading, token } = useAuth();
   const { t } = useLanguage();
   const tc = t.compare;
   const [, setLocation] = useLocation();
@@ -49,6 +49,23 @@ export default function Compare() {
   const [isSubmittingAuth, setIsSubmittingAuth] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
+  // Email verification state
+  const [showVerification, setShowVerification] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState("");
+  const [verificationCode, setVerificationCode] = useState("");
+  const [simulatedCode, setSimulatedCode] = useState("");
+  const [isVerifying, setIsVerifying] = useState(false);
+
+  // Forgot password state
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotCode, setForgotCode] = useState("");
+  const [forgotSimulatedCode, setForgotSimulatedCode] = useState("");
+  const [forgotNewPassword, setForgotNewPassword] = useState("");
+  const [forgotConfirmPassword, setForgotConfirmPassword] = useState("");
+  const [forgotStep, setForgotStep] = useState<"email" | "code" | "done">("email");
+  const [isForgotSubmitting, setIsForgotSubmitting] = useState(false);
 
   const [consultants, setConsultants] = useState<any[]>([]);
   const [isLoadingConsultants, setIsLoadingConsultants] = useState(false);
@@ -130,12 +147,67 @@ export default function Compare() {
     }
     setIsSubmittingAuth(true);
     try {
-      if (isLoginMode) { await login(email, password); }
-      else { await register(fullName, email, password); }
+      if (isLoginMode) {
+        await login(email, password);
+      } else {
+        const result = await register(fullName, email, password);
+        if (result.requiresVerification) {
+          setVerificationEmail(result.email);
+          setSimulatedCode(result.simulatedCode || "");
+          setShowVerification(true);
+        }
+      }
     } catch (err: any) {
       setAuthError(typeof err?.message === "string" ? err.message : "Authentication failed");
     } finally {
       setIsSubmittingAuth(false);
+    }
+  };
+
+  const handleVerify = async () => {
+    setIsVerifying(true);
+    setAuthError("");
+    try {
+      await verifyEmail(verificationEmail, verificationCode);
+    } catch (err: any) {
+      setAuthError(typeof err?.message === "string" ? err.message : "Verification failed");
+    } finally {
+      setIsVerifying(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    try {
+      const result = await resendCode(verificationEmail);
+      setSimulatedCode(result.simulatedCode || "");
+      setVerificationCode("");
+      setAuthError(t.verification.codeResent);
+    } catch (err: any) {
+      setAuthError(typeof err?.message === "string" ? err.message : "Failed to resend");
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    setIsForgotSubmitting(true);
+    setAuthError("");
+    try {
+      if (forgotStep === "email") {
+        const result = await forgotPassword(forgotEmail);
+        setForgotSimulatedCode(result.simulatedCode || "");
+        setForgotStep("code");
+      } else if (forgotStep === "code") {
+        if (forgotNewPassword !== forgotConfirmPassword) {
+          setAuthError("Passwords do not match");
+          setIsForgotSubmitting(false);
+          return;
+        }
+        await resetPassword(forgotEmail, forgotCode, forgotNewPassword);
+        setForgotStep("done");
+      }
+    } catch (err: any) {
+      setAuthError(typeof err?.message === "string" ? err.message : "Failed");
+    } finally {
+      setIsForgotSubmitting(false);
     }
   };
 
@@ -191,12 +263,11 @@ export default function Compare() {
 
   // ── Auth form ─────────────────────────────────────────────────────────────
   if (user === null) {
-    return (
+    const authShell = (content: React.ReactNode) => (
       <div className="relative flex min-h-screen items-center justify-center overflow-hidden premium-bg p-6">
         <div className="pointer-events-none absolute inset-0 premium-grid" />
         <div className="pointer-events-none absolute left-[12%] top-[14%] h-56 w-56 rounded-full bg-primary/20 blur-3xl hidden md:block" />
         <div className="pointer-events-none absolute right-[10%] bottom-[16%] h-72 w-72 rounded-full bg-primary/12 blur-3xl hidden md:block" />
-
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: "easeOut" }} className="w-full max-w-md">
           <div className="mb-8">
             <div className="mb-5 flex items-center justify-between">
@@ -213,110 +284,105 @@ export default function Compare() {
             <h1 className="font-display text-4xl font-bold">Lerank</h1>
             <p className="mt-1 text-sm text-muted-foreground">{tc.appSubtitle}</p>
           </div>
+          {content}
+        </motion.div>
+      </div>
+    );
 
-          <Card className="overflow-hidden rounded-2xl border border-black/[0.08] dark:border-white/[0.07] dark:bg-[#1A2218]" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-            <CardContent className="p-8" style={{ paddingTop: '2rem' }}>
-              <div className="mb-6 flex gap-1 rounded-xl bg-[#F0EDE4] dark:bg-[#141C12] p-1">
-                {[tc.tabs.signIn, tc.tabs.register].map((label, i) => (
-                  <button key={i} type="button"
-                    onClick={() => { setIsLoginMode(i === 0); setAuthError(""); setShowPassword(false); setConfirmPassword(""); setShowConfirmPassword(false); }}
-                    className={((i === 0) === isLoginMode
-                      ? "bg-[#FAFAF8] dark:bg-[#0F1410] text-[#111811] dark:text-[#F0ECE2] shadow-sm rounded-[10px]"
-                      : "text-[#4A5248] dark:text-[#7A8E78]") + " flex-1 py-2.5 text-sm font-semibold transition-all duration-200"}
-                  >{label}</button>
-                ))}
+    // Email verification screen
+    if (showVerification) {
+      return authShell(
+        <Card className="overflow-hidden rounded-2xl border border-black/[0.08] dark:border-white/[0.07] dark:bg-[#1A2218]" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+          <CardContent className="p-8" style={{ paddingTop: '2rem' }}>
+            <h2 className="text-xl font-bold mb-2">{t.verification.title}</h2>
+            <p className="text-sm text-muted-foreground mb-4">{t.verification.subtitle}</p>
+
+            {simulatedCode && (
+              <div className="bg-gold/10 border border-gold/30 rounded-xl px-4 py-3 mb-4">
+                <p className="text-sm font-medium text-gold">{t.verification.simulatedNotice} <span className="font-mono font-bold text-lg">{simulatedCode}</span></p>
               </div>
+            )}
 
-              <form onSubmit={handleAuth} noValidate className="flex flex-col gap-4">
-                <AnimatePresence initial={false}>
-                  {!isLoginMode && (
-                    <motion.div
-                      key="name-field"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                      className="overflow-hidden bg-transparent"
-                    >
-                      <div className="flex flex-col gap-1.5 pb-1">
-                        <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">{tc.form.fullName}</Label>
-                        <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder={tc.form.fullNamePlaceholder} />
-                        {fullName.trim().length > 0 && (() => {
-                          const words = fullName.trim().split(/\s+/).filter(Boolean);
-                          if (words.some(w => w.replace(/[^a-zA-Z]/g, "").length < 3)) return <p className="text-xs text-destructive mt-0.5">Each name must have at least 3 letters</p>;
-                          return <p className="text-xs text-emerald-600 mt-0.5">✓ {words.join(" ")}</p>;
-                        })()}
+            <div className="flex flex-col gap-4">
+              <Input
+                value={verificationCode}
+                onChange={(e) => setVerificationCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                placeholder={t.verification.codePlaceholder}
+                className="text-center text-2xl font-mono tracking-[0.3em] h-14"
+                maxLength={6}
+              />
+
+              <AnimatePresence>
+                {authError && (
+                  <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">{authError}</motion.p>
+                )}
+              </AnimatePresence>
+
+              <Button onClick={handleVerify} isLoading={isVerifying} disabled={verificationCode.length !== 6} className="w-full h-12 text-base font-semibold dark:bg-[#D4B96A] dark:text-[#0F1410]">
+                {t.verification.submit}
+              </Button>
+
+              <button type="button" onClick={handleResendCode} className="text-sm text-muted-foreground hover:text-gold transition-colors">
+                {t.verification.resend}
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Forgot password screen
+    if (showForgotPassword) {
+      return authShell(
+        <Card className="overflow-hidden rounded-2xl border border-black/[0.08] dark:border-white/[0.07] dark:bg-[#1A2218]" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+          <CardContent className="p-8" style={{ paddingTop: '2rem' }}>
+            <h2 className="text-xl font-bold mb-2">{t.forgotPassword.title}</h2>
+
+            {forgotStep === "done" ? (
+              <div className="space-y-4">
+                <p className="text-sm text-emerald-600 font-medium">{t.forgotPassword.success}</p>
+                <Button onClick={() => { setShowForgotPassword(false); setForgotStep("email"); setForgotEmail(""); setForgotCode(""); setForgotNewPassword(""); setForgotConfirmPassword(""); setForgotSimulatedCode(""); setAuthError(""); }}
+                  className="w-full h-12 text-base font-semibold dark:bg-[#D4B96A] dark:text-[#0F1410]">
+                  {t.forgotPassword.backToLogin}
+                </Button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4">
+                {forgotStep === "email" && (
+                  <>
+                    <p className="text-sm text-muted-foreground">{t.forgotPassword.subtitle}</p>
+                    <Input type="email" value={forgotEmail} onChange={(e) => setForgotEmail(e.target.value)} placeholder={tc.form.emailPlaceholder} />
+                  </>
+                )}
+
+                {forgotStep === "code" && (
+                  <>
+                    <p className="text-sm text-muted-foreground">{t.forgotPassword.codeSent}</p>
+                    {forgotSimulatedCode && (
+                      <div className="bg-gold/10 border border-gold/30 rounded-xl px-4 py-3">
+                        <p className="text-sm font-medium text-gold">{t.verification.simulatedNotice} <span className="font-mono font-bold text-lg">{forgotSimulatedCode}</span></p>
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <div className="flex flex-col gap-1.5">
-                  <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">{tc.form.email}</Label>
-                  <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={tc.form.emailPlaceholder} />
-                </div>
-
-                <div className="flex flex-col gap-1.5">
-                  <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">{tc.form.password}</Label>
-                  <div className="relative">
+                    )}
                     <Input
-                      type={showPassword ? "text" : "password"}
-                      required
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder={tc.form.passwordPlaceholder}
-                      className="pr-12"
+                      value={forgotCode}
+                      onChange={(e) => setForgotCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      placeholder={t.verification.codePlaceholder}
+                      className="text-center text-2xl font-mono tracking-[0.3em] h-14"
+                      maxLength={6}
                     />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
-                      tabIndex={-1}
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                <AnimatePresence initial={false}>
-                  {!isLoginMode && (
-                    <motion.div
-                      key="confirm-password-field"
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                      className="overflow-hidden bg-transparent"
-                    >
-                      <div className="flex flex-col gap-1.5 pb-1">
-                        <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">Confirm Password</Label>
-                        <div className="relative">
-                          <Input
-                            type={showConfirmPassword ? "text" : "password"}
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            placeholder="Re-enter your password"
-                            className={`pr-12 ${!isLoginMode && confirmPassword && password ? (confirmPassword === password ? "border-emerald-400 focus:ring-emerald-400" : "border-destructive focus:ring-destructive") : ""}`}
-                          />
-                          <button
-                            type="button"
-                            onClick={() => setShowConfirmPassword((v) => !v)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
-                            tabIndex={-1}
-                          >
-                            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                          </button>
-                        </div>
-                        {!isLoginMode && confirmPassword && password && confirmPassword !== password && (
-                          <p className="text-xs text-destructive mt-0.5">Passwords do not match</p>
-                        )}
-                        {!isLoginMode && confirmPassword && password && confirmPassword === password && (
-                          <p className="text-xs text-emerald-600 mt-0.5 flex items-center gap-1">✓ Passwords match</p>
-                        )}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                    <div className="flex flex-col gap-1.5">
+                      <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">{t.forgotPassword.newPassword}</Label>
+                      <Input type="password" value={forgotNewPassword} onChange={(e) => setForgotNewPassword(e.target.value)} placeholder="••••••••" />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">{t.forgotPassword.confirmNewPassword}</Label>
+                      <Input type="password" value={forgotConfirmPassword} onChange={(e) => setForgotConfirmPassword(e.target.value)} placeholder="••••••••" />
+                      {forgotNewPassword && forgotConfirmPassword && forgotNewPassword !== forgotConfirmPassword && (
+                        <p className="text-xs text-destructive">Passwords do not match</p>
+                      )}
+                    </div>
+                  </>
+                )}
 
                 <AnimatePresence>
                   {authError && (
@@ -324,15 +390,149 @@ export default function Compare() {
                   )}
                 </AnimatePresence>
 
-                <Button type="submit" isLoading={isSubmittingAuth} className="mt-1 w-full h-12 text-base font-semibold dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
-                  {isLoginMode ? tc.submitSignIn : tc.submitCreateAccount}
-                  {!isSubmittingAuth && <ArrowRight className="ml-2 h-4 w-4" />}
+                <Button onClick={handleForgotPassword} isLoading={isForgotSubmitting}
+                  disabled={forgotStep === "email" ? !forgotEmail.includes("@") : (forgotCode.length !== 6 || forgotNewPassword.length < 6 || forgotNewPassword !== forgotConfirmPassword)}
+                  className="w-full h-12 text-base font-semibold dark:bg-[#D4B96A] dark:text-[#0F1410]">
+                  {forgotStep === "email" ? t.forgotPassword.sendCode : t.forgotPassword.resetPassword}
                 </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
+
+                <button type="button" onClick={() => { setShowForgotPassword(false); setAuthError(""); setForgotStep("email"); }}
+                  className="text-sm text-muted-foreground hover:text-gold transition-colors">
+                  {t.forgotPassword.backToLogin}
+                </button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      );
+    }
+
+    // Normal login/register form
+    return authShell(
+      <Card className="overflow-hidden rounded-2xl border border-black/[0.08] dark:border-white/[0.07] dark:bg-[#1A2218]" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+        <CardContent className="p-8" style={{ paddingTop: '2rem' }}>
+          <div className="mb-6 flex gap-1 rounded-xl bg-[#F0EDE4] dark:bg-[#141C12] p-1">
+            {[tc.tabs.signIn, tc.tabs.register].map((label, i) => (
+              <button key={i} type="button"
+                onClick={() => { setIsLoginMode(i === 0); setAuthError(""); setShowPassword(false); setConfirmPassword(""); setShowConfirmPassword(false); }}
+                className={((i === 0) === isLoginMode
+                  ? "bg-[#FAFAF8] dark:bg-[#0F1410] text-[#111811] dark:text-[#F0ECE2] shadow-sm rounded-[10px]"
+                  : "text-[#4A5248] dark:text-[#7A8E78]") + " flex-1 py-2.5 text-sm font-semibold transition-all duration-200"}
+              >{label}</button>
+            ))}
+          </div>
+
+          <form onSubmit={handleAuth} noValidate className="flex flex-col gap-4">
+            <AnimatePresence initial={false}>
+              {!isLoginMode && (
+                <motion.div
+                  key="name-field"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                  className="overflow-hidden bg-transparent"
+                >
+                  <div className="flex flex-col gap-1.5 pb-1">
+                    <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">{tc.form.fullName}</Label>
+                    <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder={tc.form.fullNamePlaceholder} />
+                    {fullName.trim().length > 0 && (() => {
+                      const words = fullName.trim().split(/\s+/).filter(Boolean);
+                      if (words.some(w => w.replace(/[^a-zA-Z]/g, "").length < 3)) return <p className="text-xs text-destructive mt-0.5">Each name must have at least 3 letters</p>;
+                      return <p className="text-xs text-emerald-600 mt-0.5">✓ {words.join(" ")}</p>;
+                    })()}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">{tc.form.email}</Label>
+              <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={tc.form.emailPlaceholder} />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">{tc.form.password}</Label>
+              <div className="relative">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={tc.form.passwordPlaceholder}
+                  className="pr-12"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+            </div>
+
+            <AnimatePresence initial={false}>
+              {!isLoginMode && (
+                <motion.div
+                  key="confirm-password-field"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                  className="overflow-hidden bg-transparent"
+                >
+                  <div className="flex flex-col gap-1.5 pb-1">
+                    <Label className="text-[11px] font-semibold uppercase tracking-[0.06em] text-[#4A5248] dark:text-[#7A8E78]">Confirm Password</Label>
+                    <div className="relative">
+                      <Input
+                        type={showConfirmPassword ? "text" : "password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Re-enter your password"
+                        className={`pr-12 ${!isLoginMode && confirmPassword && password ? (confirmPassword === password ? "border-emerald-400 focus:ring-emerald-400" : "border-destructive focus:ring-destructive") : ""}`}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword((v) => !v)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                        tabIndex={-1}
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                    </div>
+                    {!isLoginMode && confirmPassword && password && confirmPassword !== password && (
+                      <p className="text-xs text-destructive mt-0.5">Passwords do not match</p>
+                    )}
+                    {!isLoginMode && confirmPassword && password && confirmPassword === password && (
+                      <p className="text-xs text-emerald-600 mt-0.5 flex items-center gap-1">✓ Passwords match</p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {authError && (
+                <motion.p initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">{authError}</motion.p>
+              )}
+            </AnimatePresence>
+
+            <Button type="submit" isLoading={isSubmittingAuth} className="mt-1 w-full h-12 text-base font-semibold dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
+              {isLoginMode ? tc.submitSignIn : tc.submitCreateAccount}
+              {!isSubmittingAuth && <ArrowRight className="ml-2 h-4 w-4" />}
+            </Button>
+
+            {isLoginMode && (
+              <button type="button" onClick={() => { setShowForgotPassword(true); setAuthError(""); }}
+                className="text-sm text-muted-foreground hover:text-gold transition-colors text-center">
+                {t.forgotPassword.title}?
+              </button>
+            )}
+          </form>
+        </CardContent>
+      </Card>
     );
   }
 
@@ -513,8 +713,8 @@ export default function Compare() {
                       <div className="grid grid-cols-3 gap-3">
                         {(["bachelor", "master", "phd"] as DegreeLevel[]).map((level) => (
                           <button key={level} type="button" onClick={() => set("degreeLevel")(level)}
-                            className={(profileData.degreeLevel === level ? "border-primary bg-primary/10 text-primary" : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground") + " rounded-xl border px-3 py-3 text-sm font-semibold capitalize transition-all duration-200"}
-                          >{level === "phd" ? "PhD" : level.charAt(0).toUpperCase() + level.slice(1)}</button>
+                            className={(profileData.degreeLevel === level ? "border-primary bg-primary/10 text-primary" : "border-border bg-background text-muted-foreground hover:border-primary/50 hover:text-foreground") + " rounded-xl border px-3 py-3 text-sm font-semibold transition-all duration-200"}
+                          >{t.degreeLevels[level]}</button>
                         ))}
                       </div>
                     </div>
@@ -523,7 +723,10 @@ export default function Compare() {
                       <Label>{ob.fieldOfStudy}</Label>
                       <select className="h-11 w-full rounded-xl border border-border bg-background px-4 text-sm" value={profileData.major} onChange={(e) => set("major")(e.target.value)}>
                         <option value="">{ob.selectMajor}</option>
-                        {MAJOR_OPTIONS.map((m) => <option key={m} value={m}>{m}</option>)}
+                        {MAJOR_OPTIONS.map((m, i) => {
+                          const keys = ["computerScience","businessAdmin","engineering","medicine","law","economics","dataScience","architecture","psychology","other"] as const;
+                          return <option key={m} value={m}>{t.majors[keys[i]]}</option>;
+                        })}
                       </select>
                     </div>
 

@@ -176,6 +176,95 @@ export interface Translations {
       defaultDesc: string;
     };
   };
+  verification: {
+    title: string;
+    subtitle: string;
+    codePlaceholder: string;
+    submit: string;
+    resend: string;
+    simulatedNotice: string;
+    codeResent: string;
+  };
+  forgotPassword: {
+    title: string;
+    subtitle: string;
+    sendCode: string;
+    codeSent: string;
+    newPassword: string;
+    confirmNewPassword: string;
+    resetPassword: string;
+    backToLogin: string;
+    success: string;
+  };
+  settings: {
+    title: string;
+    subtitle: string;
+    changeName: string;
+    fullName: string;
+    changePassword: string;
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+    save: string;
+    saved: string;
+    userId: string;
+  };
+  degreeLevels: {
+    bachelor: string;
+    master: string;
+    phd: string;
+  };
+  majors: {
+    computerScience: string;
+    businessAdmin: string;
+    engineering: string;
+    medicine: string;
+    law: string;
+    economics: string;
+    dataScience: string;
+    architecture: string;
+    psychology: string;
+    other: string;
+  };
+  companySettings: {
+    title: string;
+    subtitle: string;
+    companyName: string;
+    bio: string;
+    contactEmail: string;
+    contactPhone: string;
+    location: string;
+    workingHours: string;
+    requirements: string;
+    requirementsHint: string;
+    pricing: string;
+    priceMin: string;
+    priceMax: string;
+    countries: string;
+    save: string;
+    saved: string;
+    addCountry: string;
+    removeCountry: string;
+  };
+  superAdmin: {
+    users: string;
+    searchByCode: string;
+    searchPlaceholder: string;
+    addUser: string;
+    deleteUser: string;
+    confirmDelete: string;
+    makeCompanyAdmin: string;
+    selectCompany: string;
+    userCode: string;
+    role: string;
+    email: string;
+    fullName: string;
+    password: string;
+    createUser: string;
+    noUsers: string;
+    changeRole: string;
+    actions: string;
+  };
   dashboard: {
     nav: {
       title: string;
@@ -183,6 +272,7 @@ export interface Translations {
       findConsultants: string;
       escrowPayments: string;
       editProfile: string;
+      settings: string;
       student: string;
       signOut: string;
     };
@@ -456,6 +546,95 @@ const en: Translations = {
       defaultDesc: "Premium education consulting with personalized guidance for international applicants.",
     },
   },
+  verification: {
+    title: "Verify Your Email",
+    subtitle: "We sent a 6-digit code to your email. Enter it below.",
+    codePlaceholder: "Enter 6-digit code",
+    submit: "Verify",
+    resend: "Resend Code",
+    simulatedNotice: "Demo mode — your code is:",
+    codeResent: "Code resent!",
+  },
+  forgotPassword: {
+    title: "Reset Password",
+    subtitle: "Enter your email to receive a reset code.",
+    sendCode: "Send Reset Code",
+    codeSent: "Code sent! Enter it below.",
+    newPassword: "New Password",
+    confirmNewPassword: "Confirm New Password",
+    resetPassword: "Reset Password",
+    backToLogin: "Back to Sign In",
+    success: "Password reset successfully! You can now sign in.",
+  },
+  settings: {
+    title: "Account Settings",
+    subtitle: "Update your name or password.",
+    changeName: "Change Name",
+    fullName: "Full Name",
+    changePassword: "Change Password",
+    currentPassword: "Current Password",
+    newPassword: "New Password",
+    confirmPassword: "Confirm New Password",
+    save: "Save Changes",
+    saved: "Settings saved!",
+    userId: "Your ID",
+  },
+  degreeLevels: {
+    bachelor: "Bachelor's",
+    master: "Master's",
+    phd: "PhD",
+  },
+  majors: {
+    computerScience: "Computer Science",
+    businessAdmin: "Business Administration",
+    engineering: "Engineering",
+    medicine: "Medicine",
+    law: "Law",
+    economics: "Economics",
+    dataScience: "Data Science",
+    architecture: "Architecture",
+    psychology: "Psychology",
+    other: "Other",
+  },
+  companySettings: {
+    title: "Company Settings",
+    subtitle: "Manage your company profile and details.",
+    companyName: "Company Name",
+    bio: "Bio / About",
+    contactEmail: "Contact Email",
+    contactPhone: "Contact Phone",
+    location: "Location",
+    workingHours: "Working Hours",
+    requirements: "Requirements by Country",
+    requirementsHint: "Describe requirements for each country you serve.",
+    pricing: "Pricing",
+    priceMin: "Min Price ($)",
+    priceMax: "Max Price ($)",
+    countries: "Specialized Countries",
+    save: "Save Settings",
+    saved: "Settings saved!",
+    addCountry: "Add Country",
+    removeCountry: "Remove",
+  },
+  superAdmin: {
+    users: "User Management",
+    searchByCode: "Search by User ID",
+    searchPlaceholder: "Enter 6-char code...",
+    addUser: "Add User",
+    deleteUser: "Delete",
+    confirmDelete: "Are you sure you want to delete this user?",
+    makeCompanyAdmin: "Make Company Admin",
+    selectCompany: "Select Company",
+    userCode: "User ID",
+    role: "Role",
+    email: "Email",
+    fullName: "Full Name",
+    password: "Password",
+    createUser: "Create User",
+    noUsers: "No users found.",
+    changeRole: "Change Role",
+    actions: "Actions",
+  },
   dashboard: {
     nav: {
       title: "Lerank",
@@ -463,6 +642,7 @@ const en: Translations = {
       findConsultants: "Find Consultants",
       escrowPayments: "Escrow Payments",
       editProfile: "Edit Profile",
+      settings: "Settings",
       student: "Student",
       signOut: "Sign Out",
     },
@@ -736,6 +916,95 @@ const ru: Translations = {
       defaultDesc: "Премиальное консультирование по образованию с персональным руководством для иностранных абитуриентов.",
     },
   },
+  verification: {
+    title: "Подтвердите почту",
+    subtitle: "Мы отправили 6-значный код на вашу почту. Введите его ниже.",
+    codePlaceholder: "Введите 6-значный код",
+    submit: "Подтвердить",
+    resend: "Отправить повторно",
+    simulatedNotice: "Демо-режим — ваш код:",
+    codeResent: "Код отправлен повторно!",
+  },
+  forgotPassword: {
+    title: "Сброс пароля",
+    subtitle: "Введите email для получения кода сброса.",
+    sendCode: "Отправить код",
+    codeSent: "Код отправлен! Введите его ниже.",
+    newPassword: "Новый пароль",
+    confirmNewPassword: "Подтвердите новый пароль",
+    resetPassword: "Сбросить пароль",
+    backToLogin: "Назад к входу",
+    success: "Пароль успешно сброшен! Теперь можете войти.",
+  },
+  settings: {
+    title: "Настройки аккаунта",
+    subtitle: "Измените имя или пароль.",
+    changeName: "Изменить имя",
+    fullName: "Полное имя",
+    changePassword: "Изменить пароль",
+    currentPassword: "Текущий пароль",
+    newPassword: "Новый пароль",
+    confirmPassword: "Подтвердите новый пароль",
+    save: "Сохранить",
+    saved: "Настройки сохранены!",
+    userId: "Ваш ID",
+  },
+  degreeLevels: {
+    bachelor: "Бакалавриат",
+    master: "Магистратура",
+    phd: "PhD / Аспирантура",
+  },
+  majors: {
+    computerScience: "Информатика",
+    businessAdmin: "Бизнес-администрирование",
+    engineering: "Инженерия",
+    medicine: "Медицина",
+    law: "Право",
+    economics: "Экономика",
+    dataScience: "Наука о данных",
+    architecture: "Архитектура",
+    psychology: "Психология",
+    other: "Другое",
+  },
+  companySettings: {
+    title: "Настройки компании",
+    subtitle: "Управляйте профилем и данными компании.",
+    companyName: "Название компании",
+    bio: "О компании",
+    contactEmail: "Контактный email",
+    contactPhone: "Контактный телефон",
+    location: "Местоположение",
+    workingHours: "Рабочие часы",
+    requirements: "Требования по странам",
+    requirementsHint: "Опишите требования для каждой страны.",
+    pricing: "Ценообразование",
+    priceMin: "Мин. цена ($)",
+    priceMax: "Макс. цена ($)",
+    countries: "Специализированные страны",
+    save: "Сохранить настройки",
+    saved: "Настройки сохранены!",
+    addCountry: "Добавить страну",
+    removeCountry: "Удалить",
+  },
+  superAdmin: {
+    users: "Управление пользователями",
+    searchByCode: "Поиск по ID",
+    searchPlaceholder: "Введите 6-значный код...",
+    addUser: "Добавить пользователя",
+    deleteUser: "Удалить",
+    confirmDelete: "Вы уверены, что хотите удалить этого пользователя?",
+    makeCompanyAdmin: "Назначить админом компании",
+    selectCompany: "Выберите компанию",
+    userCode: "ID пользователя",
+    role: "Роль",
+    email: "Email",
+    fullName: "Полное имя",
+    password: "Пароль",
+    createUser: "Создать пользователя",
+    noUsers: "Пользователи не найдены.",
+    changeRole: "Изменить роль",
+    actions: "Действия",
+  },
   dashboard: {
     nav: {
       title: "Lerank",
@@ -743,6 +1012,7 @@ const ru: Translations = {
       findConsultants: "Найти консультантов",
       escrowPayments: "Платежи Escrow",
       editProfile: "Редактировать",
+      settings: "Настройки",
       student: "Студент",
       signOut: "Выйти",
     },
@@ -1016,6 +1286,95 @@ const uz: Translations = {
       defaultDesc: "Xorijiy abituriyentlar uchun individual ko'rsatma bilan premium ta'lim konsultingi.",
     },
   },
+  verification: {
+    title: "Emailni tasdiqlang",
+    subtitle: "Biz emailingizga 6 raqamli kod yubordik. Uni quyida kiriting.",
+    codePlaceholder: "6 raqamli kodni kiriting",
+    submit: "Tasdiqlash",
+    resend: "Kodni qayta yuborish",
+    simulatedNotice: "Demo rejim — sizning kodingiz:",
+    codeResent: "Kod qayta yuborildi!",
+  },
+  forgotPassword: {
+    title: "Parolni tiklash",
+    subtitle: "Tiklash kodi olish uchun emailingizni kiriting.",
+    sendCode: "Kod yuborish",
+    codeSent: "Kod yuborildi! Uni quyida kiriting.",
+    newPassword: "Yangi parol",
+    confirmNewPassword: "Yangi parolni tasdiqlang",
+    resetPassword: "Parolni tiklash",
+    backToLogin: "Kirishga qaytish",
+    success: "Parol muvaffaqiyatli tiklandi! Endi kirishingiz mumkin.",
+  },
+  settings: {
+    title: "Hisob sozlamalari",
+    subtitle: "Ismingiz yoki parolingizni o'zgartiring.",
+    changeName: "Ismni o'zgartirish",
+    fullName: "To'liq ism",
+    changePassword: "Parolni o'zgartirish",
+    currentPassword: "Joriy parol",
+    newPassword: "Yangi parol",
+    confirmPassword: "Yangi parolni tasdiqlang",
+    save: "Saqlash",
+    saved: "Sozlamalar saqlandi!",
+    userId: "Sizning ID",
+  },
+  degreeLevels: {
+    bachelor: "Bakalavr",
+    master: "Magistratura",
+    phd: "PhD / Doktorantura",
+  },
+  majors: {
+    computerScience: "Kompyuter fanlari",
+    businessAdmin: "Biznes boshqaruvi",
+    engineering: "Muhandislik",
+    medicine: "Tibbiyot",
+    law: "Huquqshunoslik",
+    economics: "Iqtisodiyot",
+    dataScience: "Ma'lumotlar fani",
+    architecture: "Arxitektura",
+    psychology: "Psixologiya",
+    other: "Boshqa",
+  },
+  companySettings: {
+    title: "Kompaniya sozlamalari",
+    subtitle: "Kompaniya profili va ma'lumotlarini boshqaring.",
+    companyName: "Kompaniya nomi",
+    bio: "Kompaniya haqida",
+    contactEmail: "Aloqa emaili",
+    contactPhone: "Aloqa telefoni",
+    location: "Joylashuv",
+    workingHours: "Ish soatlari",
+    requirements: "Mamlakatlar bo'yicha talablar",
+    requirementsHint: "Har bir mamlakat uchun talablarni yozing.",
+    pricing: "Narxlash",
+    priceMin: "Min. narx ($)",
+    priceMax: "Maks. narx ($)",
+    countries: "Ixtisoslashgan mamlakatlar",
+    save: "Sozlamalarni saqlash",
+    saved: "Sozlamalar saqlandi!",
+    addCountry: "Mamlakat qo'shish",
+    removeCountry: "O'chirish",
+  },
+  superAdmin: {
+    users: "Foydalanuvchilar boshqaruvi",
+    searchByCode: "ID bo'yicha qidirish",
+    searchPlaceholder: "6 belgili kodni kiriting...",
+    addUser: "Foydalanuvchi qo'shish",
+    deleteUser: "O'chirish",
+    confirmDelete: "Bu foydalanuvchini o'chirishga ishonchingiz komilmi?",
+    makeCompanyAdmin: "Kompaniya admini qilish",
+    selectCompany: "Kompaniyani tanlang",
+    userCode: "Foydalanuvchi ID",
+    role: "Rol",
+    email: "Email",
+    fullName: "To'liq ism",
+    password: "Parol",
+    createUser: "Foydalanuvchi yaratish",
+    noUsers: "Foydalanuvchilar topilmadi.",
+    changeRole: "Rolni o'zgartirish",
+    actions: "Harakatlar",
+  },
   dashboard: {
     nav: {
       title: "Lerank",
@@ -1023,6 +1382,7 @@ const uz: Translations = {
       findConsultants: "Konsultant topish",
       escrowPayments: "Escrow to'lovlari",
       editProfile: "Tahrirlash",
+      settings: "Sozlamalar",
       student: "Talaba",
       signOut: "Chiqish",
     },

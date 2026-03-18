@@ -9,6 +9,8 @@ interface User {
   avatarUrl?: string | null;
   onboardingCompleted: boolean;
   companyId?: number | null;
+  userCode?: string | null;
+  emailVerified?: boolean;
   createdAt: string;
   profile?: any | null;
 }
@@ -18,7 +20,12 @@ interface AuthContextType {
   isLoading: boolean;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (fullName: string, email: string, password: string) => Promise<void>;
+  register: (fullName: string, email: string, password: string) => Promise<{ requiresVerification: boolean; email: string; simulatedCode?: string }>;
+  verifyEmail: (email: string, code: string) => Promise<void>;
+  resendCode: (email: string) => Promise<{ simulatedCode?: string }>;
+  forgotPassword: (email: string) => Promise<{ simulatedCode?: string }>;
+  resetPassword: (email: string, code: string, newPassword: string) => Promise<void>;
+  updateSettings: (data: { fullName?: string; currentPassword?: string; newPassword?: string }) => Promise<void>;
   logout: () => void;
 }
 
@@ -100,10 +107,91 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const data = await res.json();
+    return {
+      requiresVerification: data.requiresVerification || false,
+      email: data.email || email,
+      simulatedCode: data.simulatedCode,
+    };
+  };
+
+  const verifyEmail = async (email: string, code: string) => {
+    const res = await fetch("/api/auth/verify-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, code }),
+    });
+
+    if (res.ok === false) {
+      const message = await extractErrorMessage(res, "Verification failed");
+      throw new Error(message);
+    }
+
+    const data = await res.json();
     localStorage.setItem(TOKEN_KEY, data.token);
     setToken(data.token);
     setUser(data.user);
     queryClient.clear();
+  };
+
+  const resendCode = async (email: string) => {
+    const res = await fetch("/api/auth/resend-code", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    if (res.ok === false) {
+      const message = await extractErrorMessage(res, "Failed to resend code");
+      throw new Error(message);
+    }
+
+    const data = await res.json();
+    return { simulatedCode: data.simulatedCode };
+  };
+
+  const forgotPassword = async (email: string) => {
+    const res = await fetch("/api/auth/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    if (res.ok === false) {
+      const message = await extractErrorMessage(res, "Failed");
+      throw new Error(message);
+    }
+
+    const data = await res.json();
+    return { simulatedCode: data.simulatedCode };
+  };
+
+  const resetPassword = async (email: string, code: string, newPassword: string) => {
+    const res = await fetch("/api/auth/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, code, newPassword }),
+    });
+
+    if (res.ok === false) {
+      const message = await extractErrorMessage(res, "Password reset failed");
+      throw new Error(message);
+    }
+  };
+
+  const updateSettings = async (data: { fullName?: string; currentPassword?: string; newPassword?: string }) => {
+    const res = await fetch("/api/auth/settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+      body: JSON.stringify(data),
+    });
+
+    if (res.ok === false) {
+      const message = await extractErrorMessage(res, "Update failed");
+      throw new Error(message);
+    }
+
+    const updated = await res.json();
+    setUser(updated);
   };
 
   const logout = () => {
@@ -113,7 +201,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryClient.clear();
   };
 
-  return <AuthContext.Provider value={{ user, isLoading, token, login, register, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, isLoading, token, login, register, verifyEmail, resendCode, forgotPassword, resetPassword, updateSettings, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

@@ -514,3 +514,78 @@ export const CreateMilestoneTemplateBody = zod.object({
     }),
   ),
 });
+
+/**
+ * @summary Verify email with code
+ */
+export const VerifyEmailBody = zod.object({
+  email: zod.string().email(),
+  code: zod.string().min(6).max(6),
+});
+
+/**
+ * @summary Resend verification code
+ */
+export const ResendCodeBody = zod.object({
+  email: zod.string().email(),
+});
+
+/**
+ * @summary Forgot password - request reset code
+ */
+export const ForgotPasswordBody = zod.object({
+  email: zod.string().email(),
+});
+
+/**
+ * @summary Reset password with code
+ */
+export const ResetPasswordBody = zod.object({
+  email: zod.string().email(),
+  code: zod.string().min(6).max(6),
+  newPassword: zod.string().min(6),
+});
+
+/**
+ * @summary Update user settings (name, password)
+ */
+export const UpdateSettingsBody = zod.object({
+  fullName: zod.string().optional(),
+  currentPassword: zod.string().optional(),
+  newPassword: zod.string().min(6).optional(),
+});
+
+/**
+ * @summary Update company settings (company admin)
+ */
+export const UpdateCompanySettingsBody = zod.object({
+  name: zod.string().optional(),
+  bio: zod.string().nullish(),
+  contactEmail: zod.string().nullish(),
+  contactPhone: zod.string().nullish(),
+  location: zod.string().nullish(),
+  workingHours: zod.string().nullish(),
+  requirementsPerCountry: zod.string().nullish(),
+  priceMin: zod.number().optional(),
+  priceMax: zod.number().optional(),
+  specializedCountries: zod.array(zod.string()).optional(),
+});
+
+/**
+ * @summary Admin - create user
+ */
+export const AdminCreateUserBody = zod.object({
+  fullName: zod.string(),
+  email: zod.string().email(),
+  password: zod.string().min(6),
+  role: zod.enum(["student", "company_admin", "super_admin"]),
+  companyId: zod.number().nullish(),
+});
+
+/**
+ * @summary Admin - update user role
+ */
+export const AdminUpdateUserRoleBody = zod.object({
+  role: zod.enum(["student", "company_admin", "super_admin"]),
+  companyId: zod.number().nullish(),
+});

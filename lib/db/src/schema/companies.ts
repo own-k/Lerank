@@ -7,6 +7,12 @@ export const companiesTable = pgTable("companies", {
   name: text("name").notNull(),
   logoUrl: text("logo_url"),
   description: text("description"),
+  bio: text("bio"),
+  contactEmail: text("contact_email"),
+  contactPhone: text("contact_phone"),
+  location: text("location"),
+  workingHours: text("working_hours"),
+  requirementsPerCountry: text("requirements_per_country"), // JSON string
   website: text("website"),
   rating: real("rating").notNull().default(0),
   studentsHelped: integer("students_helped").notNull().default(0),

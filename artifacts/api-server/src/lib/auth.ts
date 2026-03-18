@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import crypto from "crypto";
+import { db, usersTable } from "@workspace/db";
+import { eq } from "drizzle-orm";
 
 export function hashPassword(password: string): string {
   return crypto.createHash("sha256").update(password + "lerank_salt_2024").digest("hex");
@@ -42,4 +44,32 @@ export async function requireAuth(req: Request & { userId?: number }, res: Respo
   }
   req.userId = userId;
   next();
+}
+
+export function requireRole(...roles: string[]) {
+  return async (req: Request & { userId?: number }, res: Response, next: NextFunction) => {
+    if (!req.userId) {
+      res.status(401).json({ error: "Unauthorized" });
+      return;
+    }
+    const user = await db.query.usersTable.findFirst({ where: eq(usersTable.id, req.userId) });
+    if (!user || !roles.includes(user.role)) {
+      res.status(403).json({ error: "Forbidden", message: "Insufficient permissions" });
+      return;
+    }
+    next();
+  };
+}
+
+export function generateUserCode(): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let code = "";
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+export function generateVerificationCode(): string {
+  return Math.floor(100000 + Math.random() * 900000).toString();
 }

@@ -5,7 +5,7 @@ import { Card, CardContent, Badge, Button, Input, Label } from "@/components/ui-
 import { Link } from "wouter";
 import {
   Activity, Bell, CheckCircle, CreditCard, LayoutDashboard, LogOut,
-  FileText, ChevronRight, DollarSign, ShieldCheck, UserCog, Save, X, Menu,
+  FileText, ChevronRight, DollarSign, ShieldCheck, UserCog, Save, X, Menu, Settings, Copy, Eye, EyeOff,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -37,7 +37,7 @@ const MAJOR_OPTIONS = [
   "Law", "Economics", "Data Science", "Architecture", "Psychology", "Other",
 ];
 
-type ActiveView = "dashboard" | "profile";
+type ActiveView = "dashboard" | "profile" | "settings";
 
 function ProfileEditor({ user, token, onClose }: { user: any; token: string | null; onClose: () => void }) {
   const { t } = useLanguage();
@@ -202,7 +202,7 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
                       : "border-border text-muted-foreground hover:border-gold/50"
                   }`}
                 >
-                  {level === "phd" ? "PhD" : level.charAt(0).toUpperCase() + level.slice(1)}
+                  {t.degreeLevels[level]}
                 </button>
               ))}
             </div>
@@ -215,7 +215,10 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
               className="flex h-11 w-full rounded-xl border border-border bg-card px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all"
             >
               <option value="">{tp.selectMajor}</option>
-              {MAJOR_OPTIONS.map(m => <option key={m} value={m}>{m}</option>)}
+              {MAJOR_OPTIONS.map((m, i) => {
+                const keys = ["computerScience","businessAdmin","engineering","medicine","law","economics","dataScience","architecture","psychology","other"] as const;
+                return <option key={m} value={m}>{t.majors[keys[i]]}</option>;
+              })}
             </select>
           </div>
         </CardContent>
@@ -305,6 +308,166 @@ function ProfileEditor({ user, token, onClose }: { user: any; token: string | nu
   );
 }
 
+function SettingsEditor({ user, onClose }: { user: any; onClose: () => void }) {
+  const { t, lang } = useLanguage();
+  const { updateSettings } = useAuth();
+  const ts = t.settings;
+  const [fullName, setFullName] = useState(user.fullName || "");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<"idle" | "success" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [codeCopied, setCodeCopied] = useState(false);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    setSaveStatus("idle");
+    setErrorMsg("");
+    try {
+      const data: any = {};
+      if (fullName.trim() && fullName.trim() !== user.fullName) {
+        data.fullName = fullName.trim();
+      }
+      if (currentPassword && newPassword) {
+        if (newPassword !== confirmPassword) {
+          throw new Error("Passwords do not match");
+        }
+        data.currentPassword = currentPassword;
+        data.newPassword = newPassword;
+      }
+      if (Object.keys(data).length === 0) {
+        throw new Error("No changes to save");
+      }
+      await updateSettings(data);
+      setSaveStatus("success");
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setTimeout(() => setSaveStatus("idle"), 3000);
+    } catch (e: any) {
+      setSaveStatus("error");
+      setErrorMsg(e.message || "Something went wrong");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const copyCode = () => {
+    if (user.userCode) {
+      navigator.clipboard.writeText(user.userCode);
+      setCodeCopied(true);
+      setTimeout(() => setCodeCopied(false), 2000);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 16 }}
+      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      className="max-w-2xl mx-auto space-y-6"
+    >
+      <header className="flex justify-between items-start gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">{ts.title}</h1>
+          <p className="text-muted-foreground mt-1 text-sm">{ts.subtitle}</p>
+        </div>
+        <Button variant="ghost" size="icon" onClick={onClose} className="text-muted-foreground hover:text-foreground shrink-0">
+          <X className="w-5 h-5" />
+        </Button>
+      </header>
+
+      {/* User ID */}
+      {user.userCode && (
+        <Card className="border-border shadow-sm">
+          <CardContent className="p-5 sm:p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground">{ts.userId}</Label>
+                <div className="text-2xl font-mono font-bold text-gold tracking-widest mt-1">{user.userCode}</div>
+              </div>
+              <Button variant="outline" size="sm" onClick={copyCode} className="gap-2">
+                <Copy className="w-4 h-4" />
+                {codeCopied ? "Copied!" : "Copy"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Change Name */}
+      <Card className="border-border shadow-sm">
+        <CardContent className="p-5 sm:p-6 space-y-4">
+          <h2 className="font-bold text-foreground text-base">{ts.changeName}</h2>
+          <div className="space-y-2">
+            <Label>{ts.fullName}</Label>
+            <Input value={fullName} onChange={e => setFullName(e.target.value)} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Change Password */}
+      <Card className="border-border shadow-sm">
+        <CardContent className="p-5 sm:p-6 space-y-4">
+          <h2 className="font-bold text-foreground text-base">{ts.changePassword}</h2>
+          <div className="space-y-2">
+            <Label>{ts.currentPassword}</Label>
+            <div className="relative">
+              <Input type={showCurrentPw ? "text" : "password"} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)} className="pr-12" />
+              <button type="button" onClick={() => setShowCurrentPw(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1" tabIndex={-1}>
+                {showCurrentPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>{ts.newPassword}</Label>
+            <div className="relative">
+              <Input type={showNewPw ? "text" : "password"} value={newPassword} onChange={e => setNewPassword(e.target.value)} className="pr-12" />
+              <button type="button" onClick={() => setShowNewPw(v => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1" tabIndex={-1}>
+                {showNewPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>{ts.confirmPassword}</Label>
+            <Input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} />
+            {newPassword && confirmPassword && newPassword !== confirmPassword && (
+              <p className="text-xs text-destructive">Passwords do not match</p>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Save */}
+      <div className="flex flex-wrap items-center gap-3 pb-8">
+        <Button onClick={handleSave} isLoading={isSaving} className="bg-primary hover:bg-primary/85 text-primary-foreground">
+          <Save className="w-4 h-4 mr-2" /> {ts.save}
+        </Button>
+        <Button variant="ghost" onClick={onClose} className="text-muted-foreground">{t.dashboard.profile.cancel}</Button>
+        <AnimatePresence>
+          {saveStatus === "success" && (
+            <motion.span initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
+              className="text-sm font-medium text-emerald-600 flex items-center gap-1">
+              <CheckCircle className="w-4 h-4" /> {ts.saved}
+            </motion.span>
+          )}
+          {saveStatus === "error" && (
+            <motion.span initial={{ opacity: 0, x: -8 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0 }}
+              className="text-sm font-medium text-red-500">
+              {errorMsg}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
+}
+
 export default function StudentDashboard() {
   const { user, logout, token } = useAuth();
   const { t } = useLanguage();
@@ -348,6 +511,12 @@ export default function StudentDashboard() {
               activeView === "profile" ? "bg-gold/10 text-gold" : "text-muted-foreground hover:bg-muted hover:text-foreground"
             }`}>
             <UserCog className="w-5 h-5 shrink-0" /> {td.nav.editProfile}
+          </button>
+          <button onClick={() => { setActiveView("settings"); closeSidebar(); }}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors text-left ${
+              activeView === "settings" ? "bg-gold/10 text-gold" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+            }`}>
+            <Settings className="w-5 h-5 shrink-0" /> {td.nav.settings}
           </button>
         </nav>
       </div>
@@ -408,7 +577,9 @@ export default function StudentDashboard() {
 
         <div className="p-4 sm:p-6 lg:p-8">
           <AnimatePresence mode="wait">
-            {activeView === "profile" ? (
+            {activeView === "settings" ? (
+              <SettingsEditor key="settings" user={user} onClose={() => setActiveView("dashboard")} />
+            ) : activeView === "profile" ? (
               <ProfileEditor key="profile" user={user} token={token} onClose={() => setActiveView("dashboard")} />
             ) : (
               <motion.div

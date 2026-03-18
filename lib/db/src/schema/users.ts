@@ -13,6 +13,17 @@ export const usersTable = pgTable("users", {
   avatarUrl: text("avatar_url"),
   onboardingCompleted: boolean("onboarding_completed").notNull().default(false),
   companyId: integer("company_id"),
+  userCode: text("user_code").unique(),
+  emailVerified: boolean("email_verified").notNull().default(false),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
+export const verificationCodesTable = pgTable("verification_codes", {
+  id: serial("id").primaryKey(),
+  email: text("email").notNull(),
+  code: text("code").notNull(),
+  type: text("type").notNull(), // "registration" | "password_reset"
+  expiresAt: timestamp("expires_at").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
