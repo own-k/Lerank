@@ -54,14 +54,14 @@ export default function Compare() {
   const [showVerification, setShowVerification] = useState(false);
   const [verificationEmail, setVerificationEmail] = useState("");
   const [verificationCode, setVerificationCode] = useState("");
-  const [simulatedCode, setSimulatedCode] = useState("");
+  const [fallbackCode, setFallbackCode] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
 
   // Forgot password state
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [forgotEmail, setForgotEmail] = useState("");
   const [forgotCode, setForgotCode] = useState("");
-  const [forgotSimulatedCode, setForgotSimulatedCode] = useState("");
+  const [forgotFallbackCode, setForgotFallbackCode] = useState("");
   const [forgotNewPassword, setForgotNewPassword] = useState("");
   const [forgotConfirmPassword, setForgotConfirmPassword] = useState("");
   const [forgotStep, setForgotStep] = useState<"email" | "code" | "done">("email");
@@ -153,7 +153,7 @@ export default function Compare() {
         const result = await register(fullName, email, password);
         if (result.requiresVerification) {
           setVerificationEmail(result.email);
-          setSimulatedCode(result.simulatedCode || "");
+          setFallbackCode(result.fallbackCode || "");
           setShowVerification(true);
         }
       }
@@ -179,8 +179,8 @@ export default function Compare() {
   const handleResendCode = async () => {
     try {
       const result = await resendCode(verificationEmail);
-      setSimulatedCode(result.simulatedCode || "");
       setVerificationCode("");
+      setFallbackCode(result.fallbackCode || "");
       setAuthError(t.verification.codeResent);
     } catch (err: any) {
       setAuthError(typeof err?.message === "string" ? err.message : "Failed to resend");
@@ -193,7 +193,7 @@ export default function Compare() {
     try {
       if (forgotStep === "email") {
         const result = await forgotPassword(forgotEmail);
-        setForgotSimulatedCode(result.simulatedCode || "");
+        setForgotFallbackCode(result.fallbackCode || "");
         setForgotStep("code");
       } else if (forgotStep === "code") {
         if (forgotNewPassword !== forgotConfirmPassword) {
@@ -295,11 +295,13 @@ export default function Compare() {
         <Card className="overflow-hidden rounded-2xl border border-black/[0.08] dark:border-white/[0.07] dark:bg-[#1A2218]" style={{ boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
           <CardContent className="p-8" style={{ paddingTop: '2rem' }}>
             <h2 className="text-xl font-bold mb-2">{t.verification.title}</h2>
-            <p className="text-sm text-muted-foreground mb-4">{t.verification.subtitle}</p>
-
-            {simulatedCode && (
-              <div className="bg-gold/10 border border-gold/30 rounded-xl px-4 py-3 mb-4">
-                <p className="text-sm font-medium text-gold">{t.verification.simulatedNotice} <span className="font-mono font-bold text-lg">{simulatedCode}</span></p>
+            <p className="text-sm text-muted-foreground mb-4">
+              {fallbackCode ? `A code was sent to ${verificationEmail}` : t.verification.subtitle}
+            </p>
+            {fallbackCode && (
+              <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300/50 rounded-xl px-4 py-3 mb-4">
+                <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wide mb-1">Email delivery issue — use this code</p>
+                <span className="font-mono font-bold text-2xl tracking-[0.25em] text-amber-800 dark:text-amber-300">{fallbackCode}</span>
               </div>
             )}
 
@@ -341,7 +343,7 @@ export default function Compare() {
             {forgotStep === "done" ? (
               <div className="space-y-4">
                 <p className="text-sm text-emerald-600 font-medium">{t.forgotPassword.success}</p>
-                <Button onClick={() => { setShowForgotPassword(false); setForgotStep("email"); setForgotEmail(""); setForgotCode(""); setForgotNewPassword(""); setForgotConfirmPassword(""); setForgotSimulatedCode(""); setAuthError(""); }}
+                <Button onClick={() => { setShowForgotPassword(false); setForgotStep("email"); setForgotEmail(""); setForgotCode(""); setForgotNewPassword(""); setForgotConfirmPassword(""); setAuthError(""); }}
                   className="w-full h-12 text-base font-semibold dark:bg-[#D4B96A] dark:text-[#0F1410]">
                   {t.forgotPassword.backToLogin}
                 </Button>
@@ -358,9 +360,10 @@ export default function Compare() {
                 {forgotStep === "code" && (
                   <>
                     <p className="text-sm text-muted-foreground">{t.forgotPassword.codeSent}</p>
-                    {forgotSimulatedCode && (
-                      <div className="bg-gold/10 border border-gold/30 rounded-xl px-4 py-3">
-                        <p className="text-sm font-medium text-gold">{t.verification.simulatedNotice} <span className="font-mono font-bold text-lg">{forgotSimulatedCode}</span></p>
+                    {forgotFallbackCode && (
+                      <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-300/50 rounded-xl px-4 py-3">
+                        <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wide mb-1">Email delivery issue — use this code</p>
+                        <span className="font-mono font-bold text-2xl tracking-[0.25em] text-amber-800 dark:text-amber-300">{forgotFallbackCode}</span>
                       </div>
                     )}
                     <Input
@@ -396,7 +399,7 @@ export default function Compare() {
                   {forgotStep === "email" ? t.forgotPassword.sendCode : t.forgotPassword.resetPassword}
                 </Button>
 
-                <button type="button" onClick={() => { setShowForgotPassword(false); setAuthError(""); setForgotStep("email"); }}
+                <button type="button" onClick={() => { setShowForgotPassword(false); setAuthError(""); setForgotStep("email"); setForgotFallbackCode(""); setForgotEmail(""); setForgotCode(""); }}
                   className="text-sm text-muted-foreground hover:text-gold transition-colors">
                   {t.forgotPassword.backToLogin}
                 </button>

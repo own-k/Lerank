@@ -20,10 +20,10 @@ interface AuthContextType {
   isLoading: boolean;
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
-  register: (fullName: string, email: string, password: string) => Promise<{ requiresVerification: boolean; email: string; simulatedCode?: string }>;
+  register: (fullName: string, email: string, password: string) => Promise<{ requiresVerification: boolean; email: string; emailSent?: boolean; fallbackCode?: string }>;
   verifyEmail: (email: string, code: string) => Promise<void>;
-  resendCode: (email: string) => Promise<{ simulatedCode?: string }>;
-  forgotPassword: (email: string) => Promise<{ simulatedCode?: string }>;
+  resendCode: (email: string) => Promise<{ emailSent?: boolean; fallbackCode?: string }>;
+  forgotPassword: (email: string) => Promise<{ emailSent?: boolean; fallbackCode?: string }>;
   resetPassword: (email: string, code: string, newPassword: string) => Promise<void>;
   updateSettings: (data: { fullName?: string; currentPassword?: string; newPassword?: string }) => Promise<void>;
   logout: () => void;
@@ -110,7 +110,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return {
       requiresVerification: data.requiresVerification || false,
       email: data.email || email,
-      simulatedCode: data.simulatedCode,
+      emailSent: data.emailSent,
+      fallbackCode: data.fallbackCode,
     };
   };
 
@@ -146,7 +147,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const data = await res.json();
-    return { simulatedCode: data.simulatedCode };
+    return { emailSent: data.emailSent, fallbackCode: data.fallbackCode };
   };
 
   const forgotPassword = async (email: string) => {
@@ -162,7 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     const data = await res.json();
-    return { simulatedCode: data.simulatedCode };
+    return { emailSent: data.emailSent, fallbackCode: data.fallbackCode };
   };
 
   const resetPassword = async (email: string, code: string, newPassword: string) => {

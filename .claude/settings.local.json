@@ -18,7 +18,8 @@
       "Bash(npm run:*)",
       "Bash(pnpm run:*)",
       "Bash(pnpm --filter @workspace/lerank build)",
-      "Bash(npx vite:*)"
+      "Bash(npx vite:*)",
+      "Bash(pnpm add:*)"
     ]
   }
 }

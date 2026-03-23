@@ -3,6 +3,7 @@ import { db, usersTable, studentProfilesTable, verificationCodesTable } from "@w
 import { RegisterBody, LoginBody, UpdateProfileBody, VerifyEmailBody, ResendCodeBody, ForgotPasswordBody, ResetPasswordBody, UpdateSettingsBody } from "@workspace/api-zod";
 import { eq, and } from "drizzle-orm";
 import { hashPassword, generateToken, requireAuth, generateUserCode, generateVerificationCode } from "../lib/auth.js";
+import { sendVerificationEmail, sendPasswordResetEmail } from "../lib/email.js";
 
 const router = Router();
 
@@ -81,7 +82,7 @@ router.post("/register", async (req, res) => {
       userCode,
     }).returning();
 
-    // Generate verification code
+    // Generate verification code and send email
     const code = generateVerificationCode();
     await db.insert(verificationCodesTable).values({
       email: body.email,
@@ -90,10 +91,14 @@ router.post("/register", async (req, res) => {
       expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 min
     });
 
+    const emailSent = await sendVerificationEmail(body.email, code);
+
     res.status(201).json({
       requiresVerification: true,
       email: body.email,
-      simulatedCode: code, // In production, this would be sent via email
+      emailSent,
+      // Fallback: show code in response if email delivery failed
+      fallbackCode: emailSent ? undefined : code,
     });
   } catch (err: any) {
     if (err?.name === "ZodError") {
@@ -169,7 +174,8 @@ router.post("/resend-code", async (req, res) => {
       expiresAt: new Date(Date.now() + 10 * 60 * 1000),
     });
 
-    res.json({ success: true, simulatedCode: code });
+    const emailSent = await sendVerificationEmail(body.email, code);
+    res.json({ success: true, emailSent, fallbackCode: emailSent ? undefined : code });
   } catch (err: any) {
     res.status(500).json({ error: "Server error", message: err?.message });
   }
@@ -200,7 +206,8 @@ router.post("/forgot-password", async (req, res) => {
       expiresAt: new Date(Date.now() + 10 * 60 * 1000),
     });
 
-    res.json({ success: true, simulatedCode: code });
+    const emailSent = await sendPasswordResetEmail(body.email, code);
+    res.json({ success: true, emailSent, fallbackCode: emailSent ? undefined : code });
   } catch (err: any) {
     res.status(500).json({ error: "Server error", message: err?.message });
   }

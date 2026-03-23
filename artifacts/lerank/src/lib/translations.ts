@@ -182,7 +182,7 @@ export interface Translations {
     codePlaceholder: string;
     submit: string;
     resend: string;
-    simulatedNotice: string;
+    emailSent: string;
     codeResent: string;
   };
   forgotPassword: {
@@ -552,8 +552,8 @@ const en: Translations = {
     codePlaceholder: "Enter 6-digit code",
     submit: "Verify",
     resend: "Resend Code",
-    simulatedNotice: "Demo mode — your code is:",
-    codeResent: "Code resent!",
+    emailSent: "A verification code has been sent to your email.",
+    codeResent: "Code resent! Check your email.",
   },
   forgotPassword: {
     title: "Reset Password",
@@ -922,8 +922,8 @@ const ru: Translations = {
     codePlaceholder: "Введите 6-значный код",
     submit: "Подтвердить",
     resend: "Отправить повторно",
-    simulatedNotice: "Демо-режим — ваш код:",
-    codeResent: "Код отправлен повторно!",
+    emailSent: "Код подтверждения отправлен на вашу почту.",
+    codeResent: "Код отправлен повторно! Проверьте почту.",
   },
   forgotPassword: {
     title: "Сброс пароля",
@@ -1292,8 +1292,8 @@ const uz: Translations = {
     codePlaceholder: "6 raqamli kodni kiriting",
     submit: "Tasdiqlash",
     resend: "Kodni qayta yuborish",
-    simulatedNotice: "Demo rejim — sizning kodingiz:",
-    codeResent: "Kod qayta yuborildi!",
+    emailSent: "Tasdiqlash kodi emailingizga yuborildi.",
+    codeResent: "Kod qayta yuborildi! Emailni tekshiring.",
   },
   forgotPassword: {
     title: "Parolni tiklash",
