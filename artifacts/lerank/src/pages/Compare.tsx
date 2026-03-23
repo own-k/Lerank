@@ -5,7 +5,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageToggle } from "@/components/language-toggle";
 import { useLanguage } from "@/hooks/use-language";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, DollarSign, Eye, EyeOff, Filter, Loader2, LogOut, MapPin, Star, X, GitCompare, CheckSquare, Square, ChevronDown } from "lucide-react";
+import { ArrowLeft, ArrowRight, DollarSign, Eye, EyeOff, Filter, Loader2, LogOut, MapPin, Star, X, GitCompare, CheckSquare, Square, Phone, Mail, Clock, Globe, ChevronRight, Users, Award, TrendingUp } from "lucide-react";
 import { Link, useLocation } from "wouter";
 
 type DegreeLevel = "bachelor" | "master" | "phd";
@@ -74,7 +74,8 @@ export default function Compare() {
   const [filterCountry, setFilterCountry] = useState("All");
   const [filterRating, setFilterRating] = useState("Any");
   const [compareIds, setCompareIds] = useState<number[]>([]);
-  const [showComparePanel, setShowComparePanel] = useState(false);
+  const [activeTab, setActiveTab] = useState<"browse" | "compare">("browse");
+  const [viewingProfile, setViewingProfile] = useState<any>(null);
 
   const toggleCompare = (id: number) => {
     setCompareIds(prev =>
@@ -853,12 +854,15 @@ export default function Compare() {
 
   // ── Main compare view ─────────────────────────────────────────────────────
   const tm = tc.main;
+  const comparedConsultants = compareIds.map(id => consultants.find(x => x.id === id)).filter(Boolean);
+
   return (
     <div className="min-h-screen premium-bg pb-16">
-      <div className="sticky top-0 z-40 border-b border-border/70 bg-background/95 backdrop-blur-sm" style={{ willChange: "transform", transform: "translateZ(0)" }}>
+      {/* ── Sticky nav ── */}
+      <div className="sticky top-0 z-40 border-b border-border/70 bg-background/95 backdrop-blur-md" style={{ transform: "translateZ(0)" }}>
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           <Link href="/">
-            <span className="font-brand text-3xl cursor-pointer hover:text-primary transition-colors">Lerank</span>
+            <span className="font-brand text-3xl cursor-pointer transition-colors duration-200 hover:text-primary">Lerank</span>
           </Link>
           <div className="flex items-center gap-2">
             <span className="hidden text-sm text-muted-foreground sm:block">
@@ -869,7 +873,7 @@ export default function Compare() {
             <Link href="/dashboard">
               <Button variant="outline" size="sm">{tm.dashboard}</Button>
             </Link>
-            <Button variant="outline" size="sm" onClick={logout} className="text-muted-foreground hover:text-destructive hover:border-destructive/50">
+            <Button variant="outline" size="sm" onClick={logout} className="text-muted-foreground hover:text-destructive hover:border-destructive/50 transition-colors duration-200">
               <LogOut className="h-4 w-4" />
             </Button>
           </div>
@@ -877,44 +881,47 @@ export default function Compare() {
       </div>
 
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 pt-10 md:flex-row">
+        {/* ── Sidebar ── */}
         <aside className="w-full shrink-0 space-y-4 md:w-64">
-          <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4 }} className="reveal-card rounded-2xl border border-border/70 bg-card/90 p-5">
+          <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="reveal-card rounded-2xl border border-border/70 bg-card/90 p-5">
             <h3 className="mb-4 flex items-center gap-2 text-base font-bold">
               <Filter className="h-4 w-4 text-primary" />
               {tm.filterTitle}
               {(filterCountry !== "All" || filterRating !== "Any") && (
-                <button type="button" onClick={() => { setFilterCountry("All"); setFilterRating("Any"); }} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors">{tm.clear}</button>
+                <button type="button" onClick={() => { setFilterCountry("All"); setFilterRating("Any"); }} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors duration-200">{tm.clear}</button>
               )}
             </h3>
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tm.filterCountry}</Label>
-                <select className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm" value={filterCountry} onChange={(e) => setFilterCountry(e.target.value)}>
+                <select className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40" value={filterCountry} onChange={(e) => setFilterCountry(e.target.value)}>
                   <option value="All">{tm.allCountries}</option>
                   {COUNTRY_OPTIONS.map((c) => <option key={c}>{c}</option>)}
                 </select>
               </div>
               <div className="space-y-2">
                 <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tm.filterRating}</Label>
-                <select className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm" value={filterRating} onChange={(e) => setFilterRating(e.target.value)}>
+                <select className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40" value={filterRating} onChange={(e) => setFilterRating(e.target.value)}>
                   <option value="Any">{tm.anyRating}</option>
                   <option value="4.5+">4.5+</option>
                   <option value="4.8+">4.8+</option>
                 </select>
               </div>
             </div>
-            {(filterCountry !== "All" || filterRating !== "Any") && (
-              <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="mt-4 rounded-lg bg-primary/10 px-3 py-2 text-xs text-gold font-medium">
-                {tm.showing} {filteredConsultants.length} {tm.showingOf} {consultants.length}
-              </motion.div>
-            )}
+            <AnimatePresence>
+              {(filterCountry !== "All" || filterRating !== "Any") && (
+                <motion.div initial={{ opacity: 0, y: 4, height: 0 }} animate={{ opacity: 1, y: 0, height: "auto" }} exit={{ opacity: 0, y: 4, height: 0 }} className="mt-4 overflow-hidden rounded-lg bg-primary/10 px-3 py-2 text-xs text-gold font-medium">
+                  {tm.showing} {filteredConsultants.length} {tm.showingOf} {consultants.length}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.1 }} className="reveal-card rounded-2xl border border-border/70 bg-card/90 p-5">
+          <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }} className="reveal-card rounded-2xl border border-border/70 bg-card/90 p-5">
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-base font-bold">{tm.yourProfile}</h3>
               <Link href="/dashboard">
-                <button type="button" className="text-xs text-primary hover:underline">{tm.edit}</button>
+                <button type="button" className="text-xs text-primary hover:underline transition-opacity duration-200">{tm.edit}</button>
               </Link>
             </div>
             <div className="space-y-2 text-sm">
@@ -933,218 +940,525 @@ export default function Compare() {
           </motion.div>
         </aside>
 
+        {/* ── Main Content ── */}
         <main className="flex-1 min-w-0">
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mb-6">
+          {/* Header + Tab Bar */}
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="mb-6">
             <h1 className="font-display text-3xl font-bold">{tm.topMatches}</h1>
             <p className="mt-1 text-muted-foreground">{tm.topMatchesSubtitle}</p>
+
+            {/* Tabs */}
+            <div className="mt-5 flex items-center gap-1 border-b border-border/60">
+              <button
+                type="button"
+                onClick={() => setActiveTab("browse")}
+                className={`relative pb-3 px-4 text-sm font-semibold transition-colors duration-200 ${activeTab === "browse" ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                Browse
+                {activeTab === "browse" && (
+                  <motion.div layoutId="tab-indicator" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => { if (compareIds.length >= 2) setActiveTab("compare"); }}
+                disabled={compareIds.length < 2}
+                className={`relative pb-3 px-4 text-sm font-semibold transition-colors duration-200 flex items-center gap-2 ${activeTab === "compare" ? "text-primary" : compareIds.length < 2 ? "text-muted-foreground/40 cursor-not-allowed" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                <GitCompare className="h-3.5 w-3.5" />
+                Compare
+                {compareIds.length > 0 && (
+                  <span className={`inline-flex items-center justify-center h-5 min-w-5 rounded-full text-xs font-bold px-1.5 ${compareIds.length >= 2 ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+                    {compareIds.length}
+                  </span>
+                )}
+                {activeTab === "compare" && (
+                  <motion.div layoutId="tab-indicator" className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full" />
+                )}
+              </button>
+              {compareIds.length > 0 && compareIds.length < 2 && (
+                <span className="ml-2 text-xs text-muted-foreground/60 pb-3">Select at least 2 to compare</span>
+              )}
+            </div>
           </motion.div>
 
-          {isLoadingConsultants ? (
-            <div className="grid gap-6 lg:grid-cols-2">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="rounded-2xl border border-border/70 bg-card/90 p-6 space-y-4">
-                  <div className="flex items-center gap-4">
-                    <div className="h-16 w-16 rounded-xl skeleton" />
-                    <div className="flex-1 space-y-2">
-                      <div className="h-5 w-36 rounded-lg skeleton" />
-                      <div className="h-4 w-24 rounded-lg skeleton" />
+          <AnimatePresence mode="wait">
+            {/* ── Browse Tab ── */}
+            {activeTab === "browse" && (
+              <motion.div key="browse" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}>
+                {isLoadingConsultants ? (
+                  <div className="grid gap-6 lg:grid-cols-2">
+                    {[...Array(4)].map((_, i) => (
+                      <div key={i} className="rounded-2xl border border-border/70 bg-card/90 p-6 space-y-4">
+                        <div className="flex items-center gap-4">
+                          <div className="h-16 w-16 rounded-xl skeleton" />
+                          <div className="flex-1 space-y-2">
+                            <div className="h-5 w-36 rounded-lg skeleton" />
+                            <div className="h-4 w-24 rounded-lg skeleton" />
+                          </div>
+                        </div>
+                        <div className="h-4 rounded-lg skeleton" />
+                        <div className="h-4 w-3/4 rounded-lg skeleton" />
+                        <div className="grid grid-cols-2 gap-3">
+                          <div className="h-9 rounded-xl skeleton" />
+                          <div className="h-9 rounded-xl skeleton" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid gap-6 lg:grid-cols-2">
+                    <AnimatePresence mode="popLayout">
+                      {filteredConsultants.map((consultant, index) => {
+                        const isSelected = compareIds.includes(consultant.id);
+                        const matchPct = consultant.matchScore ?? Math.min(98, 82 + ((consultant.studentsHelped || 0) % 17));
+                        return (
+                          <motion.div
+                            key={consultant.id}
+                            layout
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            whileHover={{ y: -6, transition: { duration: 0.2, ease: [0.22, 1, 0.36, 1] } }}
+                            transition={{ delay: index * 0.05, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                            style={{ willChange: "transform" }}
+                          >
+                            <Card className={`h-full overflow-hidden border transition-[border-color,box-shadow] duration-300 cursor-default ${isSelected ? "border-primary/50 shadow-[0_0_0_2px_hsl(var(--primary)/0.12),0_8px_32px_rgba(0,0,0,0.10)]" : "border-border/70 hover:border-primary/25 hover:shadow-[0_8px_32px_rgba(0,0,0,0.09)]"}`}>
+                              {/* Top accent bar */}
+                              <div className={`h-[3px] transition-all duration-500 ${isSelected ? "bg-primary w-full" : "bg-primary w-0 group-hover:w-full"}`} />
+                              <CardContent className="flex h-full flex-col p-6">
+                                {/* Header */}
+                                <div className="mb-4 flex items-start justify-between gap-4">
+                                  <div className="flex items-center gap-4">
+                                    <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${getColorClass(consultant.name)} text-xl font-bold text-white shadow-md`}>
+                                      {consultant.name.charAt(0)}
+                                    </div>
+                                    <div>
+                                      <h3 className="text-lg font-bold leading-tight">{consultant.name}</h3>
+                                      <div className="mt-1 flex items-center gap-1.5 text-sm">
+                                        <Star className="h-3.5 w-3.5 fill-[hsl(43,88%,50%)] text-[hsl(43,88%,50%)]" />
+                                        <span className="font-bold">{consultant.rating}</span>
+                                        <span className="text-muted-foreground">· {consultant.studentsHelped} students</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <Badge variant="success" className="shrink-0">{consultant.successRate}% success</Badge>
+                                </div>
+
+                                {/* Description */}
+                                <p className="mb-4 text-sm leading-relaxed text-muted-foreground line-clamp-2">
+                                  {consultant.description || tm.defaultDesc}
+                                </p>
+
+                                {/* Match bar */}
+                                <div className="mb-4 mt-auto">
+                                  <div className="mb-1.5 flex items-center justify-between text-xs text-muted-foreground">
+                                    <span>{tm.matchScore}</span>
+                                    <span className="font-bold text-gold">{matchPct}%</span>
+                                  </div>
+                                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
+                                    <motion.div
+                                      className="h-full rounded-full bg-primary"
+                                      initial={{ width: 0 }}
+                                      animate={{ width: `${matchPct}%` }}
+                                      transition={{ delay: index * 0.05 + 0.25, duration: 0.7, ease: "easeOut" }}
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Info chips */}
+                                <div className="mb-4 grid grid-cols-2 gap-2">
+                                  <div className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2 transition-colors duration-200">
+                                    <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
+                                    <span className="truncate text-xs font-medium">{Array.isArray(consultant.specializedCountries) ? consultant.specializedCountries.slice(0, 3).join(", ") : "Various"}</span>
+                                  </div>
+                                  <div className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2 transition-colors duration-200">
+                                    <DollarSign className="h-3.5 w-3.5 shrink-0 text-primary" />
+                                    <span className="text-xs font-medium">${consultant.priceMin}–${consultant.priceMax}</span>
+                                  </div>
+                                </div>
+
+                                {/* Action row */}
+                                <div className="flex gap-2 border-t border-border/50 pt-4">
+                                  <motion.button
+                                    type="button"
+                                    whileTap={{ scale: 0.96 }}
+                                    onClick={() => toggleCompare(consultant.id)}
+                                    disabled={!isSelected && compareIds.length >= 3}
+                                    className={`flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-all duration-200 ${
+                                      isSelected
+                                        ? "border-primary bg-primary/10 text-primary"
+                                        : compareIds.length >= 3
+                                        ? "border-border text-muted-foreground/40 cursor-not-allowed"
+                                        : "border-border text-muted-foreground hover:border-primary/50 hover:bg-primary/5 hover:text-primary"
+                                    }`}
+                                  >
+                                    {isSelected ? <CheckSquare className="h-3.5 w-3.5" /> : <Square className="h-3.5 w-3.5" />}
+                                    {tm.compare}
+                                  </motion.button>
+                                  <motion.button
+                                    type="button"
+                                    whileTap={{ scale: 0.97 }}
+                                    onClick={() => setViewingProfile(consultant)}
+                                    className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold text-foreground transition-all duration-200 hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
+                                  >
+                                    <Eye className="h-3.5 w-3.5" />
+                                    {tm.viewProfile}
+                                  </motion.button>
+                                  <motion.button
+                                    type="button"
+                                    whileTap={{ scale: 0.97 }}
+                                    className="flex-1 inline-flex items-center justify-center rounded-xl bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground transition-all duration-200 hover:bg-primary/90 hover:shadow-md"
+                                  >
+                                    {tm.hire}
+                                  </motion.button>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          </motion.div>
+                        );
+                      })}
+                    </AnimatePresence>
+
+                    {filteredConsultants.length === 0 && (
+                      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-full rounded-2xl border border-border/70 bg-card/70 p-12 text-center">
+                        <Filter className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
+                        <p className="font-semibold">{tm.noResults}</p>
+                        <p className="mt-1 text-sm text-muted-foreground">{tm.noResultsHint}</p>
+                        <Button variant="outline" size="sm" className="mt-4" onClick={() => { setFilterCountry("All"); setFilterRating("Any"); }}>{tm.clearFilters}</Button>
+                      </motion.div>
+                    )}
+                  </div>
+                )}
+
+                {/* Compare prompt banner */}
+                <AnimatePresence>
+                  {compareIds.length >= 2 && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 16 }}
+                      transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                      className="mt-8 flex items-center justify-between rounded-2xl border border-primary/25 bg-primary/5 px-6 py-4"
+                    >
+                      <div className="flex items-center gap-3">
+                        <GitCompare className="h-5 w-5 text-primary" />
+                        <div>
+                          <p className="text-sm font-bold text-foreground">
+                            {compareIds.length} consultants selected
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {comparedConsultants.map((c: any) => c.name).join(", ")}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <button type="button" onClick={() => setCompareIds([])} className="text-xs text-muted-foreground hover:text-destructive transition-colors duration-200">Clear</button>
+                        <motion.button
+                          type="button"
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          onClick={() => setActiveTab("compare")}
+                          className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-all duration-200"
+                        >
+                          View Comparison <ChevronRight className="h-4 w-4" />
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            )}
+
+            {/* ── Compare Tab ── */}
+            {activeTab === "compare" && (
+              <motion.div key="compare" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}>
+                {comparedConsultants.length < 2 ? (
+                  <div className="rounded-2xl border border-border/70 bg-card/70 p-16 text-center">
+                    <GitCompare className="mx-auto mb-4 h-12 w-12 text-muted-foreground/30" />
+                    <p className="font-semibold text-lg">Select consultants to compare</p>
+                    <p className="mt-2 text-sm text-muted-foreground">Go to Browse, then select 2 or 3 consultants using the Compare button on each card.</p>
+                    <Button variant="outline" size="sm" className="mt-6" onClick={() => setActiveTab("browse")}>Browse Consultants</Button>
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm text-muted-foreground">Comparing {comparedConsultants.length} consultants</p>
+                      <div className="flex gap-2">
+                        <button type="button" onClick={() => { setCompareIds([]); setActiveTab("browse"); }} className="text-xs text-muted-foreground hover:text-destructive transition-colors duration-200">Clear all</button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="h-4 rounded-lg skeleton" />
-                  <div className="h-4 w-3/4 rounded-lg skeleton" />
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="h-9 rounded-xl skeleton" />
-                    <div className="h-9 rounded-xl skeleton" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <AnimatePresence mode="popLayout">
-              <div className="grid gap-6 lg:grid-cols-2">
-                {filteredConsultants.map((consultant, index) => (
-                  <motion.div key={consultant.id} layout initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95 }} transition={{ delay: index * 0.06, duration: 0.4 }}>
-                    <Card className="group h-full border-border/70 bg-card transition-[transform,border-color] duration-300 hover:-translate-y-1 hover:border-primary/30 overflow-hidden" style={{ willChange: "transform" }}>
-                      <div className="h-1 w-0 bg-primary transition-all duration-500 group-hover:w-full" />
-                      <CardContent className="flex h-full flex-col p-6">
-                        <div className="mb-4 flex items-start justify-between gap-4">
-                          <div className="flex items-center gap-4">
-                            <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${getColorClass(consultant.name)} text-xl font-bold text-white shadow-lg`}>
-                              {consultant.name.charAt(0)}
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-bold leading-tight">{consultant.name}</h3>
-                              <div className="mt-1 flex items-center gap-1.5 text-sm">
-                                <Star className="h-3.5 w-3.5 fill-[hsl(43,88%,50%)] text-[hsl(43,88%,50%)]" />
-                                <span className="font-bold">{consultant.rating}</span>
-                                <span className="text-muted-foreground">({consultant.studentsHelped})</span>
-                              </div>
-                            </div>
-                          </div>
-                          <Badge variant="success" className="shrink-0">{consultant.successRate}% {tm.tableSuccessRate}</Badge>
-                        </div>
 
-                        <p className="mb-4 text-sm leading-relaxed text-muted-foreground line-clamp-2">
-                          {consultant.description || tm.defaultDesc}
-                        </p>
-
-                        <div className="mb-2 mt-auto">
-                          <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                            <span>{tm.matchScore}</span>
-                            <span className="font-bold text-gold">{consultant.matchScore ?? Math.round(85 + Math.random() * 14)}%</span>
-                          </div>
-                          <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-                            <motion.div className="h-full rounded-full bg-primary" initial={{ width: 0 }} animate={{ width: `${consultant.matchScore ?? Math.round(85 + Math.random() * 14)}%` }} transition={{ delay: index * 0.06 + 0.3, duration: 0.8, ease: "easeOut" }} />
-                          </div>
-                        </div>
-
-                        <div className="mb-4 mt-4 grid grid-cols-2 gap-2.5 text-sm">
-                          <div className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2">
-                            <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
-                            <span className="truncate text-xs">{Array.isArray(consultant.specializedCountries) ? consultant.specializedCountries.join(", ") : "Various"}</span>
-                          </div>
-                          <div className="flex items-center gap-2 rounded-lg bg-muted/50 px-3 py-2">
-                            <DollarSign className="h-3.5 w-3.5 shrink-0 text-primary" />
-                            <span className="text-xs">${consultant.priceMin}–${consultant.priceMax}</span>
-                          </div>
-                        </div>
-
-                        <div className="flex gap-2 border-t border-border/60 pt-4">
+                    {/* Profile headers */}
+                    <div className={`grid gap-4 ${comparedConsultants.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                      {comparedConsultants.map((c: any) => (
+                        <motion.div
+                          key={c.id}
+                          initial={{ opacity: 0, scale: 0.97 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          transition={{ duration: 0.3 }}
+                          className="relative rounded-2xl border border-border/70 bg-card p-5 text-center shadow-sm"
+                        >
                           <button
                             type="button"
-                            onClick={() => toggleCompare(consultant.id)}
-                            title={compareIds.includes(consultant.id) ? tm.compare : compareIds.length >= 3 ? "Max 3" : tm.compare}
-                            className={`flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold transition-all duration-200 ${
-                              compareIds.includes(consultant.id)
-                                ? "border-primary bg-primary/10 text-primary"
-                                : compareIds.length >= 3
-                                ? "border-border text-muted-foreground opacity-40 cursor-not-allowed"
-                                : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                            }`}
+                            onClick={() => toggleCompare(c.id)}
+                            className="absolute right-3 top-3 rounded-full p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors duration-200"
                           >
-                            {compareIds.includes(consultant.id) ? <CheckSquare className="h-3.5 w-3.5" /> : <Square className="h-3.5 w-3.5" />}
-                            {tm.compare}
+                            <X className="h-3.5 w-3.5" />
                           </button>
-                          <Button variant="outline" className="flex-1 text-sm">{tm.viewProfile}</Button>
-                          <Button className="flex-1 text-sm">{tm.hire}</Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                ))}
+                          <div className={`mx-auto mb-3 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${getColorClass(c.name)} text-2xl font-bold text-white shadow-md`}>
+                            {c.name.charAt(0)}
+                          </div>
+                          <h3 className="font-bold text-base leading-tight">{c.name}</h3>
+                          <div className="mt-1 flex items-center justify-center gap-1.5 text-sm">
+                            <Star className="h-3.5 w-3.5 fill-[hsl(43,88%,50%)] text-[hsl(43,88%,50%)]" />
+                            <span className="font-bold">{c.rating}</span>
+                          </div>
+                          <p className="mt-2 text-xs text-muted-foreground line-clamp-2">{c.description || tm.defaultDesc}</p>
+                          <motion.button
+                            type="button"
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() => setViewingProfile(c)}
+                            className="mt-3 w-full inline-flex items-center justify-center gap-1.5 rounded-xl border border-border bg-background px-3 py-2 text-xs font-semibold hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all duration-200"
+                          >
+                            <Eye className="h-3 w-3" /> Full Profile
+                          </motion.button>
+                        </motion.div>
+                      ))}
+                    </div>
 
-                {filteredConsultants.length === 0 && (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="col-span-full rounded-2xl border border-border/70 bg-card/70 p-12 text-center">
-                    <Filter className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
-                    <p className="font-semibold">{tm.noResults}</p>
-                    <p className="mt-1 text-sm text-muted-foreground">{tm.noResultsHint}</p>
-                    <Button variant="outline" size="sm" className="mt-4" onClick={() => { setFilterCountry("All"); setFilterRating("Any"); }}>{tm.clearFilters}</Button>
-                  </motion.div>
+                    {/* Comparison table */}
+                    <div className="rounded-2xl border border-border/70 bg-card overflow-hidden shadow-sm">
+                      {[
+                        { label: "Rating", icon: Star, key: (c: any) => c.rating, highlight: (vals: any[]) => Math.max(...vals.map(Number)) },
+                        { label: "Success Rate", icon: TrendingUp, key: (c: any) => `${c.successRate}%`, highlight: (vals: any[]) => Math.max(...vals.map(v => parseInt(v))) },
+                        { label: "Students Helped", icon: Users, key: (c: any) => c.studentsHelped ?? "—", highlight: (vals: any[]) => Math.max(...vals.map(Number)) },
+                        { label: "Price Range", icon: DollarSign, key: (c: any) => `$${c.priceMin}–$${c.priceMax}`, highlight: null },
+                        { label: "Match Score", icon: Award, key: (c: any) => `${c.matchScore ?? "—"}%`, highlight: (vals: any[]) => Math.max(...vals.map(v => parseInt(v) || 0)) },
+                        { label: "Countries", icon: Globe, key: (c: any) => Array.isArray(c.specializedCountries) ? c.specializedCountries.join(", ") : "Various", highlight: null },
+                        { label: "Working Hours", icon: Clock, key: (c: any) => c.workingHours || "Mon–Fri, 9am–6pm", highlight: null },
+                        { label: "Contact Email", icon: Mail, key: (c: any) => c.contactEmail || "Via platform", highlight: null },
+                      ].map((row, ri) => {
+                        const vals = comparedConsultants.map(row.key);
+                        const bestVal = row.highlight ? row.highlight(vals) : null;
+                        return (
+                          <div key={ri} className={`grid border-b border-border/50 last:border-0 ${comparedConsultants.length === 2 ? "grid-cols-[140px_1fr_1fr]" : "grid-cols-[140px_1fr_1fr_1fr]"}`}>
+                            <div className="flex items-center gap-2 px-4 py-3.5 bg-muted/40 border-r border-border/50">
+                              <row.icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                              <span className="text-xs font-semibold text-muted-foreground">{row.label}</span>
+                            </div>
+                            {comparedConsultants.map((c: any) => {
+                              const val = row.key(c);
+                              const numVal = parseFloat(String(val)) || parseInt(String(val)) || 0;
+                              const isBest = bestVal !== null && numVal === bestVal && bestVal > 0;
+                              return (
+                                <div key={c.id} className={`flex items-center justify-center px-4 py-3.5 border-r border-border/50 last:border-0 text-sm transition-colors duration-200 ${isBest ? "bg-primary/6 font-bold text-primary" : "font-medium"}`}>
+                                  <span className="text-center">{val}</span>
+                                  {isBest && <span className="ml-1.5 text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">Best</span>}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* CTA row */}
+                    <div className={`grid gap-4 ${comparedConsultants.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                      {comparedConsultants.map((c: any) => (
+                        <motion.button
+                          key={c.id}
+                          type="button"
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md transition-all duration-200"
+                        >
+                          Hire {c.name.split(" ")[0]}
+                        </motion.button>
+                      ))}
+                    </div>
+                  </div>
                 )}
-              </div>
-            </AnimatePresence>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </main>
       </div>
 
-      {/* ── Compare Drawer ─────────────────────────────────────────── */}
+      {/* ── View Profile Slide-over ── */}
       <AnimatePresence>
-        {compareIds.length >= 1 && (
-          <motion.div
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            exit={{ y: "100%" }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed bottom-0 left-0 right-0 z-50"
-          >
-            <div className="mx-auto w-full max-w-7xl px-6" onClick={() => setShowComparePanel(p => !p)}>
-              <div className="flex cursor-pointer items-center justify-between rounded-t-2xl border border-b-0 border-border/80 bg-card px-5 py-3 shadow-lg">
-                <div className="flex items-center gap-3">
-                  <GitCompare className="h-4 w-4 text-primary" />
-                  <span className="text-sm font-bold">
-                    {tm.comparing} {compareIds.length} {compareIds.length > 1 ? tm.consultantPlural : tm.consultantSingle}
-                  </span>
-                  <div className="flex gap-2">
-                    {compareIds.map(id => {
-                      const c = consultants.find(x => x.id === id);
-                      if (!c) return null;
-                      return (
-                        <span key={id} className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
-                          {c.name}
-                          <button type="button" onClick={e => { e.stopPropagation(); toggleCompare(id); }} className="ml-0.5 hover:text-destructive">
-                            <X className="h-3 w-3" />
-                          </button>
-                        </span>
-                      );
-                    })}
+        {viewingProfile && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm"
+              onClick={() => setViewingProfile(null)}
+            />
+            <motion.div
+              initial={{ x: "100%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: "100%", opacity: 0 }}
+              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+              className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-lg bg-card shadow-2xl overflow-y-auto"
+            >
+              {/* Close button */}
+              <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border/60 bg-card/98 backdrop-blur-sm px-6 py-4">
+                <h2 className="font-display text-xl font-bold">Consultant Profile</h2>
+                <motion.button
+                  type="button"
+                  whileHover={{ scale: 1.05, rotate: 90 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setViewingProfile(null)}
+                  className="rounded-full p-2 hover:bg-muted transition-colors duration-200"
+                >
+                  <X className="h-5 w-5" />
+                </motion.button>
+              </div>
+
+              <div className="p-6 space-y-6">
+                {/* Profile hero */}
+                <div className="flex items-start gap-5">
+                  <div className={`flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br ${getColorClass(viewingProfile.name)} text-3xl font-bold text-white shadow-lg`}>
+                    {viewingProfile.name.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-2xl font-bold font-display">{viewingProfile.name}</h3>
+                    <div className="mt-1 flex items-center gap-2">
+                      <Star className="h-4 w-4 fill-[hsl(43,88%,50%)] text-[hsl(43,88%,50%)]" />
+                      <span className="font-bold text-lg">{viewingProfile.rating}</span>
+                      <span className="text-muted-foreground">· {viewingProfile.studentsHelped} students helped</span>
+                    </div>
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 px-2.5 py-1 text-xs font-bold">
+                        <TrendingUp className="h-3 w-3" /> {viewingProfile.successRate}% Success Rate
+                      </span>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-1 text-xs font-bold">
+                        {viewingProfile.matchScore ?? "92"}% Match
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  {compareIds.length >= 2 && (
-                    <span className="text-xs text-muted-foreground">
-                      {showComparePanel ? tm.hideComparison : tm.showComparison} {tm.comparison}
-                    </span>
-                  )}
-                  <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-300 ${showComparePanel ? "rotate-0" : "rotate-180"}`} />
+
+                {/* Bio */}
+                {(viewingProfile.bio || viewingProfile.description) && (
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-2">About</h4>
+                    <p className="text-sm leading-relaxed text-foreground">
+                      {viewingProfile.bio || viewingProfile.description}
+                    </p>
+                  </div>
+                )}
+
+                {/* Key stats grid */}
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { icon: DollarSign, label: "Price Range", value: `$${viewingProfile.priceMin}–$${viewingProfile.priceMax}` },
+                    { icon: Users, label: "Students Helped", value: viewingProfile.studentsHelped ?? "—" },
+                    { icon: Clock, label: "Working Hours", value: viewingProfile.workingHours || "Mon–Fri, 9am–6pm" },
+                    { icon: Award, label: "Experience", value: viewingProfile.yearsExperience ? `${viewingProfile.yearsExperience} years` : "10+ years" },
+                  ].map(({ icon: Icon, label, value }) => (
+                    <div key={label} className="rounded-xl border border-border/60 bg-muted/30 p-3.5">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Icon className="h-3.5 w-3.5 text-primary" />
+                        <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</span>
+                      </div>
+                      <p className="text-sm font-bold">{value}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Countries */}
+                {Array.isArray(viewingProfile.specializedCountries) && viewingProfile.specializedCountries.length > 0 && (
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">
+                      <Globe className="inline h-3 w-3 mr-1" />Countries Covered
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {viewingProfile.specializedCountries.map((country: string) => (
+                        <span key={country} className="inline-flex items-center gap-1 rounded-full border border-border bg-background px-3 py-1.5 text-xs font-semibold">
+                          <MapPin className="h-3 w-3 text-primary" />{country}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Requirements per country */}
+                {viewingProfile.requirementsPerCountry && Object.keys(viewingProfile.requirementsPerCountry).length > 0 && (
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Requirements by Country</h4>
+                    <div className="space-y-2">
+                      {Object.entries(viewingProfile.requirementsPerCountry).map(([country, req]: [string, any]) => (
+                        <div key={country} className="rounded-xl border border-border/60 bg-muted/20 p-3">
+                          <div className="font-semibold text-sm mb-1">{country}</div>
+                          <p className="text-xs text-muted-foreground">{typeof req === "string" ? req : JSON.stringify(req)}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Contact */}
+                <div>
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-3">Contact</h4>
+                  <div className="space-y-2">
+                    {viewingProfile.contactEmail && (
+                      <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-muted/20 px-4 py-3">
+                        <Mail className="h-4 w-4 text-primary shrink-0" />
+                        <span className="text-sm">{viewingProfile.contactEmail}</span>
+                      </div>
+                    )}
+                    {viewingProfile.contactPhone && (
+                      <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-muted/20 px-4 py-3">
+                        <Phone className="h-4 w-4 text-primary shrink-0" />
+                        <span className="text-sm">{viewingProfile.contactPhone}</span>
+                      </div>
+                    )}
+                    {viewingProfile.location && (
+                      <div className="flex items-center gap-3 rounded-xl border border-border/60 bg-muted/20 px-4 py-3">
+                        <MapPin className="h-4 w-4 text-primary shrink-0" />
+                        <span className="text-sm">{viewingProfile.location}</span>
+                      </div>
+                    )}
+                    {!viewingProfile.contactEmail && !viewingProfile.contactPhone && !viewingProfile.location && (
+                      <p className="text-sm text-muted-foreground">Contact available after hiring through the platform.</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <div className="flex gap-3 pt-2 pb-4">
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    onClick={() => { toggleCompare(viewingProfile.id); }}
+                    className={`flex-1 inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold transition-all duration-200 ${
+                      compareIds.includes(viewingProfile.id)
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-primary/40 hover:bg-primary/5"
+                    }`}
+                  >
+                    {compareIds.includes(viewingProfile.id) ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+                    {compareIds.includes(viewingProfile.id) ? "Added to Compare" : "Add to Compare"}
+                  </motion.button>
+                  <motion.button
+                    type="button"
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    className="flex-1 inline-flex items-center justify-center rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 hover:shadow-md transition-all duration-200"
+                  >
+                    Hire {viewingProfile.name.split(" ")[0]}
+                  </motion.button>
                 </div>
               </div>
-            </div>
-
-            <AnimatePresence>
-              {showComparePanel && compareIds.length >= 2 && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                  className="overflow-hidden"
-                >
-                  <div className="mx-auto w-full max-w-7xl overflow-x-auto border border-t-0 border-border/80 bg-card px-6 py-5 shadow-lg">
-                    {(() => {
-                      const compared = compareIds.map(id => consultants.find(x => x.id === id)).filter(Boolean);
-                      const rows: { label: string; key: (c: any) => string | number }[] = [
-                        { label: tm.tableRating, key: c => c.rating },
-                        { label: tm.tableSuccessRate, key: c => `${c.successRate}%` },
-                        { label: tm.tableStudentsHelped, key: c => c.studentsHelped ?? "—" },
-                        { label: tm.tablePriceRange, key: c => `$${c.priceMin}–$${c.priceMax}` },
-                        { label: tm.tableMatchScore, key: c => `${c.matchScore ?? "—"}%` },
-                        { label: tm.tableCountries, key: c => Array.isArray(c.specializedCountries) ? c.specializedCountries.join(", ") : "Various" },
-                      ];
-                      return (
-                        <table className="w-full min-w-[480px] text-sm">
-                          <thead>
-                            <tr>
-                              <th className="w-28 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground pb-3"></th>
-                              {compared.map((c: any) => (
-                                <th key={c.id} className="pb-3 text-center font-bold">
-                                  <div className="flex flex-col items-center gap-1">
-                                    <div className={`h-9 w-9 rounded-lg bg-gradient-to-br ${getColorClass(c.name)} flex items-center justify-center text-sm font-bold text-white`}>
-                                      {c.name.charAt(0)}
-                                    </div>
-                                    <span className="text-sm leading-tight">{c.name}</span>
-                                  </div>
-                                </th>
-                              ))}
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {rows.map((row, ri) => (
-                              <tr key={ri} className={ri % 2 === 0 ? "bg-muted/30" : ""}>
-                                <td className="py-2.5 pr-4 text-xs font-semibold text-muted-foreground">{row.label}</td>
-                                {compared.map((c: any) => (
-                                  <td key={c.id} className="py-2.5 text-center font-semibold">{row.key(c)}</td>
-                                ))}
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      );
-                    })()}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
     </div>
