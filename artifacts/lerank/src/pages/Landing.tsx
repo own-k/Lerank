@@ -144,7 +144,12 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero ── */}
-      <section ref={heroRef} className="relative flex min-h-screen items-center pt-14 md:pt-16">
+      <section ref={heroRef} className="relative flex min-h-screen items-center pt-14 md:pt-16 overflow-hidden">
+        {/* Floating gradient orbs */}
+        <div className="orb w-[520px] h-[520px] bg-primary/10 dark:bg-sage/10 top-16 -left-32 hidden md:block" />
+        <div className="orb orb-2 w-[380px] h-[380px] bg-gold/8 dark:bg-gold/6 top-8 right-8 hidden md:block" />
+        <div className="orb orb-3 w-[260px] h-[260px] bg-primary/6 dark:bg-sage/8 bottom-24 left-1/2 hidden lg:block" />
+
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -170,7 +175,7 @@ export default function Landing() {
 
             <div className="flex flex-col gap-3 xs:flex-row sm:flex-row flex-wrap">
               <Link href="/compare">
-                <Button size="lg" className="shadow-lg shadow-primary/20 font-bold dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
+                <Button size="lg" className="btn-glow shadow-lg shadow-primary/20 font-bold dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
                   {t.hero.findConsultant}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>

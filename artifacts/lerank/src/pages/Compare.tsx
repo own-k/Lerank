@@ -26,10 +26,25 @@ const consultantColors = [
   "from-fuchsia-500 to-purple-500",
 ];
 
+const consultantColumnColors = [
+  { border: "border-t-violet-500", bg: "bg-violet-50/60 dark:bg-violet-950/20" },
+  { border: "border-t-stone-500",  bg: "bg-stone-50/60 dark:bg-stone-950/20"  },
+  { border: "border-t-emerald-500",bg: "bg-emerald-50/60 dark:bg-emerald-950/20"},
+  { border: "border-t-rose-500",   bg: "bg-rose-50/60 dark:bg-rose-950/20"   },
+  { border: "border-t-sky-500",    bg: "bg-sky-50/60 dark:bg-sky-950/20"    },
+  { border: "border-t-fuchsia-500",bg: "bg-fuchsia-50/60 dark:bg-fuchsia-950/20"},
+];
+
 function getColorClass(name: string) {
   let code = 0;
   for (let i = 0; i < name.length; i++) code += name.charCodeAt(i);
   return consultantColors[code % consultantColors.length];
+}
+
+function getColumnColor(name: string) {
+  let code = 0;
+  for (let i = 0; i < name.length; i++) code += name.charCodeAt(i);
+  return consultantColumnColors[code % consultantColumnColors.length];
 }
 
 const TOTAL_STEPS = 4;
@@ -73,14 +88,19 @@ export default function Compare() {
 
   const [filterCountry, setFilterCountry] = useState("All");
   const [filterRating, setFilterRating] = useState("Any");
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [compareIds, setCompareIds] = useState<number[]>([]);
   const [activeTab, setActiveTab] = useState<"browse" | "compare">("browse");
   const [viewingProfile, setViewingProfile] = useState<any>(null);
 
   const toggleCompare = (id: number) => {
-    setCompareIds(prev =>
-      prev.includes(id) ? prev.filter(x => x !== id) : prev.length < 3 ? [...prev, id] : prev
-    );
+    setCompareIds(prev => {
+      if (prev.includes(id)) return prev.filter(x => x !== id);
+      if (prev.length >= 3) return prev;
+      const next = [...prev, id];
+      if (next.length === 3) setActiveTab("compare");
+      return next;
+    });
   };
 
   const [onboardingStep, setOnboardingStep] = useState(1);
@@ -277,10 +297,6 @@ export default function Compare() {
                   <ArrowLeft className="h-4 w-4" /> {tc.backToHome}
                 </button>
               </Link>
-              <div className="flex items-center gap-2">
-                <LanguageToggle />
-                <ThemeToggle />
-              </div>
             </div>
             <h1 className="font-display text-4xl font-bold">Lerank</h1>
             <p className="mt-1 text-sm text-muted-foreground">{tc.appSubtitle}</p>
@@ -551,10 +567,6 @@ export default function Compare() {
             <div>
               <h1 className="font-display text-3xl font-bold">{ob.title}</h1>
               <p className="mt-2 text-sm text-muted-foreground">{ob.subtitle}</p>
-            </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <LanguageToggle />
-              <ThemeToggle />
             </div>
           </motion.div>
 
@@ -860,18 +872,16 @@ export default function Compare() {
     <div className="min-h-screen premium-bg pb-16">
       {/* ── Sticky nav ── */}
       <div className="sticky top-0 z-40 border-b border-border/70 bg-background/95 backdrop-blur-md" style={{ transform: "translateZ(0)" }}>
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:h-16 sm:px-6">
           <Link href="/">
-            <span className="font-brand text-3xl cursor-pointer transition-colors duration-200 hover:text-primary">Lerank</span>
+            <span className="font-brand text-2xl sm:text-3xl cursor-pointer transition-colors duration-200 hover:text-primary">Lerank</span>
           </Link>
           <div className="flex items-center gap-2">
-            <span className="hidden text-sm text-muted-foreground sm:block">
+            <span className="hidden text-sm text-muted-foreground md:block">
               {tm.welcome}<span className="font-semibold text-foreground">{user.fullName}</span>
             </span>
-            <LanguageToggle />
-            <ThemeToggle />
             <Link href="/dashboard">
-              <Button variant="outline" size="sm">{tm.dashboard}</Button>
+              <Button variant="outline" size="sm" className="hidden sm:inline-flex">{tm.dashboard}</Button>
             </Link>
             <Button variant="outline" size="sm" onClick={logout} className="text-muted-foreground hover:text-destructive hover:border-destructive/50 transition-colors duration-200">
               <LogOut className="h-4 w-4" />
@@ -880,72 +890,121 @@ export default function Compare() {
         </div>
       </div>
 
-      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 pt-10 md:flex-row">
-        {/* ── Sidebar ── */}
-        <aside className="w-full shrink-0 space-y-4 md:w-64">
-          <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="reveal-card rounded-2xl border border-border/70 bg-card/90 p-5">
-            <h3 className="mb-4 flex items-center gap-2 text-base font-bold">
-              <Filter className="h-4 w-4 text-primary" />
-              {tm.filterTitle}
-              {(filterCountry !== "All" || filterRating !== "Any") && (
-                <button type="button" onClick={() => { setFilterCountry("All"); setFilterRating("Any"); }} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors duration-200">{tm.clear}</button>
-              )}
-            </h3>
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tm.filterCountry}</Label>
-                <select className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40" value={filterCountry} onChange={(e) => setFilterCountry(e.target.value)}>
-                  <option value="All">{tm.allCountries}</option>
-                  {COUNTRY_OPTIONS.map((c) => <option key={c}>{c}</option>)}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tm.filterRating}</Label>
-                <select className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40" value={filterRating} onChange={(e) => setFilterRating(e.target.value)}>
-                  <option value="Any">{tm.anyRating}</option>
-                  <option value="4.5+">4.5+</option>
-                  <option value="4.8+">4.8+</option>
-                </select>
-              </div>
-            </div>
-            <AnimatePresence>
-              {(filterCountry !== "All" || filterRating !== "Any") && (
-                <motion.div initial={{ opacity: 0, y: 4, height: 0 }} animate={{ opacity: 1, y: 0, height: "auto" }} exit={{ opacity: 0, y: 4, height: 0 }} className="mt-4 overflow-hidden rounded-lg bg-primary/10 px-3 py-2 text-xs text-gold font-medium">
-                  {tm.showing} {filteredConsultants.length} {tm.showingOf} {consultants.length}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+      <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 pt-6 pb-24 sm:px-6 md:flex-row md:gap-8 md:pt-10 md:pb-10">
+        {/* ── Sidebar (desktop) / collapsible panel (mobile) ── */}
+        <aside className="w-full shrink-0 md:w-64">
+          {/* Mobile filter toggle */}
+          <div className="md:hidden mb-3">
+            <button
+              type="button"
+              onClick={() => setShowMobileFilters(v => !v)}
+              className="flex w-full items-center justify-between rounded-xl border border-border/70 bg-card/90 px-4 py-3 text-sm font-semibold"
+            >
+              <span className="flex items-center gap-2">
+                <Filter className="h-4 w-4 text-primary" />
+                {tm.filterTitle}
+                {(filterCountry !== "All" || filterRating !== "Any") && (
+                  <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">!</span>
+                )}
+              </span>
+              <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${showMobileFilters ? "rotate-90" : ""}`} />
+            </button>
+          </div>
 
-          <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }} className="reveal-card rounded-2xl border border-border/70 bg-card/90 p-5">
-            <div className="mb-3 flex items-center justify-between">
-              <h3 className="text-base font-bold">{tm.yourProfile}</h3>
-              <Link href="/dashboard">
-                <button type="button" className="text-xs text-primary hover:underline transition-opacity duration-200">{tm.edit}</button>
-              </Link>
-            </div>
-            <div className="space-y-2 text-sm">
-              {[
-                { label: tm.degree, value: (user.profile?.degreeLevel ?? "—") },
-                { label: tm.major, value: user.profile?.major ?? "—" },
-                { label: tm.budget, value: user.profile?.consultingBudget ? `$${user.profile.consultingBudget.toLocaleString()}` : (user.profile?.budgetMax ? `$${user.profile.budgetMax.toLocaleString()}` : "—") },
-                { label: tm.gpa, value: user.profile?.gpa ? `${user.profile.gpa} / ${user.profile.gpaScale}` : "—" },
-              ].map(({ label, value }) => (
-                <div key={label} className="flex justify-between">
-                  <span className="text-muted-foreground">{label}</span>
-                  <span className="font-semibold capitalize">{value}</span>
-                </div>
-              ))}
-            </div>
-          </motion.div>
+          {/* Filter panel — always visible on desktop, collapsible on mobile */}
+          <AnimatePresence initial={false}>
+            {(showMobileFilters || true) && (
+              <motion.div
+                key="filter-panel"
+                initial={false}
+                className="space-y-4"
+              >
+                <motion.div
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className={`reveal-card rounded-2xl border border-border/70 bg-card/90 p-5 md:block ${showMobileFilters ? "block" : "hidden md:block"}`}
+                >
+                  <h3 className="mb-4 hidden md:flex items-center gap-2 text-base font-bold">
+                    <Filter className="h-4 w-4 text-primary" />
+                    {tm.filterTitle}
+                    {(filterCountry !== "All" || filterRating !== "Any") && (
+                      <button type="button" onClick={() => { setFilterCountry("All"); setFilterRating("Any"); }} className="ml-auto text-xs text-muted-foreground hover:text-foreground transition-colors duration-200">{tm.clear}</button>
+                    )}
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tm.filterCountry}</Label>
+                      <select className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40" value={filterCountry} onChange={(e) => { setFilterCountry(e.target.value); setShowMobileFilters(false); }}>
+                        <option value="All">{tm.allCountries}</option>
+                        {COUNTRY_OPTIONS.map((c) => <option key={c}>{c}</option>)}
+                      </select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{tm.filterRating}</Label>
+                      <select className="h-11 w-full rounded-xl border border-border bg-background px-3 text-sm transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary/40" value={filterRating} onChange={(e) => { setFilterRating(e.target.value); setShowMobileFilters(false); }}>
+                        <option value="Any">{tm.anyRating}</option>
+                        <option value="4.5+">4.5+</option>
+                        <option value="4.8+">4.8+</option>
+                      </select>
+                    </div>
+                  </div>
+                  <AnimatePresence>
+                    {(filterCountry !== "All" || filterRating !== "Any") && (
+                      <motion.div initial={{ opacity: 0, y: 4, height: 0 }} animate={{ opacity: 1, y: 0, height: "auto" }} exit={{ opacity: 0, y: 4, height: 0 }} className="mt-4 overflow-hidden rounded-lg bg-primary/10 px-3 py-2 text-xs text-gold font-medium">
+                        {tm.showing} {filteredConsultants.length} {tm.showingOf} {consultants.length}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: -16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                  className="reveal-card hidden rounded-2xl border border-border/70 bg-card/90 p-5 md:block"
+                >
+                  <div className="mb-3 flex items-center justify-between">
+                    <h3 className="text-base font-bold">{tm.yourProfile}</h3>
+                    <Link href="/dashboard">
+                      <button type="button" className="text-xs text-primary hover:underline transition-opacity duration-200">{tm.edit}</button>
+                    </Link>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    {[
+                      { label: tm.degree, value: (user.profile?.degreeLevel ?? "—") },
+                      { label: tm.major, value: user.profile?.major ?? "—" },
+                      { label: tm.budget, value: user.profile?.consultingBudget ? `$${user.profile.consultingBudget.toLocaleString()}` : (user.profile?.budgetMax ? `$${user.profile.budgetMax.toLocaleString()}` : "—") },
+                      { label: tm.gpa, value: user.profile?.gpa ? `${user.profile.gpa} / ${user.profile.gpaScale}` : "—" },
+                    ].map(({ label, value }) => (
+                      <div key={label} className="flex justify-between">
+                        <span className="text-muted-foreground">{label}</span>
+                        <span className="font-semibold capitalize">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </aside>
 
         {/* ── Main Content ── */}
         <main className="flex-1 min-w-0">
           {/* Header + Tab Bar */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="mb-6">
-            <h1 className="font-display text-3xl font-bold">{tm.topMatches}</h1>
-            <p className="mt-1 text-muted-foreground">{tm.topMatchesSubtitle}</p>
+            <div className="flex items-start justify-between gap-4 flex-wrap mb-1">
+              <div>
+                <h1 className="font-display text-3xl font-bold">{tm.topMatches}</h1>
+                <p className="mt-1 text-muted-foreground">{tm.topMatchesSubtitle}</p>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-full border border-border/50 bg-card/70 px-3 py-1.5 text-xs font-semibold text-muted-foreground backdrop-blur-sm">
+                <span className="relative flex h-2 w-2 pulse-dot text-emerald-500">
+                  <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                Live verified consultants
+              </div>
+            </div>
 
             {/* Tabs */}
             <div className="mt-5 flex items-center gap-1 border-b border-border/60">
@@ -987,7 +1046,7 @@ export default function Compare() {
             {activeTab === "browse" && (
               <motion.div key="browse" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}>
                 {isLoadingConsultants ? (
-                  <div className="grid gap-6 lg:grid-cols-2">
+                  <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-2">
                     {[...Array(4)].map((_, i) => (
                       <div key={i} className="rounded-2xl border border-border/70 bg-card/90 p-6 space-y-4">
                         <div className="flex items-center gap-4">
@@ -1007,7 +1066,7 @@ export default function Compare() {
                     ))}
                   </div>
                 ) : (
-                  <div className="grid gap-6 lg:grid-cols-2">
+                  <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-2">
                     <AnimatePresence mode="popLayout">
                       {filteredConsultants.map((consultant, index) => {
                         const isSelected = compareIds.includes(consultant.id);
@@ -1030,8 +1089,15 @@ export default function Compare() {
                                 {/* Header */}
                                 <div className="mb-4 flex items-start justify-between gap-4">
                                   <div className="flex items-center gap-4">
-                                    <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${getColorClass(consultant.name)} text-xl font-bold text-white shadow-md`}>
-                                      {consultant.name.charAt(0)}
+                                    <div className="relative">
+                                      <div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${getColorClass(consultant.name)} text-xl font-bold text-white shadow-md`}>
+                                        {consultant.name.charAt(0)}
+                                      </div>
+                                      {consultant.rating >= 4.8 && (
+                                        <div className="absolute -top-2 -right-2 flex items-center gap-0.5 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 px-1.5 py-0.5 text-[9px] font-extrabold text-white shadow-sm shadow-amber-400/40 leading-none">
+                                          ★ TOP
+                                        </div>
+                                      )}
                                     </div>
                                     <div>
                                       <h3 className="text-lg font-bold leading-tight">{consultant.name}</h3>
@@ -1131,38 +1197,43 @@ export default function Compare() {
                   </div>
                 )}
 
-                {/* Compare prompt banner */}
+                {/* Compare prompt banner — sticky on mobile, inline on desktop */}
                 <AnimatePresence>
-                  {compareIds.length >= 2 && (
+                  {compareIds.length >= 1 && (
                     <motion.div
                       initial={{ opacity: 0, y: 16 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: 16 }}
                       transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                      className="mt-8 flex items-center justify-between rounded-2xl border border-primary/25 bg-primary/5 px-6 py-4"
+                      className="glass fixed bottom-4 left-4 right-4 z-50 flex items-center justify-between rounded-2xl border-primary/20 px-4 py-3 shadow-xl shadow-primary/10 sm:px-6 sm:py-4 md:relative md:bottom-auto md:left-auto md:right-auto md:z-auto md:mt-8 md:shadow-lg md:shadow-primary/5"
                     >
                       <div className="flex items-center gap-3">
-                        <GitCompare className="h-5 w-5 text-primary" />
+                        <div className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10">
+                          <GitCompare className="h-4.5 w-4.5 text-primary" />
+                          <span className="absolute -top-1.5 -right-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-extrabold text-primary-foreground">{compareIds.length}</span>
+                        </div>
                         <div>
                           <p className="text-sm font-bold text-foreground">
-                            {compareIds.length} consultants selected
+                            {compareIds.length === 3 ? "Ready to compare!" : `${compareIds.length} of 3 selected`}
                           </p>
                           <p className="text-xs text-muted-foreground">
-                            {comparedConsultants.map((c: any) => c.name).join(", ")}
+                            {comparedConsultants.map((c: any) => c.name).join(" · ")}
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
                         <button type="button" onClick={() => setCompareIds([])} className="text-xs text-muted-foreground hover:text-destructive transition-colors duration-200">Clear</button>
-                        <motion.button
-                          type="button"
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
-                          onClick={() => setActiveTab("compare")}
-                          className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-all duration-200"
-                        >
-                          View Comparison <ChevronRight className="h-4 w-4" />
-                        </motion.button>
+                        {compareIds.length >= 2 && (
+                          <motion.button
+                            type="button"
+                            whileHover={{ scale: 1.03 }}
+                            whileTap={{ scale: 0.97 }}
+                            onClick={() => setActiveTab("compare")}
+                            className="btn-glow inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 transition-all duration-200"
+                          >
+                            View Comparison <ChevronRight className="h-4 w-4" />
+                          </motion.button>
+                        )}
                       </div>
                     </motion.div>
                   )}
@@ -1190,14 +1261,14 @@ export default function Compare() {
                     </div>
 
                     {/* Profile headers */}
-                    <div className={`grid gap-4 ${comparedConsultants.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                    <div className={`grid gap-3 sm:gap-4 ${comparedConsultants.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
                       {comparedConsultants.map((c: any) => (
                         <motion.div
                           key={c.id}
                           initial={{ opacity: 0, scale: 0.97 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ duration: 0.3 }}
-                          className="relative rounded-2xl border border-border/70 bg-card p-5 text-center shadow-sm"
+                          className={`relative rounded-2xl border border-border/70 bg-card p-5 text-center shadow-sm border-t-[3px] ${getColumnColor(c.name).border} ${getColumnColor(c.name).bg}`}
                         >
                           <button
                             type="button"
@@ -1229,43 +1300,52 @@ export default function Compare() {
                     </div>
 
                     {/* Comparison table */}
-                    <div className="rounded-2xl border border-border/70 bg-card overflow-hidden shadow-sm">
-                      {[
-                        { label: "Rating", icon: Star, key: (c: any) => c.rating, highlight: (vals: any[]) => Math.max(...vals.map(Number)) },
-                        { label: "Success Rate", icon: TrendingUp, key: (c: any) => `${c.successRate}%`, highlight: (vals: any[]) => Math.max(...vals.map(v => parseInt(v))) },
-                        { label: "Students Helped", icon: Users, key: (c: any) => c.studentsHelped ?? "—", highlight: (vals: any[]) => Math.max(...vals.map(Number)) },
-                        { label: "Price Range", icon: DollarSign, key: (c: any) => `$${c.priceMin}–$${c.priceMax}`, highlight: null },
-                        { label: "Match Score", icon: Award, key: (c: any) => `${c.matchScore ?? "—"}%`, highlight: (vals: any[]) => Math.max(...vals.map(v => parseInt(v) || 0)) },
-                        { label: "Countries", icon: Globe, key: (c: any) => Array.isArray(c.specializedCountries) ? c.specializedCountries.join(", ") : "Various", highlight: null },
-                        { label: "Working Hours", icon: Clock, key: (c: any) => c.workingHours || "Mon–Fri, 9am–6pm", highlight: null },
-                        { label: "Contact Email", icon: Mail, key: (c: any) => c.contactEmail || "Via platform", highlight: null },
-                      ].map((row, ri) => {
-                        const vals = comparedConsultants.map(row.key);
-                        const bestVal = row.highlight ? row.highlight(vals) : null;
-                        return (
-                          <div key={ri} className={`grid border-b border-border/50 last:border-0 ${comparedConsultants.length === 2 ? "grid-cols-[140px_1fr_1fr]" : "grid-cols-[140px_1fr_1fr_1fr]"}`}>
-                            <div className="flex items-center gap-2 px-4 py-3.5 bg-muted/40 border-r border-border/50">
-                              <row.icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                              <span className="text-xs font-semibold text-muted-foreground">{row.label}</span>
+                    <div className="rounded-2xl border border-border/70 bg-card shadow-sm overflow-x-auto">
+                      <div style={{ minWidth: comparedConsultants.length === 2 ? 480 : 600 }}>
+                        {/* Column color header strip */}
+                        <div className={`grid border-b border-border/50 ${comparedConsultants.length === 2 ? "grid-cols-[140px_1fr_1fr]" : "grid-cols-[140px_1fr_1fr_1fr]"}`}>
+                          <div className="bg-muted/40 border-r border-border/50" />
+                          {comparedConsultants.map((c: any) => (
+                            <div key={c.id} className={`h-1.5 ${getColumnColor(c.name).bg} border-r border-border/50 last:border-0`} style={{ borderTopWidth: 3, borderTopStyle: "solid" }} />
+                          ))}
+                        </div>
+                        {[
+                          { label: "Rating", icon: Star, key: (c: any) => c.rating, highlight: (vals: any[]) => Math.max(...vals.map(Number)) },
+                          { label: "Success Rate", icon: TrendingUp, key: (c: any) => `${c.successRate}%`, highlight: (vals: any[]) => Math.max(...vals.map(v => parseInt(v))) },
+                          { label: "Students Helped", icon: Users, key: (c: any) => c.studentsHelped ?? "—", highlight: (vals: any[]) => Math.max(...vals.map(Number)) },
+                          { label: "Price Range", icon: DollarSign, key: (c: any) => `$${c.priceMin}–$${c.priceMax}`, highlight: null },
+                          { label: "Match Score", icon: Award, key: (c: any) => `${c.matchScore ?? "—"}%`, highlight: (vals: any[]) => Math.max(...vals.map(v => parseInt(v) || 0)) },
+                          { label: "Countries", icon: Globe, key: (c: any) => Array.isArray(c.specializedCountries) ? c.specializedCountries.join(", ") : "Various", highlight: null },
+                          { label: "Working Hours", icon: Clock, key: (c: any) => c.workingHours || "Mon–Fri, 9am–6pm", highlight: null },
+                          { label: "Contact Email", icon: Mail, key: (c: any) => c.contactEmail || "Via platform", highlight: null },
+                        ].map((row, ri) => {
+                          const vals = comparedConsultants.map(row.key);
+                          const bestVal = row.highlight ? row.highlight(vals) : null;
+                          return (
+                            <div key={ri} className={`grid border-b border-border/50 last:border-0 ${comparedConsultants.length === 2 ? "grid-cols-[140px_1fr_1fr]" : "grid-cols-[140px_1fr_1fr_1fr]"}`}>
+                              <div className="flex items-center gap-2 px-4 py-3.5 bg-muted/40 border-r border-border/50">
+                                <row.icon className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                                <span className="text-xs font-semibold text-muted-foreground">{row.label}</span>
+                              </div>
+                              {comparedConsultants.map((c: any) => {
+                                const val = row.key(c);
+                                const numVal = parseFloat(String(val)) || parseInt(String(val)) || 0;
+                                const isBest = bestVal !== null && numVal === bestVal && bestVal > 0;
+                                return (
+                                  <div key={c.id} className={`flex items-center justify-center px-4 py-3.5 border-r border-border/50 last:border-0 text-sm transition-colors duration-200 ${isBest ? "bg-primary/6 font-bold text-primary" : `font-medium ${getColumnColor(c.name).bg}`}`}>
+                                    <span className="text-center">{val}</span>
+                                    {isBest && <span className="ml-1.5 text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">Best</span>}
+                                  </div>
+                                );
+                              })}
                             </div>
-                            {comparedConsultants.map((c: any) => {
-                              const val = row.key(c);
-                              const numVal = parseFloat(String(val)) || parseInt(String(val)) || 0;
-                              const isBest = bestVal !== null && numVal === bestVal && bestVal > 0;
-                              return (
-                                <div key={c.id} className={`flex items-center justify-center px-4 py-3.5 border-r border-border/50 last:border-0 text-sm transition-colors duration-200 ${isBest ? "bg-primary/6 font-bold text-primary" : "font-medium"}`}>
-                                  <span className="text-center">{val}</span>
-                                  {isBest && <span className="ml-1.5 text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded-full">Best</span>}
-                                </div>
-                              );
-                            })}
-                          </div>
-                        );
-                      })}
+                          );
+                        })}
+                      </div>
                     </div>
 
                     {/* CTA row */}
-                    <div className={`grid gap-4 ${comparedConsultants.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
+                    <div className={`grid gap-3 sm:gap-4 ${comparedConsultants.length === 2 ? "grid-cols-2" : "grid-cols-3"}`}>
                       {comparedConsultants.map((c: any) => (
                         <motion.button
                           key={c.id}

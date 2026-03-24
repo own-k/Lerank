@@ -19,7 +19,10 @@
       "Bash(pnpm run:*)",
       "Bash(pnpm --filter @workspace/lerank build)",
       "Bash(npx vite:*)",
-      "Bash(pnpm add:*)"
+      "Bash(pnpm add:*)",
+      "Bash(bash scripts/start-server.sh --project-dir /home/runner/workspace --host 0.0.0.0 --url-host localhost)",
+      "Bash(pnpm --filter lerank build)",
+      "Bash(pnpm exec:*)"
     ]
   }
 }

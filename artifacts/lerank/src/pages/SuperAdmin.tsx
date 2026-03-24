@@ -2,7 +2,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useLanguage } from "@/hooks/use-language";
 import { useEffect, useState } from "react";
 import { Card, CardContent, Button, Input, Label } from "@/components/ui-elements";
-import { ShieldCheck, Activity, Users, Building, AlertCircle, LogOut, Search, Plus, Trash2, UserCog, X, Eye, EyeOff } from "lucide-react";
+import { ShieldCheck, Activity, Users, Building, AlertCircle, LogOut, Search, Plus, Trash2, UserCog, X, Eye, EyeOff, Globe, DollarSign } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 
 function formatCurrency(amount: number) {
@@ -30,6 +30,12 @@ export default function SuperAdmin() {
   const [roleChangeUser, setRoleChangeUser] = useState<any>(null);
   const [newRole, setNewRole] = useState("student");
   const [newCompanyId, setNewCompanyId] = useState("");
+
+  // Create company modal
+  const [showCreateCompany, setShowCreateCompany] = useState(false);
+  const [newCompany, setNewCompany] = useState({ name: "", description: "", website: "", priceMin: "", priceMax: "", specializedCountries: "", degreeLevels: "" });
+  const [createCompanyError, setCreateCompanyError] = useState("");
+  const [isCreatingCompany, setIsCreatingCompany] = useState(false);
 
   useEffect(() => {
     if (!token) return;
@@ -118,7 +124,42 @@ export default function SuperAdmin() {
     if (res.ok) {
       const updated = await res.json();
       setUsers(prev => prev.map(u => u.id === updated.id ? updated : u));
+      if (searchResult && searchResult.id === updated.id) setSearchResult(updated);
       setRoleChangeUser(null);
+    }
+  };
+
+  const handleCreateCompany = async () => {
+    setIsCreatingCompany(true);
+    setCreateCompanyError("");
+    try {
+      const countries = newCompany.specializedCountries.split(",").map(s => s.trim()).filter(Boolean);
+      const degrees = newCompany.degreeLevels.split(",").map(s => s.trim()).filter(Boolean);
+      const res = await fetch("/api/admin/companies", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          name: newCompany.name,
+          description: newCompany.description,
+          website: newCompany.website,
+          priceMin: newCompany.priceMin ? parseInt(newCompany.priceMin) : 0,
+          priceMax: newCompany.priceMax ? parseInt(newCompany.priceMax) : 0,
+          specializedCountries: countries,
+          degreeLevels: degrees,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message || "Failed to create company");
+      }
+      const created = await res.json();
+      setCompanies(prev => [...prev, created]);
+      setShowCreateCompany(false);
+      setNewCompany({ name: "", description: "", website: "", priceMin: "", priceMax: "", specializedCountries: "", degreeLevels: "" });
+    } catch (e: any) {
+      setCreateCompanyError(e.message);
+    } finally {
+      setIsCreatingCompany(false);
     }
   };
 
@@ -233,12 +274,40 @@ export default function SuperAdmin() {
             {searchResult && (
               <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mb-4">
                 <Card className="border-gold/30 bg-gold/5">
-                  <CardContent className="p-4 flex items-center justify-between">
-                    <div>
-                      <div className="font-bold text-foreground">{searchResult.fullName}</div>
-                      <div className="text-sm text-muted-foreground">{searchResult.email} — <span className="font-mono text-gold">{searchResult.userCode}</span> — {searchResult.role}</div>
+                  <CardContent className="p-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="font-bold text-foreground">{searchResult.fullName}</div>
+                        <div className="text-sm text-muted-foreground mt-0.5">
+                          {searchResult.email} — <span className="font-mono text-gold">{searchResult.userCode}</span>
+                        </div>
+                        <div className="mt-1">
+                          <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
+                            searchResult.role === 'super_admin' ? 'bg-purple-100 text-purple-700' :
+                            searchResult.role === 'company_admin' ? 'bg-blue-100 text-blue-700' :
+                            'bg-green-100 text-green-700'
+                          }`}>{searchResult.role.replace(/_/g, ' ')}</span>
+                        </div>
+                      </div>
+                      <Button variant="ghost" size="sm" onClick={() => setSearchResult(null)}><X className="w-4 h-4" /></Button>
                     </div>
-                    <Button variant="ghost" size="sm" onClick={() => setSearchResult(null)}><X className="w-4 h-4" /></Button>
+                    <div className="flex gap-2 mt-3 pt-3 border-t border-border/50">
+                      <Button size="sm" variant="outline" onClick={() => { setRoleChangeUser(searchResult); setNewRole(searchResult.role); setNewCompanyId(searchResult.companyId?.toString() || ""); }}>
+                        <UserCog className="w-3 h-3 mr-1" /> Change Role
+                      </Button>
+                      {searchResult.role !== 'super_admin' && (
+                        <Button size="sm" variant="outline" className="border-red-300 text-red-500 hover:bg-red-50" onClick={async () => {
+                          if (!confirm(ta.confirmDelete)) return;
+                          const res = await fetch(`/api/admin/users/${searchResult.id}`, { method: "DELETE", headers: { Authorization: `Bearer ${token}` } });
+                          if (res.ok) {
+                            setUsers(prev => prev.filter(u => u.id !== searchResult.id));
+                            setSearchResult(null);
+                          }
+                        }}>
+                          <Trash2 className="w-3 h-3 mr-1" /> Delete
+                        </Button>
+                      )}
+                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
@@ -297,7 +366,12 @@ export default function SuperAdmin() {
 
         {/* Companies Table */}
         <div>
-          <h2 className="text-xl font-bold text-foreground mb-4">Consultant Companies</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-foreground">Consultant Companies</h2>
+            <Button onClick={() => setShowCreateCompany(true)} className="gap-2">
+              <Plus className="w-4 h-4" /> Create Company
+            </Button>
+          </div>
           <Card className="bg-card border-border shadow-sm overflow-hidden">
             <table className="w-full text-left">
               <thead className="border-b border-border bg-muted text-xs uppercase text-muted-foreground">
@@ -388,6 +462,59 @@ export default function SuperAdmin() {
                     )}
                     {addUserError && <p className="text-sm text-red-500">{addUserError}</p>}
                     <Button onClick={handleAddUser} isLoading={isAddingUser} className="w-full">{ta.createUser}</Button>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+
+        {/* Create Company Modal */}
+        <AnimatePresence>
+          {showCreateCompany && (
+            <>
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-40 bg-black/40" onClick={() => setShowCreateCompany(false)} />
+              <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}
+                className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+                <Card className="shadow-2xl">
+                  <CardContent className="p-6 space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h3 className="text-lg font-bold flex items-center gap-2"><Building className="w-5 h-5" /> Create Company</h3>
+                      <Button variant="ghost" size="icon" onClick={() => setShowCreateCompany(false)}><X className="w-5 h-5" /></Button>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Company Name *</Label>
+                      <Input value={newCompany.name} onChange={e => setNewCompany(c => ({ ...c, name: e.target.value }))} placeholder="e.g. GlobalEdu Consulting" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Description</Label>
+                      <Input value={newCompany.description} onChange={e => setNewCompany(c => ({ ...c, description: e.target.value }))} placeholder="Brief description of the company" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Website</Label>
+                      <Input value={newCompany.website} onChange={e => setNewCompany(c => ({ ...c, website: e.target.value }))} placeholder="https://example.com" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <Label>Min Price ($)</Label>
+                        <Input type="number" value={newCompany.priceMin} onChange={e => setNewCompany(c => ({ ...c, priceMin: e.target.value }))} placeholder="1000" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Max Price ($)</Label>
+                        <Input type="number" value={newCompany.priceMax} onChange={e => setNewCompany(c => ({ ...c, priceMax: e.target.value }))} placeholder="5000" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Specialized Countries <span className="text-muted-foreground text-xs">(comma-separated)</span></Label>
+                      <Input value={newCompany.specializedCountries} onChange={e => setNewCompany(c => ({ ...c, specializedCountries: e.target.value }))} placeholder="USA, UK, Canada" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Degree Levels <span className="text-muted-foreground text-xs">(comma-separated)</span></Label>
+                      <Input value={newCompany.degreeLevels} onChange={e => setNewCompany(c => ({ ...c, degreeLevels: e.target.value }))} placeholder="bachelor, master, phd" />
+                    </div>
+                    {createCompanyError && <p className="text-sm text-red-500">{createCompanyError}</p>}
+                    <Button onClick={handleCreateCompany} isLoading={isCreatingCompany} className="w-full">Create Company</Button>
+                    <p className="text-xs text-muted-foreground text-center">After creating, assign a Company Admin by changing a user's role to "Company Admin" and selecting this company.</p>
                   </CardContent>
                 </Card>
               </motion.div>

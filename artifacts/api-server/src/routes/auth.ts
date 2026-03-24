@@ -250,7 +250,7 @@ router.post("/login", async (req, res) => {
       where: eq(usersTable.email, body.email),
     });
     if (!user || user.passwordHash !== hashPassword(body.password)) {
-      res.status(401).json({ error: "Unauthorized", message: "Invalid credentials" });
+      res.status(401).json({ error: "Unauthorized", message: "Incorrect password or email" });
       return;
     }
     const profile = await db.query.studentProfilesTable.findFirst({
