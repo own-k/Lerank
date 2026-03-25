@@ -5,7 +5,7 @@ import { Loader2 } from "lucide-react";
 // --- BUTTON ---
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "default" | "outline" | "ghost" | "secondary" | "danger" | "link";
+  variant?: "default" | "outline" | "ghost" | "secondary" | "danger" | "link" | "glass";
   size?: "sm" | "default" | "lg" | "icon";
   isLoading?: boolean;
 }
@@ -32,6 +32,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       danger:
         "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-lg shadow-destructive/20",
       link: "text-primary underline-offset-4 hover:underline",
+      glass: "btn-glass",
     };
     const sizes = {
       sm: "h-9 px-4 text-xs rounded-lg",

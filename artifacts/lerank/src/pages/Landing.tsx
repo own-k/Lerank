@@ -191,7 +191,7 @@ export default function Landing() {
       <div className="pointer-events-none fixed inset-0 premium-grid" />
 
       {/* ── Nav ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/90 backdrop-blur-md" style={{ willChange: "transform", transform: "translateZ(0)" }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-nav" style={{ willChange: "transform", transform: "translateZ(0)" }}>
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 md:grid md:h-16 md:grid-cols-[1fr_auto_1fr]">
           {/* Left — logo */}
           <div className="flex items-center gap-2">
@@ -279,7 +279,7 @@ export default function Landing() {
                 </Button>
               </Link>
               <Link href="/compare">
-                <Button size="lg" variant="outline" className="font-semibold dark:border-[rgba(212,185,106,0.5)] dark:text-[#D4B96A] dark:hover:bg-[#D4B96A]/10 dark:bg-transparent">
+                <Button size="lg" variant="glass" className="font-semibold">
                   {t.hero.iAmConsultant}
                 </Button>
               </Link>
@@ -328,7 +328,7 @@ export default function Landing() {
                   <motion.div
                     key={label}
                     whileHover={{ scale: 1.05, transition: { duration: 0.18 } }}
-                    className="rounded-xl border border-border/50 bg-muted py-3 text-center cursor-default"
+                    className="glass-stat rounded-xl py-3 text-center cursor-default"
                   >
                     <p className="font-display text-lg font-extrabold leading-tight">{value}</p>
                     <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">{label}</p>
@@ -414,7 +414,7 @@ export default function Landing() {
                 <motion.div
                   key={item.step}
                   variants={BLUR_IN}
-                  className="bg-card px-5 py-6 sm:px-8 sm:py-9"
+                  className="glass-card px-5 py-6 sm:px-8 sm:py-9"
                 >
                   <p className="font-display mb-5 text-5xl font-medium text-gold">{item.step}</p>
                   <h3 className="mb-2 font-display text-lg font-semibold text-[#111811] dark:text-[#F0ECE2]">{item.title}</h3>
@@ -433,8 +433,7 @@ export default function Landing() {
               <motion.div
                 key={i}
                 variants={BLUR_IN}
-                className="hiw-feature-shadow rounded-2xl border border-black/[0.07] dark:border-white/[0.06] bg-card p-6 transition-colors duration-200"
-                style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}
+                className="glass-card rounded-2xl p-6"
               >
                 <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#F0EDE4] dark:bg-secondary">
                   <f.icon className="h-5 w-5 text-[#1E3D28] dark:text-[#D4B96A]" />
@@ -485,7 +484,7 @@ export default function Landing() {
               initial={{ opacity: 0, x: 28 }}
               animate={cardInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, ease: EASE }}
-              className="rounded-2xl border border-border/50 bg-card/80 p-8"
+              className="glass-card rounded-2xl p-8"
             >
               <div className="mb-6 relative flex h-11 w-11 items-center justify-center rounded-xl bg-destructive/10">
                 {cardInView && (
@@ -573,7 +572,7 @@ export default function Landing() {
               className="space-y-4"
             >
               {t.guarantee.benefits.map(({ title, points }, bi) => (
-                <motion.div key={bi} variants={BLUR_IN} className="rounded-2xl border border-border/50 bg-card/80 p-7">
+                <motion.div key={bi} variants={BLUR_IN} className="glass-card rounded-2xl p-7">
                   <h3 className="mb-4 font-display text-lg font-bold">{title}</h3>
                   <div className="space-y-3">
                     {points.map((p, pi) => (
@@ -593,7 +592,7 @@ export default function Landing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.55, delay: 0.1, ease: EASE }}
-              className="rounded-2xl border border-border/50 bg-card/80 p-8 lg:sticky lg:top-[88px]"
+              className="glass-card rounded-2xl p-8 lg:sticky lg:top-[88px]"
             >
               <div className="mb-6 flex items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sage/10">
@@ -652,7 +651,7 @@ export default function Landing() {
                 </Button>
               </Link>
               <Link href="/compare">
-                <Button size="lg" variant="outline" className="font-semibold dark:border-[rgba(212,185,106,0.5)] dark:text-[#D4B96A] dark:hover:bg-[#D4B96A]/10 dark:bg-transparent">{t.cta.signIn}</Button>
+                <Button size="lg" variant="glass" className="font-semibold">{t.cta.signIn}</Button>
               </Link>
             </motion.div>
           </motion.div>
