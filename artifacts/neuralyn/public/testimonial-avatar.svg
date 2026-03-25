@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" fill="none">
+  <rect width="56" height="56" rx="28" fill="#1a1a2e"/>
+  <!-- Skin tone -->
+  <rect width="56" height="56" rx="28" fill="#c8956c" opacity="0.85"/>
+  <!-- Hair -->
+  <ellipse cx="28" cy="13" rx="13" ry="10" fill="#2c1a0e"/>
+  <rect x="15" y="13" width="26" height="8" fill="#2c1a0e"/>
+  <!-- Face -->
+  <ellipse cx="28" cy="22" rx="11" ry="13" fill="#d4a574"/>
+  <!-- Eyes -->
+  <ellipse cx="23.5" cy="20" rx="1.5" ry="1.8" fill="#2c1a0e"/>
+  <ellipse cx="32.5" cy="20" rx="1.5" ry="1.8" fill="#2c1a0e"/>
+  <!-- Smile -->
+  <path d="M23 26 Q28 30 33 26" stroke="#8B5E3C" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  <!-- Neck -->
+  <rect x="23" y="34" width="10" height="7" rx="3" fill="#d4a574"/>
+  <!-- Shoulders / body -->
+  <ellipse cx="28" cy="52" rx="18" ry="10" fill="#1e293b"/>
+  <!-- Collar -->
+  <path d="M22 40 L28 46 L34 40" stroke="white" stroke-width="1" fill="none" opacity="0.6"/>
+</svg>

@@ -1,4 +1,4 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useScroll, useTransform, MotionValue } from "framer-motion";
 import { Link } from "wouter";
 import { Button } from "@/components/ui-elements";
 import { LanguageToggle } from "@/components/language-toggle";
@@ -72,6 +72,100 @@ const DOT_ITEM = {
   show: { scale: 1, transition: { duration: 0.22 } },
 };
 
+/* ─── Neuralyn: scroll-driven word reveal ───────────────────────────────── */
+function Word({
+  word,
+  progress,
+  start,
+  end,
+}: {
+  word: string;
+  progress: MotionValue<number>;
+  start: number;
+  end: number;
+}) {
+  const opacity = useTransform(progress, [start, end], [0.18, 1]);
+  const color = useTransform(
+    progress,
+    [start, end],
+    ["hsl(146 20% 55% / 0.45)", "hsl(146 20% 15%)"],
+  );
+  const darkColor = useTransform(
+    progress,
+    [start, end],
+    ["hsl(60 15% 75% / 0.3)", "hsl(60 15% 90%)"],
+  );
+
+  return (
+    <motion.span style={{ opacity }} className="mr-[0.3em] inline-block">
+      <motion.span style={{ color }} className="dark:hidden">
+        {word}
+      </motion.span>
+      <motion.span style={{ color: darkColor }} className="hidden dark:inline">
+        {word}
+      </motion.span>
+    </motion.span>
+  );
+}
+
+const TESTIMONIAL_TEXT =
+  "Lerank completely changed how I found my consultant. The escrow system meant my money was protected the entire time. The matching engine connected me with someone who knew exactly what universities were looking for. I got my visa approved and my offer letter within three months.";
+
+function TestimonialSection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end center"],
+  });
+
+  const words = TESTIMONIAL_TEXT.split(" ");
+
+  return (
+    <section className="py-14 md:py-24 lg:py-36 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div
+          ref={containerRef}
+          className="relative flex flex-col items-start gap-10 max-w-4xl mx-auto"
+        >
+          <div className="flex items-center gap-3">
+            <div className="h-px w-10 bg-gold/60" />
+            <span className="text-xs font-extrabold uppercase tracking-widest text-gold">
+              Student Story
+            </span>
+          </div>
+
+          <div className="text-3xl md:text-[2.6rem] font-display font-extrabold leading-[1.25] tracking-tight flex flex-wrap">
+            <span className="text-foreground/20 mr-1 font-serif">&ldquo;</span>
+            {words.map((word, i) => (
+              <Word
+                key={i}
+                word={word}
+                progress={scrollYProgress}
+                start={i / words.length}
+                end={Math.min((i + 2) / words.length, 1)}
+              />
+            ))}
+            <span className="text-foreground/20 ml-1 font-serif">&rdquo;</span>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-full bg-primary/10 border-2 border-primary/20 flex items-center justify-center text-primary font-bold text-sm">
+              AN
+            </div>
+            <div>
+              <p className="text-sm font-bold text-foreground">Asel Nurlanovna</p>
+              <p className="text-xs font-medium text-muted-foreground">
+                BSc Computer Science · University of Birmingham
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Landing() {
   const { t } = useLanguage();
   const heroRef = useRef<HTMLDivElement>(null);
@@ -79,6 +173,14 @@ export default function Landing() {
   const problemInView = useInView(problemRef, { once: true, margin: "-80px" });
   const cardRef = useRef<HTMLDivElement>(null);
   const cardInView = useInView(cardRef, { once: true, margin: "-60px" });
+
+  // Neuralyn: parallax scroll for hero section
+  const { scrollYProgress: heroScrollY } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  const heroContentY = useTransform(heroScrollY, [0, 1], [0, -120]);
+  const heroContentOpacity = useTransform(heroScrollY, [0, 0.55], [1, 0]);
 
   // Scroll-snap helper: small scroll → jump to next section
   useEffect(() => {
@@ -151,6 +253,10 @@ export default function Landing() {
         <div className="orb orb-3 w-[260px] h-[260px] bg-primary/6 dark:bg-sage/8 bottom-24 left-1/2 hidden lg:block" />
 
         <motion.div
+          style={{ y: heroContentY, opacity: heroContentOpacity }}
+          className="w-full"
+        >
+        <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE }}
@@ -158,10 +264,15 @@ export default function Landing() {
         >
           {/* Left */}
           <div>
-            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-border/60 bg-card/80 px-4 py-2 text-xs font-bold text-foreground/70">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0 }}
+              className="mb-5 liquid-glass inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-foreground/70"
+            >
               <Lock className="h-3 w-3 text-sage" />
               {t.hero.badge}
-            </div>
+            </motion.div>
 
             <h1 className="mb-4 font-display text-[2.3rem] font-extrabold leading-[1.05] tracking-tight sm:text-5xl sm:mb-6 lg:text-[4.25rem]">
               {t.hero.heading1}
@@ -288,6 +399,7 @@ export default function Landing() {
               </div>
             </div>
           </motion.div>
+        </motion.div>
         </motion.div>
 
       </section>
@@ -529,6 +641,9 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
+      {/* ── Testimonial (Neuralyn scroll-reveal) ── */}
+      <TestimonialSection />
 
       {/* ── CTA ── */}
       <section className="border-t border-border/40 py-14 md:py-24 lg:py-36">
