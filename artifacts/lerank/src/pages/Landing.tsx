@@ -1,4 +1,4 @@
-import { motion, useInView, useScroll, useTransform, MotionValue } from "framer-motion";
+import { motion, useInView, useScroll, useTransform, useSpring, MotionValue } from "framer-motion";
 import { Link } from "wouter";
 import { Button } from "@/components/ui-elements";
 import { LanguageToggle } from "@/components/language-toggle";
@@ -174,28 +174,15 @@ export default function Landing() {
   const cardRef = useRef<HTMLDivElement>(null);
   const cardInView = useInView(cardRef, { once: true, margin: "-60px" });
 
-  // Neuralyn: parallax scroll for hero section
+  // Neuralyn: smooth spring-based parallax for hero section
   const { scrollYProgress: heroScrollY } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  const heroContentY = useTransform(heroScrollY, [0, 1], [0, -120]);
-  const heroContentOpacity = useTransform(heroScrollY, [0, 0.55], [1, 0]);
-
-  // Scroll-snap helper: small scroll → jump to next section
-  useEffect(() => {
-    let snapped = false;
-    const handleScroll = () => {
-      if (snapped) return;
-      const y = window.scrollY;
-      if (y > 35 && y < window.innerHeight * 0.32) {
-        snapped = true;
-        document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
-      }
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  const rawY = useTransform(heroScrollY, [0, 1], [0, -100]);
+  const rawOpacity = useTransform(heroScrollY, [0, 0.6], [1, 0]);
+  const heroContentY = useSpring(rawY, { stiffness: 80, damping: 20, mass: 0.4 });
+  const heroContentOpacity = useSpring(rawOpacity, { stiffness: 100, damping: 25, mass: 0.3 });
 
   const features = t.howItWorks.features.map((f, i) => ({ ...f, icon: featureIcons[i] }));
 
@@ -253,7 +240,7 @@ export default function Landing() {
         <div className="orb orb-3 w-[260px] h-[260px] bg-primary/6 dark:bg-sage/8 bottom-24 left-1/2 hidden lg:block" />
 
         <motion.div
-          style={{ y: heroContentY, opacity: heroContentOpacity }}
+          style={{ y: heroContentY, opacity: heroContentOpacity, willChange: "transform, opacity" }}
           className="w-full"
         >
         <motion.div

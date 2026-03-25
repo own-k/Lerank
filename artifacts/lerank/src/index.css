@@ -308,6 +308,8 @@ select:focus {
   border-radius: 50%;
   filter: blur(72px);
   pointer-events: none;
+  will-change: transform;
+  transform: translateZ(0);
   animation: orb-drift 14s ease-in-out infinite;
 }
 .orb-2 { animation-delay: -7s; animation-duration: 18s; }
