@@ -108,8 +108,10 @@ function Word({
   );
 }
 
+const TESTIMONIAL_TEXT =
+  "Lerank completely changed how I found my consultant. The escrow system meant my money was protected the entire time. The matching engine connected me with someone who knew exactly what universities were looking for. I got my visa approved and my offer letter within three months.";
+
 function TestimonialSection() {
-  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -117,7 +119,7 @@ function TestimonialSection() {
     offset: ["start end", "end center"],
   });
 
-  const words = t.testimonial.quote.split(" ");
+  const words = TESTIMONIAL_TEXT.split(" ");
 
   return (
     <section className="py-14 md:py-24 lg:py-36 overflow-hidden">
@@ -129,7 +131,7 @@ function TestimonialSection() {
           <div className="flex items-center gap-3">
             <div className="h-px w-10 bg-gold/60" />
             <span className="text-xs font-extrabold uppercase tracking-widest text-gold">
-              {t.testimonial.sectionLabel}
+              Student Story
             </span>
           </div>
 
@@ -152,9 +154,9 @@ function TestimonialSection() {
               AN
             </div>
             <div>
-              <p className="text-sm font-bold text-foreground">{t.testimonial.authorName}</p>
+              <p className="text-sm font-bold text-foreground">Asel Nurlanovna</p>
               <p className="text-xs font-medium text-muted-foreground">
-                {t.testimonial.authorTitle}
+                BSc Computer Science · University of Birmingham
               </p>
             </div>
           </div>
@@ -168,13 +170,6 @@ export default function Landing() {
   const { t } = useLanguage();
   const heroRef = useRef<HTMLDivElement>(null);
   const problemRef = useRef<HTMLDivElement>(null);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 60);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
   const problemInView = useInView(problemRef, { once: true, margin: "-80px" });
   const cardRef = useRef<HTMLDivElement>(null);
   const cardInView = useInView(cardRef, { once: true, margin: "-60px" });
@@ -188,7 +183,6 @@ export default function Landing() {
   const rawOpacity = useTransform(heroScrollY, [0, 0.6], [1, 0]);
   const heroContentY = useSpring(rawY, { stiffness: 80, damping: 20, mass: 0.4 });
   const heroContentOpacity = useSpring(rawOpacity, { stiffness: 100, damping: 25, mass: 0.3 });
-  const cardParallaxY = useTransform(heroScrollY, [0, 1], [0, -160]);
 
   const features = t.howItWorks.features.map((f, i) => ({ ...f, icon: featureIcons[i] }));
 
@@ -197,7 +191,7 @@ export default function Landing() {
       <div className="pointer-events-none fixed inset-0 premium-grid" />
 
       {/* ── Nav ── */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "glass-nav" : "nav-transparent"}`} style={{ willChange: "transform", transform: "translateZ(0)" }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-nav" style={{ willChange: "transform", transform: "translateZ(0)" }}>
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 md:grid md:h-16 md:grid-cols-[1fr_auto_1fr]">
           {/* Left — logo */}
           <div className="flex items-center gap-2">
@@ -239,211 +233,161 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero ── */}
-      <section ref={heroRef} className="relative flex flex-col min-h-screen overflow-hidden">
-        {/* ── Full-screen background video ── */}
-        <video
-          autoPlay loop muted playsInline
-          className="absolute inset-0 w-full h-full object-cover"
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260306_074215_04640ca7-042c-45d6-bb56-58b1e8a42489.mp4"
-        />
-        {/* Readability gradient — subtle darkening so text is legible */}
-        <div className="absolute inset-0 bg-black/30 pointer-events-none" />
+      <section ref={heroRef} className="relative flex min-h-screen items-center pt-14 md:pt-16 overflow-hidden">
+        {/* Floating gradient orbs */}
+        <div className="orb w-[520px] h-[520px] bg-primary/10 dark:bg-sage/10 top-16 -left-32 hidden md:block" />
+        <div className="orb orb-2 w-[380px] h-[380px] bg-gold/8 dark:bg-gold/6 top-8 right-8 hidden md:block" />
+        <div className="orb orb-3 w-[260px] h-[260px] bg-primary/6 dark:bg-sage/8 bottom-24 left-1/2 hidden lg:block" />
 
-        {/* ── Centered hero text ── */}
         <motion.div
           style={{ y: heroContentY, opacity: heroContentOpacity, willChange: "transform, opacity" }}
-          className="w-full relative z-10 flex flex-col items-center text-center px-4 pt-28 pb-16 sm:px-6"
+          className="w-full"
         >
-          {/* Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0 }}
-            className="mb-6 inline-flex items-center gap-0 rounded-full bg-white/10 backdrop-blur-sm px-1 py-1"
-          >
-            <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md rounded-full px-4 py-1.5">
-              <Lock className="h-3 w-3 text-[#1E3D28]" />
-              <span className="text-xs font-semibold text-[#1E3D28] tracking-wide">{t.hero.badge}</span>
-            </div>
-          </motion.div>
-
-          {/* Heading */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
-            className="mb-5 text-[2.6rem] font-medium leading-[1.08] tracking-[-1.5px] text-white sm:text-6xl md:text-7xl"
-            style={{ fontFamily: "'Barlow', sans-serif" }}
-          >
-            {t.hero.heading1}
-            <br />
-            <span className="italic font-normal" style={{ fontFamily: "'Instrument Serif', serif" }}>{t.hero.heading2}</span>
-          </motion.h1>
-
-          {/* Subtitle */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2, ease: EASE }}
-            className="mb-8 max-w-[520px] text-base font-normal leading-relaxed text-white/70 sm:text-lg"
-            style={{ fontFamily: "'Barlow', sans-serif" }}
-          >
-            {t.hero.body}
-          </motion.p>
-
-          {/* CTAs */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3, ease: EASE }}
-            className="flex flex-col items-center gap-3 sm:flex-row"
-          >
-            <Link href="/compare">
-              <motion.button
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center justify-center gap-2 h-12 px-8 text-sm font-medium text-[#171717] rounded-full transition-colors"
-                style={{ backgroundColor: "#f8f8f8", fontFamily: "'Barlow', sans-serif" }}
-              >
-                {t.hero.findConsultant}
-                <ArrowRight className="h-3.5 w-3.5" />
-              </motion.button>
-            </Link>
-            <Link href="/compare">
-              <motion.button
-                whileHover={{ backgroundColor: "rgba(255,255,255,0.15)" }}
-                whileTap={{ scale: 0.97 }}
-                className="inline-flex items-center justify-center gap-2 h-12 px-8 text-sm font-medium text-white border border-white/30 rounded-full transition-colors"
-                style={{ backgroundColor: "rgba(255,255,255,0.07)", fontFamily: "'Barlow', sans-serif" }}
-              >
-                {t.hero.iAmConsultant}
-              </motion.button>
-            </Link>
-          </motion.div>
-
-          {/* Trust stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="mt-10 flex items-center divide-x divide-white/20"
-          >
-            {t.heroStats.map(({ value, label }, i) => (
-              <div key={i} className="flex flex-col gap-0.5 px-6 first:pl-0 last:pr-0 text-center">
-                <span className="font-display text-xl font-extrabold text-white sm:text-2xl">{value}</span>
-                <span className="text-[11px] font-medium text-white/55">{label}</span>
-              </div>
-            ))}
-          </motion.div>
-        </motion.div>
-
-        {/* ── Centered product card — full-width parallax like Neuralyn dashboard ── */}
         <motion.div
-          initial={{ opacity: 0, y: 40, filter: "blur(10px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.8, delay: 0.45, ease: EASE }}
-          style={{ y: cardParallaxY, willChange: "transform" }}
-          className="relative z-10 w-full flex justify-center px-4 pb-8 sm:px-6"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE }}
+          className="mx-auto grid w-full max-w-7xl items-center gap-8 px-4 py-8 sm:px-6 sm:py-16 lg:grid-cols-[1fr_480px] lg:gap-16 lg:py-0"
         >
-          <div
-            className="w-full max-w-lg cursor-default"
-            style={{ mixBlendMode: "normal" }}
-          >
-            {/* Corner accents on the card */}
-            <div className="relative">
-              <span className="corner-accent corner-accent-tl" style={{ width: 9, height: 9 }} />
-              <span className="corner-accent corner-accent-tr" style={{ width: 9, height: 9 }} />
-              <span className="corner-accent corner-accent-bl" style={{ width: 9, height: 9 }} />
-              <span className="corner-accent corner-accent-br" style={{ width: 9, height: 9 }} />
+          {/* Left */}
+          <div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0 }}
+              className="mb-5 liquid-glass inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-foreground/70"
+            >
+              <Lock className="h-3 w-3 text-sage" />
+              {t.hero.badge}
+            </motion.div>
 
-              <div className="rounded-2xl border border-white/[0.12] bg-white/[0.07] backdrop-blur-xl p-6 shadow-[0_32px_80px_rgba(0,0,0,0.45)]"
-                style={{ background: "rgba(250,246,241,0.94)" }}>
+            <h1 className="mb-4 font-display text-[2.3rem] font-extrabold leading-[1.05] tracking-tight sm:text-5xl sm:mb-6 lg:text-[4.25rem]">
+              {t.hero.heading1}
+              <br />
+              <span className="text-gradient">{t.hero.heading2}</span>
+            </h1>
 
-                {/* Card header */}
-                <div className="mb-5 flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-[11px] font-extrabold uppercase tracking-widest text-[#C4956A]">{t.productCard.topMatch}</p>
-                    <h3 className="mt-1 font-display text-xl font-bold leading-tight text-[#2C1810]">Mr. Shojalil Kosimov</h3>
-                  </div>
-                  <div className="shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold bg-[#2D5A3E] text-white">
-                    <span className="h-1.5 w-1.5 rounded-full bg-white/70" />
-                    {t.productCard.matchPct}
-                  </div>
+            <p className="mb-6 max-w-[480px] text-base font-medium leading-relaxed text-foreground/80 dark:text-[#A8B09E] sm:text-lg sm:mb-8">
+              {t.hero.body}
+            </p>
+
+            <div className="flex flex-col gap-3 xs:flex-row sm:flex-row flex-wrap">
+              <Link href="/compare">
+                <Button size="lg" className="btn-glow shadow-lg shadow-primary/20 font-bold dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
+                  {t.hero.findConsultant}
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link href="/compare">
+                <Button size="lg" variant="glass" className="font-semibold">
+                  {t.hero.iAmConsultant}
+                </Button>
+              </Link>
+            </div>
+
+            {/* Trust stats */}
+            <div className="mt-7 grid grid-cols-3 divide-x divide-border/50 border-t border-border/50 pt-5 sm:mt-10 sm:pt-8">
+              {t.heroStats.map(({ value, label }, i) => (
+                <div key={i} className="flex flex-col gap-0.5 px-3 first:pl-0 last:pr-0 sm:px-6 sm:first:pl-0">
+                  <span className="font-display text-xl font-extrabold text-foreground sm:text-2xl">{value}</span>
+                  <span className="text-[11px] font-medium leading-tight text-muted-foreground sm:text-xs">{label}</span>
                 </div>
-
-                {/* Stats */}
-                <div className="mb-5 grid grid-cols-3 gap-2.5">
-                  {[
-                    { label: t.productCard.rating, value: "4.9" },
-                    { label: t.productCard.students, value: "312" },
-                    { label: t.productCard.success, value: "97%" },
-                  ].map(({ label, value }) => (
-                    <motion.div
-                      key={label}
-                      whileHover={{ scale: 1.04, transition: { duration: 0.18 } }}
-                      className="rounded-xl py-3 text-center cursor-default border border-[#2C1810]/[0.07] bg-[#FAF6F1]"
-                    >
-                      <p className="font-display text-lg font-extrabold leading-tight text-[#2C1810]">{value}</p>
-                      <p className="mt-0.5 text-[11px] font-medium text-[#2C1810]/50">{label}</p>
-                    </motion.div>
-                  ))}
-                </div>
-
-                {/* Countries */}
-                <div className="mb-5 flex items-center gap-2 text-sm font-medium text-[#2C1810]/60">
-                  <MapPin className="h-3.5 w-3.5 shrink-0 text-[#2D5A3E]" />
-                  <span>USA · UK · Canada · Australia</span>
-                </div>
-
-                {/* Milestones */}
-                <div className="mb-5">
-                  <p className="mb-2.5 text-[11px] font-extrabold uppercase tracking-widest text-[#2C1810]/40">
-                    {t.productCard.activeMilestones}
-                  </p>
-                  <div className="space-y-2">
-                    {t.productCard.milestoneItems.map(({ label, done }, i) => (
-                      <div key={i} className="flex items-center gap-3">
-                        {done
-                          ? <CheckCircle className="h-4 w-4 shrink-0 text-[#2D5A3E]" />
-                          : <Circle className="h-4 w-4 shrink-0 text-[#2C1810]/20" />
-                        }
-                        <span className={`text-sm font-medium ${done ? "line-through text-[#2C1810]/40" : "text-[#2C1810]"}`}>
-                          {label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Escrow */}
-                <div className="rounded-xl border border-[#2D5A3E]/20 bg-[#2D5A3E]/[0.06] px-4 py-3.5">
-                  <div className="flex items-center justify-between text-sm font-semibold text-[#2C1810]">
-                    <div className="flex items-center gap-2">
-                      <Lock className="h-3.5 w-3.5 text-[#2D5A3E]" />
-                      {t.productCard.escrowBalance}
-                    </div>
-                    <span className="font-display font-bold text-[#C4956A]">{t.productCard.escrowAmount}</span>
-                  </div>
-                  <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-[#2D5A3E]/15">
-                    <motion.div
-                      className="h-full rounded-full bg-[#2D5A3E]"
-                      initial={{ width: 0 }}
-                      animate={{ width: "68%" }}
-                      transition={{ delay: 0.9, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-                    />
-                  </div>
-                  <div className="mt-1.5 flex justify-between text-xs font-medium text-[#2C1810]/50">
-                    <span>{t.productCard.milestonesProgress}</span>
-                    <span>68%</span>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
-        </motion.div>
 
-        {/* Bottom fade into page bg */}
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background to-transparent pointer-events-none z-20" />
+          {/* Right — product preview */}
+          <motion.div
+            initial={{ opacity: 0, y: 16, filter: "blur(8px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.65, delay: 0.2, ease: EASE }}
+            whileHover={{ y: -3, transition: { duration: 0.25, ease: EASE } }}
+            className="hidden cursor-default lg:block"
+          >
+            <div className="relative rounded-2xl border border-border/60 dark:border-white/[0.06] bg-card p-6 shadow-2xl dark:shadow-[0_4px_32px_rgba(0,0,0,0.5)] transition-shadow duration-300 hover:shadow-[0_24px_48px_rgba(0,0,0,0.13)] dark:hover:shadow-[0_24px_48px_rgba(0,0,0,0.6)]">
+
+              {/* Card header */}
+              <div className="mb-5 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[11px] font-extrabold uppercase tracking-widest text-gold dark:text-[#8A9E86]">{t.productCard.topMatch}</p>
+                  <h3 className="mt-1 font-display text-xl font-bold leading-tight">Mr. Shojalil Kosimov</h3>
+                </div>
+                <div className="shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold bg-[#2D5A3E] text-white dark:bg-[#2D5A3E] dark:text-[#7DD4A0]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-white/60 dark:bg-[#7DD4A0]/70" />
+                  {t.productCard.matchPct}
+                </div>
+              </div>
+
+              {/* Stats */}
+              <div className="mb-5 grid grid-cols-3 gap-2.5">
+                {[
+                  { label: t.productCard.rating, value: "4.9" },
+                  { label: t.productCard.students, value: "312" },
+                  { label: t.productCard.success, value: "97%" },
+                ].map(({ label, value }) => (
+                  <motion.div
+                    key={label}
+                    whileHover={{ scale: 1.05, transition: { duration: 0.18 } }}
+                    className="glass-stat rounded-xl py-3 text-center cursor-default"
+                  >
+                    <p className="font-display text-lg font-extrabold leading-tight">{value}</p>
+                    <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">{label}</p>
+                  </motion.div>
+                ))}
+              </div>
+
+              {/* Countries */}
+              <div className="mb-5 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-sage" />
+                <span>USA · UK · Canada · Australia</span>
+              </div>
+
+              {/* Milestones */}
+              <div className="mb-5">
+                <p className="mb-2.5 text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground">
+                  {t.productCard.activeMilestones}
+                </p>
+                <div className="space-y-2">
+                  {t.productCard.milestoneItems.map(({ label, done }, i) => (
+                    <div key={i} className="group/m flex items-center gap-3">
+                      {done
+                        ? <CheckCircle className="h-4 w-4 shrink-0 text-sage" />
+                        : <Circle className="h-4 w-4 shrink-0 text-muted-foreground/40" />
+                      }
+                      <span className={`text-sm font-medium ${done ? "line-through text-muted-foreground/70 dark:text-[#5A7A58]" : "text-foreground dark:text-[#F0ECE2]"}`}>
+                        {label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Escrow */}
+              <div className="rounded-xl border border-primary/20 bg-primary/8 px-4 py-3.5 dark:bg-card dark:border-[rgba(212,185,106,0.2)] dark:text-[#A8B09E]">
+                <div className="flex items-center justify-between text-sm font-semibold">
+                  <div className="flex items-center gap-2">
+                    <Lock className="h-3.5 w-3.5 text-primary" />
+                    {t.productCard.escrowBalance}
+                  </div>
+                  <span className="font-display font-bold text-gold">{t.productCard.escrowAmount}</span>
+                </div>
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-primary/15 dark:bg-[#2A3828]">
+                  <motion.div
+                    className="h-full rounded-full bg-primary"
+                    initial={{ width: 0 }}
+                    animate={{ width: "68%" }}
+                    transition={{ delay: 0.9, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+                  />
+                </div>
+                <div className="mt-1.5 flex justify-between text-xs font-medium text-muted-foreground">
+                  <span>{t.productCard.milestonesProgress}</span>
+                  <span>68%</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+        </motion.div>
 
       </section>
 

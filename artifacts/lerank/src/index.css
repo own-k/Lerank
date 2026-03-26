@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 html {
@@ -24,8 +24,6 @@ html {
 
 @theme inline {
   --font-sans: 'Plus Jakarta Sans', sans-serif;
-  --font-barlow: 'Barlow', sans-serif;
-  --font-instrument: 'Instrument Serif', serif;
   --font-display: 'Playfair Display', serif;
   --font-brand: 'Monsieur La Doulaise', cursive;
 
@@ -300,30 +298,6 @@ select:focus {
 /* ─── FONT UTILITIES ────────────────────────────────────────────────────────── */
 .font-brand {
   font-family: 'Monsieur La Doulaise', cursive;
-}
-
-/* ─── CORNER ACCENTS (video hero) ──────────────────────────────────────────── */
-.corner-accent {
-  position: absolute;
-  width: 7px;
-  height: 7px;
-  background: white;
-}
-.corner-accent-tl { top: 0; left: 0; }
-.corner-accent-tr { top: 0; right: 0; }
-.corner-accent-bl { bottom: 0; left: 0; }
-.corner-accent-br { bottom: 0; right: 0; }
-
-/* ─── NAV TRANSPARENT (at page top over video) ─────────────────────────────── */
-.nav-transparent {
-  background: transparent;
-  border-bottom: none;
-  box-shadow: none;
-}
-.nav-transparent a,
-.nav-transparent button,
-.nav-transparent span {
-  color: white;
 }
 
 /* ─── PREMIUM DESIGN EXTRAS ─────────────────────────────────────────────────── */
