@@ -239,30 +239,20 @@ export default function Landing() {
         <video
           autoPlay loop muted playsInline
           className="absolute inset-0 w-full h-full object-cover z-0"
-          src="/hero-bg.mp4"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260319_015952_e1deeb12-8fb7-4071-a42a-60779fc64ab6.mp4"
         />
 
-        {/* Overlay — subtle dark tint so content stays readable without heavy blur */}
+        {/* Overlay — warm gradient so content stays readable */}
         <div className="absolute inset-0 z-[1]" style={{
-          background: "linear-gradient(to bottom, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.18) 55%, rgba(0,0,0,0.10) 100%)"
-        }} />
-
-        {/* Blur fade transition at the bottom of hero into next section */}
-        <div className="absolute bottom-0 left-0 right-0 z-[3]" style={{
-          height: "160px",
-          background: "linear-gradient(to bottom, transparent 0%, hsl(var(--background)/0.6) 50%, hsl(var(--background)) 100%)",
-          backdropFilter: "blur(6px)",
-          WebkitBackdropFilter: "blur(6px)",
-          maskImage: "linear-gradient(to bottom, transparent 0%, black 60%)",
-          WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 60%)",
+          background: "linear-gradient(to bottom, hsl(var(--background)/0.72) 0%, hsl(var(--background)/0.48) 55%, hsl(var(--background)/0.28) 100%)"
         }} />
 
         {/* Parallax content wrapper */}
         <motion.div
           style={{ y: heroContentY, opacity: heroContentOpacity, willChange: "transform, opacity" }}
-          className="relative z-10 flex flex-col items-center flex-1 pt-14 md:pt-16"
+          className="relative z-10 flex flex-col items-center flex-1 pt-14 md:pt-16 overflow-hidden"
         >
-          <div className="flex flex-col items-center text-center px-4 sm:px-6 pt-10 md:pt-14 w-full max-w-6xl mx-auto flex-1">
+          <div className="flex flex-col items-center text-center px-4 sm:px-6 pt-10 md:pt-14 w-full max-w-6xl mx-auto">
 
             {/* Badge */}
             <motion.div
@@ -275,17 +265,16 @@ export default function Landing() {
               {t.hero.badge}
             </motion.div>
 
-            {/* Headline — bold serif, dark green accent */}
+            {/* Headline — mixed weight: bold sans + italic serif */}
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
-              className="mb-4 font-hero text-[2.6rem] font-extrabold leading-[0.97] tracking-[-0.03em] sm:text-5xl lg:text-[5rem] max-w-3xl"
-              style={{ color: '#fff' }}
+              className="mb-4 font-display text-[2.6rem] font-extrabold leading-[0.97] tracking-[-0.03em] sm:text-5xl lg:text-[5rem] max-w-3xl"
             >
-              <span style={{ color: '#1a4a2e' }}>{t.hero.heading1}</span>
+              {t.hero.heading1}
               <br />
-              <span className="italic font-normal" style={{ color: '#fff' }}>{t.hero.heading2}</span>
+              <span className="italic font-normal">{t.hero.heading2}</span>
             </motion.h1>
 
             {/* Subheadline */}
@@ -293,8 +282,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2, ease: EASE }}
-              className="mt-2 text-base md:text-lg max-w-[580px] leading-relaxed"
-              style={{ color: 'rgba(255,255,255,0.85)' }}
+              className="mt-2 text-base md:text-lg text-foreground/70 max-w-[580px] leading-relaxed"
             >
               {t.hero.body}
             </motion.p>
@@ -319,19 +307,19 @@ export default function Landing() {
               </Link>
             </motion.div>
 
-            {/* Mini Lerank Dashboard Preview — extends to bottom of hero */}
+            {/* Mini Lerank Dashboard Preview */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
-              className="mt-9 w-full flex-1 min-h-0"
+              className="mt-9 w-full"
               style={{
-                background: "rgba(255,255,255,0.82)",
-                border: "1px solid rgba(255,255,255,0.75)",
-                boxShadow: "0 25px 80px -12px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.06)",
+                background: "rgba(255,255,255,0.42)",
+                border: "1px solid rgba(255,255,255,0.58)",
+                boxShadow: "0 25px 80px -12px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.04)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
-                borderRadius: "1rem 1rem 0 0",
+                borderRadius: "1rem",
                 overflow: "hidden",
               }}
             >
@@ -354,7 +342,7 @@ export default function Landing() {
               </div>
 
               {/* Dashboard body */}
-              <div className="flex text-[11px] select-none pointer-events-none flex-1" style={{ minHeight: "230px" }}>
+              <div className="flex text-[11px] select-none pointer-events-none" style={{ height: "230px" }}>
 
                 {/* Sidebar */}
                 <div className="w-36 border-r border-black/[0.06] dark:border-white/[0.06] flex flex-col gap-0.5 p-2.5 shrink-0 bg-white/20 dark:bg-black/10">
