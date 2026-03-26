@@ -108,10 +108,8 @@ function Word({
   );
 }
 
-const TESTIMONIAL_TEXT =
-  "Lerank completely changed how I found my consultant. The escrow system meant my money was protected the entire time. The matching engine connected me with someone who knew exactly what universities were looking for. I got my visa approved and my offer letter within three months.";
-
 function TestimonialSection() {
+  const { t } = useLanguage();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -119,7 +117,7 @@ function TestimonialSection() {
     offset: ["start end", "end center"],
   });
 
-  const words = TESTIMONIAL_TEXT.split(" ");
+  const words = t.testimonial.quote.split(" ");
 
   return (
     <section className="py-14 md:py-24 lg:py-36 overflow-hidden">
@@ -131,7 +129,7 @@ function TestimonialSection() {
           <div className="flex items-center gap-3">
             <div className="h-px w-10 bg-gold/60" />
             <span className="text-xs font-extrabold uppercase tracking-widest text-gold">
-              Student Story
+              {t.testimonial.sectionLabel}
             </span>
           </div>
 
@@ -154,9 +152,9 @@ function TestimonialSection() {
               AN
             </div>
             <div>
-              <p className="text-sm font-bold text-foreground">Asel Nurlanovna</p>
+              <p className="text-sm font-bold text-foreground">{t.testimonial.authorName}</p>
               <p className="text-xs font-medium text-muted-foreground">
-                BSc Computer Science · University of Birmingham
+                {t.testimonial.authorTitle}
               </p>
             </div>
           </div>
@@ -170,6 +168,13 @@ export default function Landing() {
   const { t } = useLanguage();
   const heroRef = useRef<HTMLDivElement>(null);
   const problemRef = useRef<HTMLDivElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 60);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   const problemInView = useInView(problemRef, { once: true, margin: "-80px" });
   const cardRef = useRef<HTMLDivElement>(null);
   const cardInView = useInView(cardRef, { once: true, margin: "-60px" });
@@ -191,7 +196,7 @@ export default function Landing() {
       <div className="pointer-events-none fixed inset-0 premium-grid" />
 
       {/* ── Nav ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-nav" style={{ willChange: "transform", transform: "translateZ(0)" }}>
+      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "glass-nav" : "nav-transparent"}`} style={{ willChange: "transform", transform: "translateZ(0)" }}>
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 md:grid md:h-16 md:grid-cols-[1fr_auto_1fr]">
           {/* Left — logo */}
           <div className="flex items-center gap-2">
@@ -233,64 +238,91 @@ export default function Landing() {
       </nav>
 
       {/* ── Hero ── */}
-      <section ref={heroRef} className="relative flex min-h-screen items-center pt-14 md:pt-16 overflow-hidden">
-        {/* Floating gradient orbs */}
-        <div className="orb w-[520px] h-[520px] bg-primary/10 dark:bg-sage/10 top-16 -left-32 hidden md:block" />
-        <div className="orb orb-2 w-[380px] h-[380px] bg-gold/8 dark:bg-gold/6 top-8 right-8 hidden md:block" />
-        <div className="orb orb-3 w-[260px] h-[260px] bg-primary/6 dark:bg-sage/8 bottom-24 left-1/2 hidden lg:block" />
+      <section ref={heroRef} className="relative flex min-h-screen items-center overflow-hidden">
+        {/* ── Full-screen background video ── */}
+        <video
+          autoPlay loop muted playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260306_074215_04640ca7-042c-45d6-bb56-58b1e8a42489.mp4"
+        />
+        {/* Readability gradient — left-to-transparent so text pops over video */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/25 to-transparent pointer-events-none" />
+        {/* Bottom fade to page bg */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
 
         <motion.div
           style={{ y: heroContentY, opacity: heroContentOpacity, willChange: "transform, opacity" }}
-          className="w-full"
+          className="w-full relative z-10"
         >
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE }}
-          className="mx-auto grid w-full max-w-7xl items-center gap-8 px-4 py-8 sm:px-6 sm:py-16 lg:grid-cols-[1fr_480px] lg:gap-16 lg:py-0"
+          className="mx-auto grid w-full max-w-7xl items-center gap-8 px-4 pt-24 pb-[250px] sm:px-6 lg:grid-cols-[1fr_480px] lg:gap-16"
         >
           {/* Left */}
-          <div>
+          <div className="relative">
+            {/* Corner accents */}
+            <div className="absolute -inset-5 pointer-events-none hidden lg:block">
+              <span className="corner-accent corner-accent-tl" />
+              <span className="corner-accent corner-accent-tr" />
+              <span className="corner-accent corner-accent-bl" />
+              <span className="corner-accent corner-accent-br" />
+            </div>
+
+            {/* Double-layer liquid glass badge (per requirements) */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0 }}
-              className="mb-5 liquid-glass inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-foreground/70"
+              className="mb-6 inline-flex items-center gap-0 rounded-full bg-white/10 backdrop-blur-sm px-1 py-1"
             >
-              <Lock className="h-3 w-3 text-sage" />
-              {t.hero.badge}
+              <div className="flex items-center gap-2 bg-white/90 backdrop-blur-md rounded-full px-4 py-1.5">
+                <Lock className="h-3 w-3 text-[#1E3D28]" />
+                <span className="text-xs font-semibold text-[#1E3D28] tracking-wide">{t.hero.badge}</span>
+              </div>
             </motion.div>
 
-            <h1 className="mb-4 font-display text-[2.3rem] font-extrabold leading-[1.05] tracking-tight sm:text-5xl sm:mb-6 lg:text-[4.25rem]">
+            <h1 className="mb-4 text-[2.3rem] font-light leading-[1.05] tracking-tight sm:text-5xl sm:mb-6 lg:text-[4rem] text-white" style={{ fontFamily: "'Barlow', sans-serif" }}>
               {t.hero.heading1}
               <br />
-              <span className="text-gradient">{t.hero.heading2}</span>
+              <span className="italic font-normal" style={{ fontFamily: "'Instrument Serif', serif" }}>{t.hero.heading2}</span>
             </h1>
 
-            <p className="mb-6 max-w-[480px] text-base font-medium leading-relaxed text-foreground/80 dark:text-[#A8B09E] sm:text-lg sm:mb-8">
+            <p className="mb-8 max-w-[480px] text-base font-normal leading-relaxed text-white/75 sm:text-lg" style={{ fontFamily: "'Barlow', sans-serif" }}>
               {t.hero.body}
             </p>
 
             <div className="flex flex-col gap-3 xs:flex-row sm:flex-row flex-wrap">
               <Link href="/compare">
-                <Button size="lg" className="btn-glow shadow-lg shadow-primary/20 font-bold dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
+                <motion.button
+                  whileHover={{ backgroundColor: "#ffffff" }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex items-center justify-center gap-2 h-12 px-7 text-sm font-medium text-[#171717] transition-colors"
+                  style={{ backgroundColor: "#f8f8f8", borderRadius: "2px", fontFamily: "'Barlow', sans-serif" }}
+                >
                   {t.hero.findConsultant}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </motion.button>
               </Link>
               <Link href="/compare">
-                <Button size="lg" variant="glass" className="font-semibold">
+                <motion.button
+                  whileHover={{ backgroundColor: "rgba(255,255,255,0.15)" }}
+                  whileTap={{ scale: 0.98 }}
+                  className="inline-flex items-center justify-center gap-2 h-12 px-7 text-sm font-medium text-white border border-white/40 transition-colors"
+                  style={{ backgroundColor: "rgba(255,255,255,0.07)", borderRadius: "2px", fontFamily: "'Barlow', sans-serif" }}
+                >
                   {t.hero.iAmConsultant}
-                </Button>
+                </motion.button>
               </Link>
             </div>
 
             {/* Trust stats */}
-            <div className="mt-7 grid grid-cols-3 divide-x divide-border/50 border-t border-border/50 pt-5 sm:mt-10 sm:pt-8">
+            <div className="mt-7 grid grid-cols-3 divide-x divide-white/20 border-t border-white/20 pt-5 sm:mt-10 sm:pt-8">
               {t.heroStats.map(({ value, label }, i) => (
                 <div key={i} className="flex flex-col gap-0.5 px-3 first:pl-0 last:pr-0 sm:px-6 sm:first:pl-0">
-                  <span className="font-display text-xl font-extrabold text-foreground sm:text-2xl">{value}</span>
-                  <span className="text-[11px] font-medium leading-tight text-muted-foreground sm:text-xs">{label}</span>
+                  <span className="font-display text-xl font-extrabold text-white sm:text-2xl">{value}</span>
+                  <span className="text-[11px] font-medium leading-tight text-white/60 sm:text-xs">{label}</span>
                 </div>
               ))}
             </div>

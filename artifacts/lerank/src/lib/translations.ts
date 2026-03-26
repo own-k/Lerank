@@ -56,6 +56,12 @@ export interface Translations {
       cta: string;
     };
   };
+  testimonial: {
+    sectionLabel: string;
+    quote: string;
+    authorName: string;
+    authorTitle: string;
+  };
   cta: {
     heading: string;
     body: string;
@@ -425,6 +431,12 @@ const en: Translations = {
       ],
       cta: "Start with Escrow Protection",
     },
+  },
+  testimonial: {
+    sectionLabel: "Student Story",
+    quote: "Lerank completely changed how I found my consultant. The escrow system meant my money was protected the entire time. The matching engine connected me with someone who knew exactly what universities were looking for.",
+    authorName: "Asel Nurlanovna",
+    authorTitle: "BSc Computer Science · University of Birmingham",
   },
   cta: {
     heading: "Apply with confidence.",
@@ -796,6 +808,12 @@ const ru: Translations = {
       cta: "Начать с защитой Escrow",
     },
   },
+  testimonial: {
+    sectionLabel: "История студентки",
+    quote: "Lerank полностью изменил то, как я нашла своего консультанта. Система эскроу защищала мои деньги на протяжении всего времени. Подборщик соединил меня с тем, кто точно знал, что ищут университеты.",
+    authorName: "Asel Nurlanovna",
+    authorTitle: "Бакалавр компьютерных наук · Университет Бирмингема",
+  },
   cta: {
     heading: "Подавайте заявки уверенно.",
     body: "Создайте бесплатный аккаунт, сравните консультантов и платите только за выполненную работу.",
@@ -1165,6 +1183,12 @@ const uz: Translations = {
       ],
       cta: "Escrow himoyasi bilan boshlash",
     },
+  },
+  testimonial: {
+    sectionLabel: "Talaba hikoyasi",
+    quote: "Lerank maslahatchi topish usulimni butunlay o'zgartirdi. Escrow tizimi mening pulaim doimo himoyalangan ekanini ta'minladi. Moslash mexanizmi meni universitetlar nima qidirayotganini aniq biladigan biri bilan bog'ladi.",
+    authorName: "Asel Nurlanovna",
+    authorTitle: "Kompyuter fanlari bakalavriat · Birmingham universiteti",
   },
   cta: {
     heading: "Ishonch bilan ariza bering.",
