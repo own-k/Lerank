@@ -239,20 +239,30 @@ export default function Landing() {
         <video
           autoPlay loop muted playsInline
           className="absolute inset-0 w-full h-full object-cover z-0"
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260319_015952_e1deeb12-8fb7-4071-a42a-60779fc64ab6.mp4"
+          src="/hero-bg.mp4"
         />
 
-        {/* Overlay — warm gradient so content stays readable */}
+        {/* Overlay — light dark tint, video stays clearly visible */}
         <div className="absolute inset-0 z-[1]" style={{
-          background: "linear-gradient(to bottom, hsl(var(--background)/0.72) 0%, hsl(var(--background)/0.48) 55%, hsl(var(--background)/0.28) 100%)"
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.16) 55%, rgba(0,0,0,0.08) 100%)"
+        }} />
+
+        {/* Section-transition blur fade — bottom of hero bleeds smoothly into page */}
+        <div className="absolute bottom-0 left-0 right-0 z-[3]" style={{
+          height: "160px",
+          background: "linear-gradient(to bottom, transparent 0%, hsl(var(--background)/0.65) 55%, hsl(var(--background)) 100%)",
+          backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)",
+          maskImage: "linear-gradient(to bottom, transparent 0%, black 55%)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 55%)",
         }} />
 
         {/* Parallax content wrapper */}
         <motion.div
           style={{ y: heroContentY, opacity: heroContentOpacity, willChange: "transform, opacity" }}
-          className="relative z-10 flex flex-col items-center flex-1 pt-14 md:pt-16 overflow-hidden"
+          className="relative z-10 flex flex-col items-center flex-1 pt-14 md:pt-16"
         >
-          <div className="flex flex-col items-center text-center px-4 sm:px-6 pt-10 md:pt-14 w-full max-w-6xl mx-auto">
+          <div className="flex flex-col items-center text-center px-4 sm:px-6 pt-10 md:pt-14 w-full max-w-6xl mx-auto flex-1">
 
             {/* Badge */}
             <motion.div
@@ -265,16 +275,17 @@ export default function Landing() {
               {t.hero.badge}
             </motion.div>
 
-            {/* Headline — mixed weight: bold sans + italic serif */}
+            {/* Headline — Instrument Serif only here, dark green + white */}
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
-              className="mb-4 font-display text-[2.6rem] font-extrabold leading-[0.97] tracking-[-0.03em] sm:text-5xl lg:text-[5rem] max-w-3xl"
+              className="mb-4 text-[2.6rem] font-extrabold leading-[0.97] tracking-[-0.03em] sm:text-5xl lg:text-[5rem] max-w-3xl"
+              style={{ fontFamily: "'Instrument Serif', 'Times New Roman', Times, serif" }}
             >
-              {t.hero.heading1}
+              <span style={{ color: '#1a4a2e' }}>{t.hero.heading1}</span>
               <br />
-              <span className="italic font-normal">{t.hero.heading2}</span>
+              <span className="italic font-normal" style={{ color: '#fff' }}>{t.hero.heading2}</span>
             </motion.h1>
 
             {/* Subheadline */}
@@ -282,7 +293,8 @@ export default function Landing() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2, ease: EASE }}
-              className="mt-2 text-base md:text-lg text-foreground/70 max-w-[580px] leading-relaxed"
+              className="mt-2 text-base md:text-lg max-w-[580px] leading-relaxed"
+              style={{ color: 'rgba(255,255,255,0.85)' }}
             >
               {t.hero.body}
             </motion.p>
@@ -307,19 +319,19 @@ export default function Landing() {
               </Link>
             </motion.div>
 
-            {/* Mini Lerank Dashboard Preview */}
+            {/* Mini Lerank Dashboard Preview — grows to bottom of hero, behind blur fade */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
-              className="mt-9 w-full"
+              className="mt-9 w-full flex-1 min-h-0"
               style={{
-                background: "rgba(255,255,255,0.42)",
-                border: "1px solid rgba(255,255,255,0.58)",
-                boxShadow: "0 25px 80px -12px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.04)",
+                background: "rgba(255,255,255,0.82)",
+                border: "1px solid rgba(255,255,255,0.72)",
+                boxShadow: "0 30px 90px -12px rgba(0,0,0,0.28), 0 0 0 1px rgba(0,0,0,0.06)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
-                borderRadius: "1rem",
+                borderRadius: "1rem 1rem 0 0",
                 overflow: "hidden",
               }}
             >
@@ -342,7 +354,7 @@ export default function Landing() {
               </div>
 
               {/* Dashboard body */}
-              <div className="flex text-[11px] select-none pointer-events-none" style={{ height: "230px" }}>
+              <div className="flex text-[11px] select-none pointer-events-none flex-1" style={{ minHeight: "200px" }}>
 
                 {/* Sidebar */}
                 <div className="w-36 border-r border-black/[0.06] dark:border-white/[0.06] flex flex-col gap-0.5 p-2.5 shrink-0 bg-white/20 dark:bg-black/10">
