@@ -235,26 +235,16 @@ export default function Landing() {
       {/* ── Hero (Nexora-style: h-screen, video bg, centered, glass dashboard) ── */}
       <section ref={heroRef} className="relative h-screen flex flex-col overflow-hidden">
 
-        {/* ── Dark background + Lerank-colored glow orbs (Cawar-style) ── */}
-        <div className="absolute inset-0 z-0" style={{ background: "#080C09" }}>
-          {/* Primary forest-green glow — bottom-left, like Cawar's orange bloom */}
-          <div className="absolute -bottom-32 -left-24 w-[700px] h-[560px] rounded-full blur-[130px]"
-            style={{ background: "radial-gradient(ellipse, rgba(30,61,40,0.55) 0%, transparent 70%)" }} />
-          {/* Gold accent glow — bottom-right */}
-          <div className="absolute -bottom-20 right-0 w-[500px] h-[420px] rounded-full blur-[110px]"
-            style={{ background: "radial-gradient(ellipse, rgba(201,168,76,0.22) 0%, transparent 70%)" }} />
-          {/* Subtle centre top glow */}
-          <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[400px] rounded-full blur-[120px]"
-            style={{ background: "radial-gradient(ellipse, rgba(45,90,62,0.18) 0%, transparent 70%)" }} />
-          {/* Dot-grid texture overlay */}
-          <div className="absolute inset-0 opacity-[0.03]"
-            style={{ backgroundImage: "radial-gradient(circle, #fff 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
-        </div>
+        {/* Background video */}
+        <video
+          autoPlay loop muted playsInline
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260319_015952_e1deeb12-8fb7-4071-a42a-60779fc64ab6.mp4"
+        />
 
-        {/* Bottom fade — dark → cream, joins How It Works seamlessly */}
-        <div className="absolute bottom-0 left-0 right-0 z-[3] pointer-events-none" style={{
-          height: "200px",
-          background: "linear-gradient(to bottom, transparent 0%, #080C09 40%, hsl(var(--background)) 100%)",
+        {/* Overlay — warm gradient so content stays readable */}
+        <div className="absolute inset-0 z-[1]" style={{
+          background: "linear-gradient(to bottom, hsl(var(--background)/0.72) 0%, hsl(var(--background)/0.48) 55%, hsl(var(--background)/0.28) 100%)"
         }} />
 
         {/* Parallax content wrapper */}
@@ -264,38 +254,27 @@ export default function Landing() {
         >
           <div className="flex flex-col items-center text-center px-4 sm:px-6 pt-10 md:pt-14 w-full max-w-6xl mx-auto">
 
-            {/* Badge — Cawar dark pill with pulse dot */}
+            {/* Badge */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="mb-6 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold"
-              style={{
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.12)",
-                color: "rgba(255,255,255,0.65)",
-              }}
+              className="mb-6 liquid-glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold text-foreground/70"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-[#7DD4A0] animate-pulse shrink-0" />
+              <Lock className="h-3 w-3 text-sage" />
               {t.hero.badge}
             </motion.div>
 
-            {/* Headline — bold white sans (line 1) + italic serif gold (line 2) */}
+            {/* Headline — mixed weight: bold sans + italic serif */}
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
-              className="mb-4 text-[2.5rem] font-extrabold leading-[1.05] tracking-[-0.03em] sm:text-5xl lg:text-[5.5rem] max-w-4xl"
-              style={{ color: "#F5F2EC" }}
+              className="mb-4 font-display text-[2.6rem] font-extrabold leading-[0.97] tracking-[-0.03em] sm:text-5xl lg:text-[5rem] max-w-3xl"
             >
               {t.hero.heading1}
               <br />
-              <span className="font-display italic font-normal" style={{
-                background: "linear-gradient(135deg, #C9A84C 0%, #D4B96A 50%, #C9A84C 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}>{t.hero.heading2}</span>
+              <span className="italic font-normal">{t.hero.heading2}</span>
             </motion.h1>
 
             {/* Subheadline */}
@@ -303,76 +282,70 @@ export default function Landing() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2, ease: EASE }}
-              className="mt-3 text-base md:text-lg max-w-[540px] leading-relaxed font-medium"
-              style={{ color: "rgba(245,242,236,0.60)" }}
+              className="mt-2 text-base md:text-lg text-foreground/70 max-w-[580px] leading-relaxed"
             >
               {t.hero.body}
             </motion.p>
 
-            {/* CTAs — Cawar style: filled white + dark outline */}
+            {/* CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3, ease: EASE }}
-              className="mt-7 flex items-center gap-3 flex-wrap justify-center"
+              className="mt-6 flex items-center gap-3 flex-wrap justify-center"
             >
               <Link href="/compare">
-                <button className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold transition-all duration-200 hover:opacity-90 active:scale-[0.97]"
-                  style={{ background: "#F5F2EC", color: "#0F1410", boxShadow: "0 0 0 1px rgba(255,255,255,0.1), 0 8px 24px rgba(0,0,0,0.4)" }}>
+                <Button size="lg" className="rounded-full btn-glow font-bold shadow-lg shadow-primary/20 dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
                   {t.hero.findConsultant}
-                  <ArrowRight className="h-4 w-4" />
-                </button>
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
               </Link>
               <Link href="/compare">
-                <button className="inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-200 hover:bg-white/10 active:scale-[0.97]"
-                  style={{ border: "1px solid rgba(255,255,255,0.20)", color: "rgba(245,242,236,0.80)", background: "transparent" }}>
+                <Button size="lg" variant="glass" className="rounded-full font-semibold">
                   {t.hero.iAmConsultant}
-                </button>
+                </Button>
               </Link>
             </motion.div>
 
-            {/* ── Mini Lerank Dashboard Preview — dark glass (Cawar-style) ── */}
+            {/* Mini Lerank Dashboard Preview */}
             <motion.div
-              initial={{ opacity: 0, y: 40 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
               className="mt-9 w-full"
               style={{
-                background: "rgba(18,24,18,0.75)",
-                border: "1px solid rgba(255,255,255,0.10)",
-                boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 40px 100px -20px rgba(0,0,0,0.7)",
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
-                borderRadius: "0.875rem",
+                background: "rgba(255,255,255,0.42)",
+                border: "1px solid rgba(255,255,255,0.58)",
+                boxShadow: "0 25px 80px -12px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.04)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                borderRadius: "1rem",
                 overflow: "hidden",
               }}
             >
               {/* Dashboard top bar */}
-              <div className="flex items-center gap-3 px-4 py-2.5 text-[11px]"
-                style={{ borderBottom: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)" }}>
+              <div className="flex items-center gap-3 px-4 py-2.5 border-b border-black/[0.06] dark:border-white/[0.06] text-[11px] bg-white/30 dark:bg-black/10">
                 <div className="flex items-center gap-2 shrink-0">
-                  <div className="h-5 w-5 rounded-md flex items-center justify-center" style={{ background: "#1E3D28" }}>
-                    <Globe2 className="h-3 w-3 text-white" />
+                  <div className="h-5 w-5 rounded-md bg-primary flex items-center justify-center">
+                    <Globe2 className="h-3 w-3 text-primary-foreground" />
                   </div>
-                  <span className="font-brand text-lg leading-none" style={{ color: "#F5F2EC" }}>Lerank</span>
+                  <span className="font-brand text-lg leading-none text-foreground">Lerank</span>
                 </div>
-                <div className="hidden sm:flex flex-1 items-center gap-2 rounded-lg px-3 py-1.5 max-w-[240px]"
-                  style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <span className="flex-1 text-left" style={{ color: "rgba(255,255,255,0.30)" }}>Search consultants…</span>
-                  <kbd className="text-[9px] rounded px-1" style={{ color: "rgba(255,255,255,0.25)", border: "1px solid rgba(255,255,255,0.12)" }}>⌘K</kbd>
+                <div className="flex-1 flex items-center gap-2 bg-black/[0.05] rounded-lg px-3 py-1.5 max-w-[240px]">
+                  <span className="text-foreground/40 flex-1 text-left">Search consultants…</span>
+                  <kbd className="text-[9px] text-foreground/30 border border-border/40 rounded px-1">⌘K</kbd>
                 </div>
                 <div className="ml-auto flex items-center gap-2">
-                  <div className="rounded-full px-3 py-1 text-[10px] font-semibold" style={{ background: "#1E3D28", color: "#7DD4A0" }}>Find Consultant</div>
-                  <div className="h-6 w-6 rounded-full flex items-center justify-center text-[9px] font-bold" style={{ background: "rgba(45,90,62,0.3)", border: "1px solid rgba(125,212,160,0.3)", color: "#7DD4A0" }}>A</div>
+                  <div className="bg-primary text-primary-foreground rounded-full px-3 py-1 text-[10px] font-semibold">Find Consultant</div>
+                  <div className="h-6 w-6 rounded-full bg-sage/20 border border-sage/30 flex items-center justify-center text-[9px] font-bold text-sage">A</div>
                 </div>
               </div>
 
               {/* Dashboard body */}
-              <div className="flex text-[11px] select-none pointer-events-none" style={{ height: "220px" }}>
+              <div className="flex text-[11px] select-none pointer-events-none" style={{ height: "230px" }}>
 
-                {/* Sidebar — desktop only */}
-                <div className="hidden md:flex w-36 flex-col gap-0.5 p-2.5 shrink-0"
-                  style={{ borderRight: "1px solid rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.02)" }}>
+                {/* Sidebar */}
+                <div className="w-36 border-r border-black/[0.06] dark:border-white/[0.06] flex flex-col gap-0.5 p-2.5 shrink-0 bg-white/20 dark:bg-black/10">
                   {[
                     { label: "Dashboard", active: true },
                     { label: "Compare", badge: "12" },
@@ -380,89 +353,74 @@ export default function Landing() {
                     { label: "Escrow" },
                     { label: "Messages", badge: "3" },
                   ].map(({ label, active, badge }: { label: string; active?: boolean; badge?: string }) => (
-                    <div key={label} className="flex items-center justify-between px-2 py-1.5 rounded-md"
-                      style={{
-                        background: active ? "rgba(30,61,40,0.4)" : "transparent",
-                        color: active ? "#7DD4A0" : "rgba(255,255,255,0.40)",
-                        fontWeight: active ? 600 : 400,
-                      }}>
+                    <div key={label} className={`flex items-center justify-between px-2 py-1.5 rounded-md ${active ? "bg-primary/12 text-primary font-semibold" : "text-foreground/50"}`}>
                       <span>{label}</span>
-                      {badge && <span className="text-[9px] font-bold px-1.5 py-0.5 rounded-full"
-                        style={{ background: active ? "rgba(125,212,160,0.2)" : "rgba(255,255,255,0.08)", color: active ? "#7DD4A0" : "rgba(255,255,255,0.5)" }}>{badge}</span>}
+                      {badge && <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${active ? "bg-primary text-primary-foreground" : "bg-foreground/10 text-foreground/60"}`}>{badge}</span>}
                     </div>
                   ))}
-                  <div className="mt-auto pt-2" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div className="mt-auto pt-2 border-t border-black/[0.06]">
                     <div className="space-y-1 px-2">
-                      <div className="flex justify-between" style={{ color: "rgba(255,255,255,0.35)" }}>
-                        <span>Escrow</span><span style={{ color: "#D4B96A" }}>$1,200</span>
-                      </div>
-                      <div className="flex justify-between" style={{ color: "rgba(255,255,255,0.35)" }}>
-                        <span>Success</span><span style={{ color: "#7DD4A0" }}>97%</span>
-                      </div>
+                      <div className="flex justify-between text-foreground/50"><span>Escrow</span><span className="text-gold font-semibold">$1,200</span></div>
+                      <div className="flex justify-between text-foreground/50"><span>Success</span><span className="text-sage font-semibold">97%</span></div>
                     </div>
                   </div>
                 </div>
 
                 {/* Main content */}
-                <div className="flex-1 flex gap-3 p-3 overflow-hidden" style={{ background: "rgba(255,255,255,0.01)" }}>
+                <div className="flex-1 flex gap-3 p-3 overflow-hidden bg-white/10 dark:bg-black/5">
 
                   {/* Top match card */}
-                  <div className="flex-1 rounded-xl p-3 min-w-0"
-                    style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <div className="flex-1 rounded-xl border border-black/[0.07] dark:border-white/[0.07] bg-white/60 dark:bg-white/[0.04] p-3 min-w-0">
                     <div className="flex items-start justify-between mb-2">
                       <div>
-                        <p className="text-[9px] font-extrabold uppercase tracking-widest" style={{ color: "#D4B96A" }}>YOUR TOP MATCH</p>
-                        <p className="font-semibold text-xs mt-0.5" style={{ color: "#F5F2EC" }}>Mr. Shojalil Kosimov</p>
+                        <p className="text-[9px] font-extrabold uppercase tracking-widest text-gold">YOUR TOP MATCH</p>
+                        <p className="font-semibold text-foreground text-xs mt-0.5">Mr. Shojalil Kosimov</p>
                       </div>
-                      <span className="text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 ml-2"
-                        style={{ background: "rgba(125,212,160,0.15)", color: "#7DD4A0" }}>96% match</span>
+                      <span className="bg-sage/15 text-sage text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 ml-2">96% match</span>
                     </div>
                     <div className="grid grid-cols-3 gap-1 mb-2">
                       {[["4.9","Rating"],["312","Students"],["97%","Success"]].map(([v,l]) => (
-                        <div key={l} className="text-center rounded-md py-1.5"
-                          style={{ background: "rgba(255,255,255,0.05)" }}>
-                          <p className="font-bold text-[11px]" style={{ color: "#F5F2EC" }}>{v}</p>
-                          <p className="text-[9px]" style={{ color: "rgba(255,255,255,0.35)" }}>{l}</p>
+                        <div key={l} className="text-center bg-black/[0.04] rounded-md py-1.5">
+                          <p className="font-bold text-foreground text-[11px]">{v}</p>
+                          <p className="text-foreground/45 text-[9px]">{l}</p>
                         </div>
                       ))}
                     </div>
-                    <div className="flex items-center gap-1.5 mb-2" style={{ color: "rgba(255,255,255,0.35)" }}>
-                      <MapPin className="h-2.5 w-2.5 shrink-0" style={{ color: "#7DD4A0" }} />
+                    <div className="flex items-center gap-1.5 text-foreground/45 mb-2">
+                      <MapPin className="h-2.5 w-2.5 shrink-0 text-sage" />
                       <span>USA · UK · Canada · Australia</span>
                     </div>
-                    <div className="rounded-lg p-2" style={{ background: "rgba(30,61,40,0.25)", border: "1px solid rgba(45,90,62,0.4)" }}>
+                    <div className="bg-primary/6 border border-primary/12 rounded-lg p-2">
                       <div className="flex justify-between mb-1">
-                        <span className="flex items-center gap-1" style={{ color: "rgba(255,255,255,0.40)" }}>
-                          <Lock className="h-2.5 w-2.5" /> Escrow
-                        </span>
-                        <span className="font-semibold" style={{ color: "#D4B96A" }}>$1,200 protected</span>
+                        <span className="text-foreground/50 flex items-center gap-1"><Lock className="h-2.5 w-2.5" /> Escrow</span>
+                        <span className="text-gold font-semibold">$1,200 protected</span>
                       </div>
-                      <div className="h-1 w-full rounded-full" style={{ background: "rgba(255,255,255,0.08)" }}>
-                        <div className="h-full rounded-full" style={{ width: "68%", background: "#1E3D28" }} />
+                      <div className="h-1 w-full bg-primary/10 rounded-full">
+                        <div className="h-full bg-primary rounded-full" style={{ width: "68%" }} />
                       </div>
-                      <div className="flex justify-between mt-1" style={{ color: "rgba(255,255,255,0.30)" }}>
+                      <div className="flex justify-between mt-1 text-foreground/40">
                         <span>2 of 3 milestones</span><span>68%</span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Applications card — desktop only */}
-                  <div className="hidden sm:block flex-1 rounded-xl p-3 min-w-0"
-                    style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                    <p className="text-[9px] font-extrabold uppercase tracking-widest mb-2" style={{ color: "rgba(255,255,255,0.30)" }}>Recent Applications</p>
+                  {/* Applications card */}
+                  <div className="flex-1 rounded-xl border border-black/[0.07] dark:border-white/[0.07] bg-white/60 dark:bg-white/[0.04] p-3 min-w-0">
+                    <p className="text-[9px] font-extrabold uppercase tracking-widest text-foreground/40 mb-2">Recent Applications</p>
                     {[
                       { school: "Univ. of Birmingham", status: "In Review", c: "amber" },
                       { school: "King's College London", status: "Accepted", c: "green" },
                       { school: "Univ. of Leeds", status: "Pending", c: "muted" },
-                      { school: "Univ. of Manchester", status: "Docs Due", c: "blue" },
+                      { school: "Univ. of Manchester", status: "Documents Due", c: "blue" },
                     ].map(({ school, status, c }) => (
-                      <div key={school} className="flex items-center justify-between py-1.5"
-                        style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-                        <span className="truncate mr-2 text-[10px]" style={{ color: "rgba(255,255,255,0.60)" }}>{school}</span>
-                        <span className="text-[8px] font-bold px-1.5 py-0.5 rounded-full shrink-0" style={{
-                          background: c === "green" ? "rgba(125,212,160,0.15)" : c === "amber" ? "rgba(251,191,36,0.15)" : c === "blue" ? "rgba(96,165,250,0.15)" : "rgba(255,255,255,0.06)",
-                          color: c === "green" ? "#7DD4A0" : c === "amber" ? "#FBB024" : c === "blue" ? "#60A5FA" : "rgba(255,255,255,0.40)",
-                        }}>{status}</span>
+                      <div key={school} className="flex items-center justify-between py-1.5 border-b border-black/[0.05] last:border-0">
+                        <span className="text-foreground/70 truncate mr-2 text-[10px]">{school}</span>
+                        <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
+                          c === "green" ? "bg-sage/15 text-sage" :
+                          c === "amber" ? "bg-yellow-100 text-yellow-700" :
+                          c === "blue"  ? "bg-blue-100 text-blue-600" :
+                          "bg-black/[0.06] text-foreground/50"
+                        }`}>{status}</span>
                       </div>
                     ))}
                   </div>
