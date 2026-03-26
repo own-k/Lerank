@@ -239,7 +239,7 @@ export default function Landing() {
         <video
           autoPlay loop muted playsInline
           className="absolute inset-0 w-full h-full object-cover z-0"
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260319_015952_e1deeb12-8fb7-4071-a42a-60779fc64ab6.mp4"
+          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260307_083826_e938b29f-a43a-41ec-a153-3d4730578ab8.mp4"
         />
 
         {/* Layered overlay: strong at top for text, fades out toward dashboard */}
@@ -276,7 +276,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
-              className="mb-4 font-display text-[2.4rem] font-extrabold leading-[1.02] tracking-tight sm:text-5xl lg:text-[4.8rem] max-w-3xl"
+              className="mb-4 font-display text-[2.4rem] font-medium leading-[1.08] tracking-[-0.03em] sm:text-5xl lg:text-[5rem] max-w-3xl"
             >
               {t.hero.heading1}
               <br />
