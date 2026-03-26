@@ -242,19 +242,19 @@ export default function Landing() {
           src="/hero-bg.mp4"
         />
 
-        {/* Overlay — light dark tint, video stays clearly visible */}
+        {/* Overlay — subtle dark tint so content stays readable without heavy blur */}
         <div className="absolute inset-0 z-[1]" style={{
-          background: "linear-gradient(to bottom, rgba(0,0,0,0.28) 0%, rgba(0,0,0,0.16) 55%, rgba(0,0,0,0.08) 100%)"
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.18) 55%, rgba(0,0,0,0.10) 100%)"
         }} />
 
-        {/* Section-transition blur fade — bottom of hero bleeds smoothly into page */}
+        {/* Blur fade transition at the bottom of hero into next section */}
         <div className="absolute bottom-0 left-0 right-0 z-[3]" style={{
           height: "160px",
-          background: "linear-gradient(to bottom, transparent 0%, hsl(var(--background)/0.65) 55%, hsl(var(--background)) 100%)",
-          backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)",
-          maskImage: "linear-gradient(to bottom, transparent 0%, black 55%)",
-          WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 55%)",
+          background: "linear-gradient(to bottom, transparent 0%, hsl(var(--background)/0.6) 50%, hsl(var(--background)) 100%)",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
+          maskImage: "linear-gradient(to bottom, transparent 0%, black 60%)",
+          WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 60%)",
         }} />
 
         {/* Parallax content wrapper */}
@@ -275,13 +275,13 @@ export default function Landing() {
               {t.hero.badge}
             </motion.div>
 
-            {/* Headline — Instrument Serif only here, dark green + white */}
+            {/* Headline — bold serif, dark green accent */}
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
-              className="mb-4 text-[2.6rem] font-extrabold leading-[0.97] tracking-[-0.03em] sm:text-5xl lg:text-[5rem] max-w-3xl"
-              style={{ fontFamily: "'Instrument Serif', 'Times New Roman', Times, serif" }}
+              className="mb-4 font-hero text-[2.6rem] font-extrabold leading-[0.97] tracking-[-0.03em] sm:text-5xl lg:text-[5rem] max-w-3xl"
+              style={{ color: '#fff' }}
             >
               <span style={{ color: '#1a4a2e' }}>{t.hero.heading1}</span>
               <br />
@@ -319,7 +319,7 @@ export default function Landing() {
               </Link>
             </motion.div>
 
-            {/* Mini Lerank Dashboard Preview — grows to bottom of hero, behind blur fade */}
+            {/* Mini Lerank Dashboard Preview — extends to bottom of hero */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -327,8 +327,8 @@ export default function Landing() {
               className="mt-9 w-full flex-1 min-h-0"
               style={{
                 background: "rgba(255,255,255,0.82)",
-                border: "1px solid rgba(255,255,255,0.72)",
-                boxShadow: "0 30px 90px -12px rgba(0,0,0,0.28), 0 0 0 1px rgba(0,0,0,0.06)",
+                border: "1px solid rgba(255,255,255,0.75)",
+                boxShadow: "0 25px 80px -12px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.06)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
                 borderRadius: "1rem 1rem 0 0",
@@ -354,7 +354,7 @@ export default function Landing() {
               </div>
 
               {/* Dashboard body */}
-              <div className="flex text-[11px] select-none pointer-events-none flex-1" style={{ minHeight: "200px" }}>
+              <div className="flex text-[11px] select-none pointer-events-none flex-1" style={{ minHeight: "230px" }}>
 
                 {/* Sidebar */}
                 <div className="w-36 border-r border-black/[0.06] dark:border-white/[0.06] flex flex-col gap-0.5 p-2.5 shrink-0 bg-white/20 dark:bg-black/10">
