@@ -242,9 +242,15 @@ export default function Landing() {
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260319_015952_e1deeb12-8fb7-4071-a42a-60779fc64ab6.mp4"
         />
 
-        {/* Overlay — warm gradient so content stays readable */}
+        {/* Layered overlay: strong at top for text, fades out toward dashboard */}
         <div className="absolute inset-0 z-[1]" style={{
-          background: "linear-gradient(to bottom, hsl(var(--background)/0.72) 0%, hsl(var(--background)/0.48) 55%, hsl(var(--background)/0.28) 100%)"
+          background: "linear-gradient(to bottom, hsl(var(--background)/0.82) 0%, hsl(var(--background)/0.62) 45%, hsl(var(--background)/0.38) 75%, hsl(var(--background)/0.20) 100%)"
+        }} />
+
+        {/* Bottom fade — blends hero into How It Works */}
+        <div className="absolute bottom-0 left-0 right-0 z-[3] pointer-events-none" style={{
+          height: "180px",
+          background: "linear-gradient(to bottom, transparent 0%, hsl(var(--background)/0.7) 55%, hsl(var(--background)) 100%)",
         }} />
 
         {/* Parallax content wrapper */}
@@ -265,16 +271,16 @@ export default function Landing() {
               {t.hero.badge}
             </motion.div>
 
-            {/* Headline — mixed weight: bold sans + italic serif */}
+            {/* Headline */}
             <motion.h1
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
-              className="mb-4 font-display text-[2.6rem] font-extrabold leading-[0.97] tracking-[-0.03em] sm:text-5xl lg:text-[5rem] max-w-3xl"
+              className="mb-4 font-display text-[2.4rem] font-extrabold leading-[1.02] tracking-tight sm:text-5xl lg:text-[4.8rem] max-w-3xl"
             >
               {t.hero.heading1}
               <br />
-              <span className="italic font-normal">{t.hero.heading2}</span>
+              <span className="italic font-normal text-gradient">{t.hero.heading2}</span>
             </motion.h1>
 
             {/* Subheadline */}
@@ -282,7 +288,7 @@ export default function Landing() {
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2, ease: EASE }}
-              className="mt-2 text-base md:text-lg text-foreground/70 max-w-[580px] leading-relaxed"
+              className="mt-3 text-base md:text-lg text-foreground/80 max-w-[560px] leading-relaxed font-medium"
             >
               {t.hero.body}
             </motion.p>
@@ -331,7 +337,7 @@ export default function Landing() {
                   </div>
                   <span className="font-brand text-lg leading-none text-foreground">Lerank</span>
                 </div>
-                <div className="flex-1 flex items-center gap-2 bg-black/[0.05] rounded-lg px-3 py-1.5 max-w-[240px]">
+                <div className="hidden sm:flex flex-1 items-center gap-2 bg-black/[0.05] rounded-lg px-3 py-1.5 max-w-[240px]">
                   <span className="text-foreground/40 flex-1 text-left">Search consultants…</span>
                   <kbd className="text-[9px] text-foreground/30 border border-border/40 rounded px-1">⌘K</kbd>
                 </div>
@@ -342,10 +348,10 @@ export default function Landing() {
               </div>
 
               {/* Dashboard body */}
-              <div className="flex text-[11px] select-none pointer-events-none" style={{ height: "230px" }}>
+              <div className="flex text-[11px] select-none pointer-events-none" style={{ height: "220px" }}>
 
-                {/* Sidebar */}
-                <div className="w-36 border-r border-black/[0.06] dark:border-white/[0.06] flex flex-col gap-0.5 p-2.5 shrink-0 bg-white/20 dark:bg-black/10">
+                {/* Sidebar — desktop only */}
+                <div className="hidden md:flex w-36 border-r border-black/[0.06] dark:border-white/[0.06] flex-col gap-0.5 p-2.5 shrink-0 bg-white/20 dark:bg-black/10">
                   {[
                     { label: "Dashboard", active: true },
                     { label: "Compare", badge: "12" },
@@ -404,8 +410,8 @@ export default function Landing() {
                     </div>
                   </div>
 
-                  {/* Applications card */}
-                  <div className="flex-1 rounded-xl border border-black/[0.07] dark:border-white/[0.07] bg-white/60 dark:bg-white/[0.04] p-3 min-w-0">
+                  {/* Applications card — desktop only */}
+                  <div className="hidden sm:block flex-1 rounded-xl border border-black/[0.07] dark:border-white/[0.07] bg-white/60 dark:bg-white/[0.04] p-3 min-w-0">
                     <p className="text-[9px] font-extrabold uppercase tracking-widest text-foreground/40 mb-2">Recent Applications</p>
                     {[
                       { school: "Univ. of Birmingham", status: "In Review", c: "amber" },
