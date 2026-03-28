@@ -232,19 +232,12 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* ── Hero (Nexora-style: h-screen, video bg, centered, glass dashboard) ── */}
+      {/* ── Hero: h-screen, gradient bg, centered, glass dashboard ── */}
       <section ref={heroRef} className="relative h-screen flex flex-col overflow-hidden">
 
-        {/* Background video */}
-        <video
-          autoPlay loop muted playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0"
-          src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260319_015952_e1deeb12-8fb7-4071-a42a-60779fc64ab6.mp4"
-        />
-
-        {/* Overlay — warm gradient so content stays readable */}
-        <div className="absolute inset-0 z-[1]" style={{
-          background: "linear-gradient(to bottom, hsl(var(--background)/0.72) 0%, hsl(var(--background)/0.48) 55%, hsl(var(--background)/0.28) 100%)"
+        {/* Hero gradient background */}
+        <div className="absolute inset-0 z-0" style={{
+          background: "radial-gradient(ellipse 90% 55% at 50% -5%, hsl(var(--sage)/0.22) 0%, transparent 65%), linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background)) 100%)"
         }} />
 
         {/* Parallax content wrapper */}
