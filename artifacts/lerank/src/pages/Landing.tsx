@@ -4,7 +4,7 @@ import { Button } from "@/components/ui-elements";
 import { LanguageToggle } from "@/components/language-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useLanguage } from "@/hooks/use-language";
-import { ArrowRight, CheckCircle, DollarSign, Globe2, Lock, Mail, Phone, Shield, Target, TrendingUp } from "lucide-react";
+import { ArrowRight, CheckCircle, Circle, DollarSign, Globe2, Lock, Mail, MapPin, Phone, Shield, Target, TrendingUp, XCircle } from "lucide-react";
 
 function TelegramIcon({ className }: { className?: string }) {
   return (
@@ -189,6 +189,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen overflow-x-hidden overflow-y-auto premium-bg text-foreground">
       <div className="pointer-events-none fixed inset-0 premium-grid" />
+
       {/* ── Nav ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-nav" style={{ willChange: "transform", transform: "translateZ(0)" }}>
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 md:grid md:h-16 md:grid-cols-[1fr_auto_1fr]">
@@ -230,91 +231,201 @@ export default function Landing() {
           </div>
         </div>
       </nav>
-      {/* ── Hero ── */}
-      <section ref={heroRef} className="relative flex min-h-screen items-center pt-14 md:pt-16 overflow-hidden">
-        {/* Floating gradient orbs */}
-        <div className="orb w-[520px] h-[520px] bg-primary/10 dark:bg-sage/10 top-16 -left-32 hidden md:block" />
-        <div className="orb orb-2 w-[380px] h-[380px] bg-gold/8 dark:bg-gold/6 top-8 right-8 hidden md:block" />
-        <div className="orb orb-3 w-[260px] h-[260px] bg-primary/6 dark:bg-sage/8 bottom-24 left-1/2 hidden lg:block" />
 
+      {/* ── Hero: h-screen, gradient bg, centered, glass dashboard ── */}
+      <section ref={heroRef} className="relative h-screen flex flex-col overflow-hidden">
+
+        {/* Hero gradient background */}
+        <div className="absolute inset-0 z-0" style={{
+          background: "radial-gradient(ellipse 90% 55% at 50% -5%, hsl(var(--sage)/0.22) 0%, transparent 65%), linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background)) 100%)"
+        }} />
+
+        {/* Parallax content wrapper */}
         <motion.div
           style={{ y: heroContentY, opacity: heroContentOpacity, willChange: "transform, opacity" }}
-          className="w-full"
+          className="relative z-10 flex flex-col items-center flex-1 pt-14 md:pt-16 overflow-hidden"
         >
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, ease: EASE }}
-          className="mx-auto w-full flex flex-col items-center"
-        >
-          {/* ── Top: centered text ── */}
-          <div className="flex flex-col items-center text-center pt-10 md:pt-14 pb-8 px-4 sm:px-6 w-full max-w-2xl mx-auto">
+          <div className="flex flex-col items-center text-center px-4 sm:px-6 pt-10 md:pt-14 w-full max-w-6xl mx-auto">
+
+            {/* Badge */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0 }}
-              className="mb-5 liquid-glass inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-foreground/70"
+              transition={{ duration: 0.5 }}
+              className="mb-6 liquid-glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold text-foreground/70"
             >
               <Lock className="h-3 w-3 text-sage" />
               {t.hero.badge}
             </motion.div>
 
-            <h1 className="mb-4 font-display font-extrabold tracking-tight sm:text-[2.6rem] sm:mb-5 lg:text-[3.25rem] text-center text-[35px]">
+            {/* Headline — mixed weight: bold sans + italic serif */}
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
+              className="mb-4 font-display text-[2.6rem] font-extrabold leading-[0.97] tracking-[-0.03em] sm:text-5xl lg:text-[5rem] max-w-3xl"
+            >
               {t.hero.heading1}
               <br />
-              <span className="text-gradient">{t.hero.heading2}</span>
-            </h1>
+              <span className="italic font-normal">{t.hero.heading2}</span>
+            </motion.h1>
 
-            <p className="mb-7 max-w-[400px] text-[14.5px] font-medium leading-relaxed text-foreground/65 dark:text-[#A8B09E]">
+            {/* Subheadline */}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2, ease: EASE }}
+              className="mt-2 text-base md:text-lg text-foreground/70 max-w-[580px] leading-relaxed"
+            >
               {t.hero.body}
-            </p>
+            </motion.p>
 
-            <div className="flex flex-col gap-3 sm:flex-row flex-wrap justify-center">
+            {/* CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3, ease: EASE }}
+              className="mt-6 flex items-center gap-3 flex-wrap justify-center"
+            >
               <Link href="/compare">
-                <Button size="lg" className="btn-glow shadow-lg shadow-primary/20 font-bold dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
+                <Button size="lg" className="rounded-full btn-glow font-bold shadow-lg shadow-primary/20 dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
                   {t.hero.findConsultant}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
               <Link href="/compare">
-                <Button size="lg" variant="glass" className="font-semibold">
+                <Button size="lg" variant="glass" className="rounded-full font-semibold">
                   {t.hero.iAmConsultant}
                 </Button>
               </Link>
-            </div>
+            </motion.div>
 
-            {/* Trust stats — centered */}
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-10 border-t border-border/40 pt-6 w-full">
-              {t.heroStats.map(({ value, label }, i) => (
-                <div key={i} className="flex flex-col items-center gap-0.5">
-                  <span className="font-display text-lg font-extrabold text-foreground sm:text-xl">{value}</span>
-                  <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
+            {/* Mini Lerank Dashboard Preview */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
+              className="mt-9 w-full"
+              style={{
+                background: "rgba(255,255,255,0.42)",
+                border: "1px solid rgba(255,255,255,0.58)",
+                boxShadow: "0 25px 80px -12px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.04)",
+                backdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)",
+                borderRadius: "1rem",
+                overflow: "hidden",
+              }}
+            >
+              {/* Dashboard top bar */}
+              <div className="flex items-center gap-3 px-4 py-2.5 border-b border-black/[0.06] dark:border-white/[0.06] text-[11px] bg-white/30 dark:bg-black/10">
+                <div className="flex items-center gap-2 shrink-0">
+                  <div className="h-5 w-5 rounded-md bg-primary flex items-center justify-center">
+                    <Globe2 className="h-3 w-3 text-primary-foreground" />
+                  </div>
+                  <span className="font-brand text-lg leading-none text-foreground">Lerank</span>
                 </div>
-              ))}
-            </div>
+                <div className="flex-1 flex items-center gap-2 bg-black/[0.05] rounded-lg px-3 py-1.5 max-w-[240px]">
+                  <span className="text-foreground/40 flex-1 text-left">Search consultants…</span>
+                  <kbd className="text-[9px] text-foreground/30 border border-border/40 rounded px-1">⌘K</kbd>
+                </div>
+                <div className="ml-auto flex items-center gap-2">
+                  <div className="bg-primary text-primary-foreground rounded-full px-3 py-1 text-[10px] font-semibold">Find Consultant</div>
+                  <div className="h-6 w-6 rounded-full bg-sage/20 border border-sage/30 flex items-center justify-center text-[9px] font-bold text-sage">A</div>
+                </div>
+              </div>
+
+              {/* Dashboard body */}
+              <div className="flex text-[11px] select-none pointer-events-none" style={{ height: "230px" }}>
+
+                {/* Sidebar */}
+                <div className="w-36 border-r border-black/[0.06] dark:border-white/[0.06] flex flex-col gap-0.5 p-2.5 shrink-0 bg-white/20 dark:bg-black/10">
+                  {[
+                    { label: "Dashboard", active: true },
+                    { label: "Compare", badge: "12" },
+                    { label: "Applications" },
+                    { label: "Escrow" },
+                    { label: "Messages", badge: "3" },
+                  ].map(({ label, active, badge }: { label: string; active?: boolean; badge?: string }) => (
+                    <div key={label} className={`flex items-center justify-between px-2 py-1.5 rounded-md ${active ? "bg-primary/12 text-primary font-semibold" : "text-foreground/50"}`}>
+                      <span>{label}</span>
+                      {badge && <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${active ? "bg-primary text-primary-foreground" : "bg-foreground/10 text-foreground/60"}`}>{badge}</span>}
+                    </div>
+                  ))}
+                  <div className="mt-auto pt-2 border-t border-black/[0.06]">
+                    <div className="space-y-1 px-2">
+                      <div className="flex justify-between text-foreground/50"><span>Escrow</span><span className="text-gold font-semibold">$1,200</span></div>
+                      <div className="flex justify-between text-foreground/50"><span>Success</span><span className="text-sage font-semibold">97%</span></div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Main content */}
+                <div className="flex-1 flex gap-3 p-3 overflow-hidden bg-white/10 dark:bg-black/5">
+
+                  {/* Top match card */}
+                  <div className="flex-1 rounded-xl border border-black/[0.07] dark:border-white/[0.07] bg-white/60 dark:bg-white/[0.04] p-3 min-w-0">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <p className="text-[9px] font-extrabold uppercase tracking-widest text-gold">YOUR TOP MATCH</p>
+                        <p className="font-semibold text-foreground text-xs mt-0.5">Mr. Shojalil Kosimov</p>
+                      </div>
+                      <span className="bg-sage/15 text-sage text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 ml-2">96% match</span>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1 mb-2">
+                      {[["4.9","Rating"],["312","Students"],["97%","Success"]].map(([v,l]) => (
+                        <div key={l} className="text-center bg-black/[0.04] rounded-md py-1.5">
+                          <p className="font-bold text-foreground text-[11px]">{v}</p>
+                          <p className="text-foreground/45 text-[9px]">{l}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-1.5 text-foreground/45 mb-2">
+                      <MapPin className="h-2.5 w-2.5 shrink-0 text-sage" />
+                      <span>USA · UK · Canada · Australia</span>
+                    </div>
+                    <div className="bg-primary/6 border border-primary/12 rounded-lg p-2">
+                      <div className="flex justify-between mb-1">
+                        <span className="text-foreground/50 flex items-center gap-1"><Lock className="h-2.5 w-2.5" /> Escrow</span>
+                        <span className="text-gold font-semibold">$1,200 protected</span>
+                      </div>
+                      <div className="h-1 w-full bg-primary/10 rounded-full">
+                        <div className="h-full bg-primary rounded-full" style={{ width: "68%" }} />
+                      </div>
+                      <div className="flex justify-between mt-1 text-foreground/40">
+                        <span>2 of 3 milestones</span><span>68%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Applications card */}
+                  <div className="flex-1 rounded-xl border border-black/[0.07] dark:border-white/[0.07] bg-white/60 dark:bg-white/[0.04] p-3 min-w-0">
+                    <p className="text-[9px] font-extrabold uppercase tracking-widest text-foreground/40 mb-2">Recent Applications</p>
+                    {[
+                      { school: "Univ. of Birmingham", status: "In Review", c: "amber" },
+                      { school: "King's College London", status: "Accepted", c: "green" },
+                      { school: "Univ. of Leeds", status: "Pending", c: "muted" },
+                      { school: "Univ. of Manchester", status: "Documents Due", c: "blue" },
+                    ].map(({ school, status, c }) => (
+                      <div key={school} className="flex items-center justify-between py-1.5 border-b border-black/[0.05] last:border-0">
+                        <span className="text-foreground/70 truncate mr-2 text-[10px]">{school}</span>
+                        <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
+                          c === "green" ? "bg-sage/15 text-sage" :
+                          c === "amber" ? "bg-yellow-100 text-yellow-700" :
+                          c === "blue"  ? "bg-blue-100 text-blue-600" :
+                          "bg-black/[0.06] text-foreground/50"
+                        }`}>{status}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                </div>
+              </div>
+            </motion.div>
+
           </div>
-
-          {/* ── Bottom: centered dashboard screenshot ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 44, filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.80, delay: 0.32, ease: EASE }}
-            className="relative w-full max-w-5xl mx-auto px-4 sm:px-6"
-          >
-            <img
-              src="/dashboard-preview.png"
-              alt="Lerank student dashboard"
-              className="w-full rounded-2xl border border-border/30 dark:border-white/[0.06] shadow-[0_12px_60px_rgba(30,61,40,0.13)] dark:shadow-[0_12px_60px_rgba(0,0,0,0.55)]"
-            />
-            <div
-              className="absolute bottom-0 left-4 right-4 sm:left-6 sm:right-6 h-28 pointer-events-none rounded-b-2xl"
-              style={{ background: "linear-gradient(to bottom, transparent, hsl(var(--background)))" }}
-            />
-          </motion.div>
         </motion.div>
-        </motion.div>
-
       </section>
+
       {/* ── How it works ── */}
       <section id="how-it-works" className="py-14 md:py-24 lg:py-36">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -369,6 +480,7 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
+
       {/* ── Problem ── */}
       <section id="problem" ref={problemRef} className="border-y border-border/40 py-14 md:py-24 lg:py-36">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -474,6 +586,7 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
       {/* ── Guarantee ── */}
       <section id="guarantee" className="py-14 md:py-24 lg:py-36">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -549,8 +662,10 @@ export default function Landing() {
           </div>
         </div>
       </section>
+
       {/* ── Testimonial (Neuralyn scroll-reveal) ── */}
       <TestimonialSection />
+
       {/* ── CTA ── */}
       <section className="border-t border-border/40 py-14 md:py-24 lg:py-36">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
@@ -577,6 +692,7 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
+
       {/* ── Contact / Footer ── */}
       <section className="border-t border-border/40 py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -645,6 +761,7 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
+
       <footer className="border-t border-border/40 py-5">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 text-sm font-medium text-muted-foreground sm:flex-row sm:px-6">
           <div className="flex items-center gap-2">
