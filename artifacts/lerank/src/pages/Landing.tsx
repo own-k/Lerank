@@ -4,7 +4,7 @@ import { Button } from "@/components/ui-elements";
 import { LanguageToggle } from "@/components/language-toggle";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useLanguage } from "@/hooks/use-language";
-import { ArrowRight, CheckCircle, Circle, DollarSign, Globe2, Lock, Mail, MapPin, Phone, Shield, Target, TrendingUp, XCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, DollarSign, Globe2, Lock, Mail, Phone, Shield, Target, TrendingUp } from "lucide-react";
 
 function TelegramIcon({ className }: { className?: string }) {
   return (
@@ -247,10 +247,10 @@ export default function Landing() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: EASE }}
-          className="mx-auto grid w-full max-w-7xl items-center gap-8 px-4 py-8 sm:px-6 sm:py-16 lg:grid-cols-[1fr_480px] lg:gap-16 lg:py-0"
+          className="mx-auto w-full flex flex-col items-center"
         >
-          {/* Left */}
-          <div>
+          {/* ── Top: centered text ── */}
+          <div className="flex flex-col items-center text-center pt-10 md:pt-14 pb-8 px-4 sm:px-6 w-full max-w-2xl mx-auto">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -261,17 +261,17 @@ export default function Landing() {
               {t.hero.badge}
             </motion.div>
 
-            <h1 className="mb-4 font-display text-[2.3rem] font-extrabold leading-[1.05] tracking-tight sm:text-5xl sm:mb-6 lg:text-[4.25rem]">
+            <h1 className="mb-4 font-display text-[1.85rem] font-extrabold leading-[1.1] tracking-tight sm:text-[2.6rem] sm:mb-5 lg:text-[3.25rem]">
               {t.hero.heading1}
               <br />
               <span className="text-gradient">{t.hero.heading2}</span>
             </h1>
 
-            <p className="mb-6 max-w-[480px] text-base font-medium leading-relaxed text-foreground/80 dark:text-[#A8B09E] sm:text-lg sm:mb-8">
+            <p className="mb-7 max-w-[400px] text-[14.5px] font-medium leading-relaxed text-foreground/65 dark:text-[#A8B09E]">
               {t.hero.body}
             </p>
 
-            <div className="flex flex-col gap-3 xs:flex-row sm:flex-row flex-wrap">
+            <div className="flex flex-col gap-3 sm:flex-row flex-wrap justify-center">
               <Link href="/compare">
                 <Button size="lg" className="btn-glow shadow-lg shadow-primary/20 font-bold dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
                   {t.hero.findConsultant}
@@ -285,106 +285,33 @@ export default function Landing() {
               </Link>
             </div>
 
-            {/* Trust stats */}
-            <div className="mt-7 grid grid-cols-3 divide-x divide-border/50 border-t border-border/50 pt-5 sm:mt-10 sm:pt-8">
+            {/* Trust stats — centered */}
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-6 sm:gap-10 border-t border-border/40 pt-6 w-full">
               {t.heroStats.map(({ value, label }, i) => (
-                <div key={i} className="flex flex-col gap-0.5 px-3 first:pl-0 last:pr-0 sm:px-6 sm:first:pl-0">
-                  <span className="font-display text-xl font-extrabold text-foreground sm:text-2xl">{value}</span>
-                  <span className="text-[11px] font-medium leading-tight text-muted-foreground sm:text-xs">{label}</span>
+                <div key={i} className="flex flex-col items-center gap-0.5">
+                  <span className="font-display text-lg font-extrabold text-foreground sm:text-xl">{value}</span>
+                  <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Right — product preview */}
+          {/* ── Bottom: centered dashboard screenshot ── */}
           <motion.div
-            initial={{ opacity: 0, y: 16, filter: "blur(8px)" }}
+            initial={{ opacity: 0, y: 44, filter: "blur(10px)" }}
             animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 0.65, delay: 0.2, ease: EASE }}
-            whileHover={{ y: -3, transition: { duration: 0.25, ease: EASE } }}
-            className="hidden cursor-default lg:block"
+            transition={{ duration: 0.80, delay: 0.32, ease: EASE }}
+            className="relative w-full max-w-5xl mx-auto px-4 sm:px-6"
           >
-            <div className="relative rounded-2xl border border-border/60 dark:border-white/[0.06] bg-card p-6 shadow-2xl dark:shadow-[0_4px_32px_rgba(0,0,0,0.5)] transition-shadow duration-300 hover:shadow-[0_24px_48px_rgba(0,0,0,0.13)] dark:hover:shadow-[0_24px_48px_rgba(0,0,0,0.6)]">
-
-              {/* Card header */}
-              <div className="mb-5 flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-[11px] font-extrabold uppercase tracking-widest text-gold dark:text-[#8A9E86]">{t.productCard.topMatch}</p>
-                  <h3 className="mt-1 font-display text-xl font-bold leading-tight">Mr. Shojalil Kosimov</h3>
-                </div>
-                <div className="shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold bg-[#2D5A3E] text-white dark:bg-[#2D5A3E] dark:text-[#7DD4A0]">
-                  <span className="h-1.5 w-1.5 rounded-full bg-white/60 dark:bg-[#7DD4A0]/70" />
-                  {t.productCard.matchPct}
-                </div>
-              </div>
-
-              {/* Stats */}
-              <div className="mb-5 grid grid-cols-3 gap-2.5">
-                {[
-                  { label: t.productCard.rating, value: "4.9" },
-                  { label: t.productCard.students, value: "312" },
-                  { label: t.productCard.success, value: "97%" },
-                ].map(({ label, value }) => (
-                  <motion.div
-                    key={label}
-                    whileHover={{ scale: 1.05, transition: { duration: 0.18 } }}
-                    className="glass-stat rounded-xl py-3 text-center cursor-default"
-                  >
-                    <p className="font-display text-lg font-extrabold leading-tight">{value}</p>
-                    <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">{label}</p>
-                  </motion.div>
-                ))}
-              </div>
-
-              {/* Countries */}
-              <div className="mb-5 flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                <MapPin className="h-3.5 w-3.5 shrink-0 text-sage" />
-                <span>USA · UK · Canada · Australia</span>
-              </div>
-
-              {/* Milestones */}
-              <div className="mb-5">
-                <p className="mb-2.5 text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground">
-                  {t.productCard.activeMilestones}
-                </p>
-                <div className="space-y-2">
-                  {t.productCard.milestoneItems.map(({ label, done }, i) => (
-                    <div key={i} className="group/m flex items-center gap-3">
-                      {done
-                        ? <CheckCircle className="h-4 w-4 shrink-0 text-sage" />
-                        : <Circle className="h-4 w-4 shrink-0 text-muted-foreground/40" />
-                      }
-                      <span className={`text-sm font-medium ${done ? "line-through text-muted-foreground/70 dark:text-[#5A7A58]" : "text-foreground dark:text-[#F0ECE2]"}`}>
-                        {label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Escrow */}
-              <div className="rounded-xl border border-primary/20 bg-primary/8 px-4 py-3.5 dark:bg-card dark:border-[rgba(212,185,106,0.2)] dark:text-[#A8B09E]">
-                <div className="flex items-center justify-between text-sm font-semibold">
-                  <div className="flex items-center gap-2">
-                    <Lock className="h-3.5 w-3.5 text-primary" />
-                    {t.productCard.escrowBalance}
-                  </div>
-                  <span className="font-display font-bold text-gold">{t.productCard.escrowAmount}</span>
-                </div>
-                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-primary/15 dark:bg-[#2A3828]">
-                  <motion.div
-                    className="h-full rounded-full bg-primary"
-                    initial={{ width: 0 }}
-                    animate={{ width: "68%" }}
-                    transition={{ delay: 0.9, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-                  />
-                </div>
-                <div className="mt-1.5 flex justify-between text-xs font-medium text-muted-foreground">
-                  <span>{t.productCard.milestonesProgress}</span>
-                  <span>68%</span>
-                </div>
-              </div>
-            </div>
+            <img
+              src="/dashboard-preview.png"
+              alt="Lerank student dashboard"
+              className="w-full rounded-2xl border border-border/30 dark:border-white/[0.06] shadow-[0_12px_60px_rgba(30,61,40,0.13)] dark:shadow-[0_12px_60px_rgba(0,0,0,0.55)]"
+            />
+            <div
+              className="absolute bottom-0 left-4 right-4 sm:left-6 sm:right-6 h-28 pointer-events-none rounded-b-2xl"
+              style={{ background: "linear-gradient(to bottom, transparent, hsl(var(--background)))" }}
+            />
           </motion.div>
         </motion.div>
         </motion.div>
