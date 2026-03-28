@@ -1,5 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
+
+@font-face {
+  font-family: 'Styrene A';
+  src: url('/StyreneA-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Styrene A';
+  src: url('/StyreneA-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
 
 html {
   scroll-behavior: smooth;
@@ -23,8 +38,8 @@ html {
 }
 
 @theme inline {
-  --font-sans: 'Inter', sans-serif;
-  --font-display: 'Instrument Serif', serif;
+  --font-sans: 'Styrene A', sans-serif;
+  --font-display: 'Styrene A', sans-serif;
   --font-brand: 'Monsieur La Doulaise', cursive;
 
   --color-background: hsl(var(--background));
