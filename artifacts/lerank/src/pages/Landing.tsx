@@ -191,7 +191,7 @@ export default function Landing() {
       <div className="pointer-events-none fixed inset-0 premium-grid" />
 
       {/* ── Nav ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 glass-nav" style={{ willChange: "transform", transform: "translateZ(0)" }}>
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/40 bg-background/90 backdrop-blur-md" style={{ willChange: "transform", transform: "translateZ(0)" }}>
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 md:grid md:h-16 md:grid-cols-[1fr_auto_1fr]">
           {/* Left — logo */}
           <div className="flex items-center gap-2">
@@ -232,198 +232,163 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* ── Hero: h-screen, gradient bg, centered, glass dashboard ── */}
-      <section ref={heroRef} className="relative h-screen flex flex-col overflow-hidden">
+      {/* ── Hero ── */}
+      <section ref={heroRef} className="relative flex min-h-screen items-center pt-14 md:pt-16 overflow-hidden">
+        {/* Floating gradient orbs */}
+        <div className="orb w-[520px] h-[520px] bg-primary/10 dark:bg-sage/10 top-16 -left-32 hidden md:block" />
+        <div className="orb orb-2 w-[380px] h-[380px] bg-gold/8 dark:bg-gold/6 top-8 right-8 hidden md:block" />
+        <div className="orb orb-3 w-[260px] h-[260px] bg-primary/6 dark:bg-sage/8 bottom-24 left-1/2 hidden lg:block" />
 
-        {/* Hero gradient background */}
-        <div className="absolute inset-0 z-0" style={{
-          background: "radial-gradient(ellipse 90% 55% at 50% -5%, hsl(var(--sage)/0.22) 0%, transparent 65%), linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--background)) 100%)"
-        }} />
-
-        {/* Parallax content wrapper */}
         <motion.div
           style={{ y: heroContentY, opacity: heroContentOpacity, willChange: "transform, opacity" }}
-          className="relative z-10 flex flex-col items-center flex-1 pt-14 md:pt-16 overflow-hidden"
+          className="w-full"
         >
-          <div className="flex flex-col items-center text-center px-4 sm:px-6 pt-10 md:pt-14 w-full max-w-6xl mx-auto">
-
-            {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: EASE }}
+          className="mx-auto grid w-full max-w-7xl items-center gap-8 px-4 py-8 sm:px-6 sm:py-16 lg:grid-cols-[1fr_480px] lg:gap-16 lg:py-0"
+        >
+          {/* Left */}
+          <div>
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mb-6 liquid-glass inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold text-foreground/70"
+              transition={{ duration: 0.5, delay: 0 }}
+              className="mb-5 liquid-glass inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-bold text-foreground/70"
             >
               <Lock className="h-3 w-3 text-sage" />
               {t.hero.badge}
             </motion.div>
 
-            {/* Headline — mixed weight: bold sans + italic serif */}
-            <motion.h1
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1, ease: EASE }}
-              className="mb-4 font-display text-[2.6rem] font-extrabold leading-[0.97] tracking-[-0.03em] sm:text-5xl lg:text-[5rem] max-w-3xl"
-            >
+            <h1 className="mb-4 font-display text-[2.3rem] font-extrabold leading-[1.05] tracking-tight sm:text-5xl sm:mb-6 lg:text-[4.25rem]">
               {t.hero.heading1}
               <br />
-              <span className="italic font-normal">{t.hero.heading2}</span>
-            </motion.h1>
+              <span className="text-gradient">{t.hero.heading2}</span>
+            </h1>
 
-            {/* Subheadline */}
-            <motion.p
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2, ease: EASE }}
-              className="mt-2 text-base md:text-lg text-foreground/70 max-w-[580px] leading-relaxed"
-            >
+            <p className="mb-6 max-w-[480px] text-base font-medium leading-relaxed text-foreground/80 dark:text-[#A8B09E] sm:text-lg sm:mb-8">
               {t.hero.body}
-            </motion.p>
+            </p>
 
-            {/* CTAs */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3, ease: EASE }}
-              className="mt-6 flex items-center gap-3 flex-wrap justify-center"
-            >
+            <div className="flex flex-col gap-3 xs:flex-row sm:flex-row flex-wrap">
               <Link href="/compare">
-                <Button size="lg" className="rounded-full btn-glow font-bold shadow-lg shadow-primary/20 dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
+                <Button size="lg" className="btn-glow shadow-lg shadow-primary/20 font-bold dark:bg-[#D4B96A] dark:text-[#0F1410] dark:hover:bg-[#D4B96A]/90 dark:shadow-none">
                   {t.hero.findConsultant}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
               <Link href="/compare">
-                <Button size="lg" variant="glass" className="rounded-full font-semibold">
+                <Button size="lg" variant="outline" className="font-semibold dark:border-[rgba(212,185,106,0.5)] dark:text-[#D4B96A] dark:hover:bg-[#D4B96A]/10 dark:bg-transparent">
                   {t.hero.iAmConsultant}
                 </Button>
               </Link>
-            </motion.div>
+            </div>
 
-            {/* Mini Lerank Dashboard Preview */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5, ease: EASE }}
-              className="mt-9 w-full"
-              style={{
-                background: "rgba(255,255,255,0.42)",
-                border: "1px solid rgba(255,255,255,0.58)",
-                boxShadow: "0 25px 80px -12px rgba(0,0,0,0.14), 0 0 0 1px rgba(0,0,0,0.04)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
-                borderRadius: "1rem",
-                overflow: "hidden",
-              }}
-            >
-              {/* Dashboard top bar */}
-              <div className="flex items-center gap-3 px-4 py-2.5 border-b border-black/[0.06] dark:border-white/[0.06] text-[11px] bg-white/30 dark:bg-black/10">
-                <div className="flex items-center gap-2 shrink-0">
-                  <div className="h-5 w-5 rounded-md bg-primary flex items-center justify-center">
-                    <Globe2 className="h-3 w-3 text-primary-foreground" />
-                  </div>
-                  <span className="font-brand text-lg leading-none text-foreground">Lerank</span>
+            {/* Trust stats */}
+            <div className="mt-7 grid grid-cols-3 divide-x divide-border/50 border-t border-border/50 pt-5 sm:mt-10 sm:pt-8">
+              {t.heroStats.map(({ value, label }, i) => (
+                <div key={i} className="flex flex-col gap-0.5 px-3 first:pl-0 last:pr-0 sm:px-6 sm:first:pl-0">
+                  <span className="font-display text-xl font-extrabold text-foreground sm:text-2xl">{value}</span>
+                  <span className="text-[11px] font-medium leading-tight text-muted-foreground sm:text-xs">{label}</span>
                 </div>
-                <div className="flex-1 flex items-center gap-2 bg-black/[0.05] rounded-lg px-3 py-1.5 max-w-[240px]">
-                  <span className="text-foreground/40 flex-1 text-left">Search consultants…</span>
-                  <kbd className="text-[9px] text-foreground/30 border border-border/40 rounded px-1">⌘K</kbd>
+              ))}
+            </div>
+          </div>
+
+          {/* Right — product preview */}
+          <motion.div
+            initial={{ opacity: 0, y: 16, filter: "blur(8px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: 0.65, delay: 0.2, ease: EASE }}
+            whileHover={{ y: -3, transition: { duration: 0.25, ease: EASE } }}
+            className="hidden cursor-default lg:block"
+          >
+            <div className="relative rounded-2xl border border-border/60 dark:border-white/[0.06] bg-card p-6 shadow-2xl dark:shadow-[0_4px_32px_rgba(0,0,0,0.5)] transition-shadow duration-300 hover:shadow-[0_24px_48px_rgba(0,0,0,0.13)] dark:hover:shadow-[0_24px_48px_rgba(0,0,0,0.6)]">
+
+              {/* Card header */}
+              <div className="mb-5 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[11px] font-extrabold uppercase tracking-widest text-gold dark:text-[#8A9E86]">{t.productCard.topMatch}</p>
+                  <h3 className="mt-1 font-display text-xl font-bold leading-tight">Mr. Shojalil Kosimov</h3>
                 </div>
-                <div className="ml-auto flex items-center gap-2">
-                  <div className="bg-primary text-primary-foreground rounded-full px-3 py-1 text-[10px] font-semibold">Find Consultant</div>
-                  <div className="h-6 w-6 rounded-full bg-sage/20 border border-sage/30 flex items-center justify-center text-[9px] font-bold text-sage">A</div>
+                <div className="shrink-0 flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold bg-[#2D5A3E] text-white dark:bg-[#2D5A3E] dark:text-[#7DD4A0]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-white/60 dark:bg-[#7DD4A0]/70" />
+                  {t.productCard.matchPct}
                 </div>
               </div>
 
-              {/* Dashboard body */}
-              <div className="flex text-[11px] select-none pointer-events-none" style={{ height: "230px" }}>
+              {/* Stats */}
+              <div className="mb-5 grid grid-cols-3 gap-2.5">
+                {[
+                  { label: t.productCard.rating, value: "4.9" },
+                  { label: t.productCard.students, value: "312" },
+                  { label: t.productCard.success, value: "97%" },
+                ].map(({ label, value }) => (
+                  <motion.div
+                    key={label}
+                    whileHover={{ scale: 1.05, transition: { duration: 0.18 } }}
+                    className="rounded-xl border border-border/50 bg-muted py-3 text-center cursor-default"
+                  >
+                    <p className="font-display text-lg font-extrabold leading-tight">{value}</p>
+                    <p className="mt-0.5 text-[11px] font-medium text-muted-foreground">{label}</p>
+                  </motion.div>
+                ))}
+              </div>
 
-                {/* Sidebar */}
-                <div className="w-36 border-r border-black/[0.06] dark:border-white/[0.06] flex flex-col gap-0.5 p-2.5 shrink-0 bg-white/20 dark:bg-black/10">
-                  {[
-                    { label: "Dashboard", active: true },
-                    { label: "Compare", badge: "12" },
-                    { label: "Applications" },
-                    { label: "Escrow" },
-                    { label: "Messages", badge: "3" },
-                  ].map(({ label, active, badge }: { label: string; active?: boolean; badge?: string }) => (
-                    <div key={label} className={`flex items-center justify-between px-2 py-1.5 rounded-md ${active ? "bg-primary/12 text-primary font-semibold" : "text-foreground/50"}`}>
-                      <span>{label}</span>
-                      {badge && <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full ${active ? "bg-primary text-primary-foreground" : "bg-foreground/10 text-foreground/60"}`}>{badge}</span>}
+              {/* Countries */}
+              <div className="mb-5 flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-sage" />
+                <span>USA · UK · Canada · Australia</span>
+              </div>
+
+              {/* Milestones */}
+              <div className="mb-5">
+                <p className="mb-2.5 text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground">
+                  {t.productCard.activeMilestones}
+                </p>
+                <div className="space-y-2">
+                  {t.productCard.milestoneItems.map(({ label, done }, i) => (
+                    <div key={i} className="group/m flex items-center gap-3">
+                      {done
+                        ? <CheckCircle className="h-4 w-4 shrink-0 text-sage" />
+                        : <Circle className="h-4 w-4 shrink-0 text-muted-foreground/40" />
+                      }
+                      <span className={`text-sm font-medium ${done ? "line-through text-muted-foreground/70 dark:text-[#5A7A58]" : "text-foreground dark:text-[#F0ECE2]"}`}>
+                        {label}
+                      </span>
                     </div>
                   ))}
-                  <div className="mt-auto pt-2 border-t border-black/[0.06]">
-                    <div className="space-y-1 px-2">
-                      <div className="flex justify-between text-foreground/50"><span>Escrow</span><span className="text-gold font-semibold">$1,200</span></div>
-                      <div className="flex justify-between text-foreground/50"><span>Success</span><span className="text-sage font-semibold">97%</span></div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Main content */}
-                <div className="flex-1 flex gap-3 p-3 overflow-hidden bg-white/10 dark:bg-black/5">
-
-                  {/* Top match card */}
-                  <div className="flex-1 rounded-xl border border-black/[0.07] dark:border-white/[0.07] bg-white/60 dark:bg-white/[0.04] p-3 min-w-0">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <p className="text-[9px] font-extrabold uppercase tracking-widest text-gold">YOUR TOP MATCH</p>
-                        <p className="font-semibold text-foreground text-xs mt-0.5">Mr. Shojalil Kosimov</p>
-                      </div>
-                      <span className="bg-sage/15 text-sage text-[9px] font-bold px-2 py-0.5 rounded-full shrink-0 ml-2">96% match</span>
-                    </div>
-                    <div className="grid grid-cols-3 gap-1 mb-2">
-                      {[["4.9","Rating"],["312","Students"],["97%","Success"]].map(([v,l]) => (
-                        <div key={l} className="text-center bg-black/[0.04] rounded-md py-1.5">
-                          <p className="font-bold text-foreground text-[11px]">{v}</p>
-                          <p className="text-foreground/45 text-[9px]">{l}</p>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-foreground/45 mb-2">
-                      <MapPin className="h-2.5 w-2.5 shrink-0 text-sage" />
-                      <span>USA · UK · Canada · Australia</span>
-                    </div>
-                    <div className="bg-primary/6 border border-primary/12 rounded-lg p-2">
-                      <div className="flex justify-between mb-1">
-                        <span className="text-foreground/50 flex items-center gap-1"><Lock className="h-2.5 w-2.5" /> Escrow</span>
-                        <span className="text-gold font-semibold">$1,200 protected</span>
-                      </div>
-                      <div className="h-1 w-full bg-primary/10 rounded-full">
-                        <div className="h-full bg-primary rounded-full" style={{ width: "68%" }} />
-                      </div>
-                      <div className="flex justify-between mt-1 text-foreground/40">
-                        <span>2 of 3 milestones</span><span>68%</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Applications card */}
-                  <div className="flex-1 rounded-xl border border-black/[0.07] dark:border-white/[0.07] bg-white/60 dark:bg-white/[0.04] p-3 min-w-0">
-                    <p className="text-[9px] font-extrabold uppercase tracking-widest text-foreground/40 mb-2">Recent Applications</p>
-                    {[
-                      { school: "Univ. of Birmingham", status: "In Review", c: "amber" },
-                      { school: "King's College London", status: "Accepted", c: "green" },
-                      { school: "Univ. of Leeds", status: "Pending", c: "muted" },
-                      { school: "Univ. of Manchester", status: "Documents Due", c: "blue" },
-                    ].map(({ school, status, c }) => (
-                      <div key={school} className="flex items-center justify-between py-1.5 border-b border-black/[0.05] last:border-0">
-                        <span className="text-foreground/70 truncate mr-2 text-[10px]">{school}</span>
-                        <span className={`text-[8px] font-bold px-1.5 py-0.5 rounded-full shrink-0 ${
-                          c === "green" ? "bg-sage/15 text-sage" :
-                          c === "amber" ? "bg-yellow-100 text-yellow-700" :
-                          c === "blue"  ? "bg-blue-100 text-blue-600" :
-                          "bg-black/[0.06] text-foreground/50"
-                        }`}>{status}</span>
-                      </div>
-                    ))}
-                  </div>
-
                 </div>
               </div>
-            </motion.div>
 
-          </div>
+              {/* Escrow */}
+              <div className="rounded-xl border border-primary/20 bg-primary/8 px-4 py-3.5 dark:bg-card dark:border-[rgba(212,185,106,0.2)] dark:text-[#A8B09E]">
+                <div className="flex items-center justify-between text-sm font-semibold">
+                  <div className="flex items-center gap-2">
+                    <Lock className="h-3.5 w-3.5 text-primary" />
+                    {t.productCard.escrowBalance}
+                  </div>
+                  <span className="font-display font-bold text-gold">{t.productCard.escrowAmount}</span>
+                </div>
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-primary/15 dark:bg-[#2A3828]">
+                  <motion.div
+                    className="h-full rounded-full bg-primary"
+                    initial={{ width: 0 }}
+                    animate={{ width: "68%" }}
+                    transition={{ delay: 0.9, duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
+                  />
+                </div>
+                <div className="mt-1.5 flex justify-between text-xs font-medium text-muted-foreground">
+                  <span>{t.productCard.milestonesProgress}</span>
+                  <span>68%</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
+        </motion.div>
+
       </section>
 
       {/* ── How it works ── */}
@@ -449,7 +414,7 @@ export default function Landing() {
                 <motion.div
                   key={item.step}
                   variants={BLUR_IN}
-                  className="glass-card px-5 py-6 sm:px-8 sm:py-9"
+                  className="bg-card px-5 py-6 sm:px-8 sm:py-9"
                 >
                   <p className="font-display mb-5 text-5xl font-medium text-gold">{item.step}</p>
                   <h3 className="mb-2 font-display text-lg font-semibold text-[#111811] dark:text-[#F0ECE2]">{item.title}</h3>
@@ -468,7 +433,8 @@ export default function Landing() {
               <motion.div
                 key={i}
                 variants={BLUR_IN}
-                className="glass-card rounded-2xl p-6"
+                className="hiw-feature-shadow rounded-2xl border border-black/[0.07] dark:border-white/[0.06] bg-card p-6 transition-colors duration-200"
+                style={{ boxShadow: '0 2px 12px rgba(0,0,0,0.05)' }}
               >
                 <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-[10px] bg-[#F0EDE4] dark:bg-secondary">
                   <f.icon className="h-5 w-5 text-[#1E3D28] dark:text-[#D4B96A]" />
@@ -519,7 +485,7 @@ export default function Landing() {
               initial={{ opacity: 0, x: 28 }}
               animate={cardInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, ease: EASE }}
-              className="glass-card rounded-2xl p-8"
+              className="rounded-2xl border border-border/50 bg-card/80 p-8"
             >
               <div className="mb-6 relative flex h-11 w-11 items-center justify-center rounded-xl bg-destructive/10">
                 {cardInView && (
@@ -607,7 +573,7 @@ export default function Landing() {
               className="space-y-4"
             >
               {t.guarantee.benefits.map(({ title, points }, bi) => (
-                <motion.div key={bi} variants={BLUR_IN} className="glass-card rounded-2xl p-7">
+                <motion.div key={bi} variants={BLUR_IN} className="rounded-2xl border border-border/50 bg-card/80 p-7">
                   <h3 className="mb-4 font-display text-lg font-bold">{title}</h3>
                   <div className="space-y-3">
                     {points.map((p, pi) => (
@@ -627,7 +593,7 @@ export default function Landing() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.55, delay: 0.1, ease: EASE }}
-              className="glass-card rounded-2xl p-8 lg:sticky lg:top-[88px]"
+              className="rounded-2xl border border-border/50 bg-card/80 p-8 lg:sticky lg:top-[88px]"
             >
               <div className="mb-6 flex items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-sage/10">
@@ -686,7 +652,7 @@ export default function Landing() {
                 </Button>
               </Link>
               <Link href="/compare">
-                <Button size="lg" variant="glass" className="font-semibold">{t.cta.signIn}</Button>
+                <Button size="lg" variant="outline" className="font-semibold dark:border-[rgba(212,185,106,0.5)] dark:text-[#D4B96A] dark:hover:bg-[#D4B96A]/10 dark:bg-transparent">{t.cta.signIn}</Button>
               </Link>
             </motion.div>
           </motion.div>
