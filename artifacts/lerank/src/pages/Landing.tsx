@@ -189,7 +189,6 @@ export default function Landing() {
   return (
     <div className="min-h-screen overflow-x-hidden overflow-y-auto premium-bg text-foreground">
       <div className="pointer-events-none fixed inset-0 premium-grid" />
-
       {/* ── Nav ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-nav" style={{ willChange: "transform", transform: "translateZ(0)" }}>
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 md:grid md:h-16 md:grid-cols-[1fr_auto_1fr]">
@@ -231,7 +230,6 @@ export default function Landing() {
           </div>
         </div>
       </nav>
-
       {/* ── Hero ── */}
       <section ref={heroRef} className="relative flex min-h-screen items-center pt-14 md:pt-16 overflow-hidden">
         {/* Floating gradient orbs */}
@@ -261,7 +259,7 @@ export default function Landing() {
               {t.hero.badge}
             </motion.div>
 
-            <h1 className="mb-4 font-display text-[1.85rem] font-extrabold leading-[1.1] tracking-tight sm:text-[2.6rem] sm:mb-5 lg:text-[3.25rem]">
+            <h1 className="mb-4 font-display font-extrabold tracking-tight sm:text-[2.6rem] sm:mb-5 lg:text-[3.25rem] text-center text-[35px]">
               {t.hero.heading1}
               <br />
               <span className="text-gradient">{t.hero.heading2}</span>
@@ -317,7 +315,6 @@ export default function Landing() {
         </motion.div>
 
       </section>
-
       {/* ── How it works ── */}
       <section id="how-it-works" className="py-14 md:py-24 lg:py-36">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -372,7 +369,6 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
-
       {/* ── Problem ── */}
       <section id="problem" ref={problemRef} className="border-y border-border/40 py-14 md:py-24 lg:py-36">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -478,7 +474,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* ── Guarantee ── */}
       <section id="guarantee" className="py-14 md:py-24 lg:py-36">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -554,10 +549,8 @@ export default function Landing() {
           </div>
         </div>
       </section>
-
       {/* ── Testimonial (Neuralyn scroll-reveal) ── */}
       <TestimonialSection />
-
       {/* ── CTA ── */}
       <section className="border-t border-border/40 py-14 md:py-24 lg:py-36">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
@@ -584,7 +577,6 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
-
       {/* ── Contact / Footer ── */}
       <section className="border-t border-border/40 py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
@@ -653,7 +645,6 @@ export default function Landing() {
           </motion.div>
         </div>
       </section>
-
       <footer className="border-t border-border/40 py-5">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 text-sm font-medium text-muted-foreground sm:flex-row sm:px-6">
           <div className="flex items-center gap-2">
