@@ -4,7 +4,28 @@
       "Bash(git remote:*)",
       "Bash(find /home/runner/workspace/artifacts -name \".replit-artifact\" -type d -exec rm -rf {} +)",
       "Bash(git add:*)",
-      "Bash(git rm:*)"
+      "Bash(git rm:*)",
+      "Bash(git commit:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(gh auth:*)",
+      "Bash(ssh-keygen -t ed25519 -f ~/.ssh/github_key -N \"\" -q)",
+      "Read(//home/runner/.ssh/**)",
+      "Bash(git fetch:*)",
+      "Bash(git config:*)",
+      "Bash(git filter-branch:*)",
+      "Bash(git stash:*)",
+      "Bash(git reflog:*)",
+      "Bash(git gc:*)",
+      "Bash(git update-ref:*)",
+      "Bash(pnpm --filter @workspace/lerank dev)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173/)",
+      "Bash(kill %1)",
+      "Bash(curl -s http://localhost:5173/)",
+      "Bash(curl -sv http://localhost:5173/)",
+      "Bash(PORT=5173 BASE_PATH=/ REPL_ID=\"\" pnpm --filter @workspace/lerank dev)",
+      "Bash(npx vite:*)",
+      "Bash(curl -sv http://localhost:5174/)"
     ]
   }
 }
