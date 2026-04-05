@@ -41,25 +41,11 @@ testem.log
 .DS_Store
 Thumbs.db
 
-.cursor/rules/nx-rules.mdc
-.github/instructions/nx.instructions.md
 
 # Environment
 .env
 .env.*
 
-# Replit
-.replit
-.replitignore
-replit.md
-.cache/
-.local/
-.config/
-
-# Claude Code
-.claude/
-.superpowers/
-.agents/
 
 # Attached assets (dev uploads)
 attached_assets/
